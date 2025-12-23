@@ -272,14 +272,25 @@ EC2 Ubuntu 서버에 배포 시:
    python manage.py migrate
    ```
 
-5. `python manage.py collectstatic` 실행
+5. 초기 데이터 로드 (카테고리 및 주제 데이터):
+   ```bash
+   python manage.py load_initial_data
+   ```
+   > **참고**: 개발 환경에서 이미 데이터를 입력했다면 이 단계는 생략할 수 있습니다. 하지만 프로덕션은 새로운 MariaDB이므로 초기 데이터를 로드해야 합니다.
 
-6. Gunicorn으로 서버 실행:
+6. `python manage.py collectstatic` 실행
+
+7. Gunicorn으로 서버 실행:
    ```bash
    gunicorn anonymous_project.wsgi:application
    ```
 
-7. Nginx를 리버스 프록시로 설정
+8. Nginx를 리버스 프록시로 설정
+
+> **중요 참고사항**: 
+> - 프로덕션 환경에서는 `DJANGO_SETTINGS_MODULE=anonymous_project.settings.production`이 설정되면 자동으로 MariaDB를 사용합니다.
+> - 코드(models.py, views.py 등)는 Django ORM을 사용하므로 SQLite든 MariaDB든 동일하게 동작합니다.
+> - 개발 환경(SQLite)과 프로덕션 환경(MariaDB) 간 데이터베이스는 별개이므로, 프로덕션 배포 시 마이그레이션과 초기 데이터 로드를 다시 수행해야 합니다.
 
 ### systemd 서비스 파일 예시
 
