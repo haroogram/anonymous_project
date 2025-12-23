@@ -1,0 +1,36 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}{{ category_name }} 튜토리얼 - anonymous{% endblock %}
+
+{% block content %}
+<div class="tutorial-header">
+    <nav class="breadcrumb">
+        <a href="{% url 'index' %}">홈</a>
+        <span> / </span>
+        <span>{{ category_name }}</span>
+    </nav>
+    <h1>{{ category_name }} 정리</h1>
+    <p>{{ category_name }}에 대한 지식을 단계별로 학습해보세요.</p>
+</div>
+
+<div class="topics-list">
+    <h2>주제 목록</h2>
+    <div class="topics-grid">
+        {% for topic in topics %}
+        <div class="topic-card">
+            <div class="topic-number">{{ forloop.counter }}</div>
+            <div class="topic-content">
+                <h3>{{ topic.title }}</h3>
+                <a href="{% url 'topic_detail' category topic.slug %}" class="btn btn-primary">학습하기</a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="no-topics">
+            <p>준비 중인 주제입니다.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
