@@ -54,14 +54,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'anonymous_project.wsgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# Database 설정은 development.py와 production.py에서 환경 변수로 설정
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators

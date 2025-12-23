@@ -12,7 +12,45 @@ anonymous 스타일의 프로그래밍 교육 사이트를 Django 프레임워�
 
 ## 설치 및 실행
 
-### 1. 가상환경 활성화
+### 빠른 시작 (자동 설정)
+
+프로젝트를 클론한 후, 해당 디렉토리에서 다음 명령어 하나만 실행하면 환경 설정이 자동으로 완료됩니다:
+
+```bash
+# Linux/Mac
+chmod +x setup.sh
+./setup.sh
+
+# Windows PowerShell
+.\setup.ps1
+```
+
+스크립트가 자동으로 다음 작업을 수행합니다:
+- ✅ 가상환경 생성 및 활성화
+- ✅ 의존성 설치 (pip install -r requirements.txt)
+- ✅ .env 파일 생성 (.env.example 복사 또는 기본값 생성)
+- ✅ 데이터베이스 마이그레이션 실행
+- ✅ 정적 파일 수집
+
+설정 완료 후 개발 서버 실행:
+
+```bash
+# Linux/Mac
+source venv/bin/activate
+python manage.py runserver
+
+# Windows
+.\venv\Scripts\Activate.ps1
+python manage.py runserver
+```
+
+---
+
+### 수동 설정 (선택사항)
+
+자동 설정 스크립트를 사용하지 않는 경우, 아래 단계를 수동으로 진행할 수 있습니다.
+
+#### 1. 가상환경 활성화
 
 ```bash
 # Windows
@@ -23,13 +61,13 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 source venv/bin/activate
 ```
 
-### 2. 의존성 설치
+#### 2. 의존성 설치
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. 환경 변수 설정
+#### 3. 환경 변수 설정
 
 ```bash
 # .env.example을 .env로 복사
@@ -39,13 +77,65 @@ cp .env.example .env
 # 개발 환경에서는 기본값으로도 동작합니다
 ```
 
-### 4. 데이터베이스 마이그레이션
+#### 4. 데이터베이스 설정
+
+#### 개발 환경
+
+**옵션 1: SQLite 사용 (기본값)**
+- 환경 변수 설정 없이 바로 사용 가능
+- 별도 데이터베이스 서버 설치 불필요
+
+**옵션 2: MariaDB 사용**
+`.env` 파일에 다음을 추가:
+
+```env
+DB_ENGINE=mysql
+DB_NAME=anonymous_db
+DB_USER=root
+DB_PASSWORD=your_password
+DB_HOST=localhost
+DB_PORT=3306
+```
+
+MariaDB 설치 및 데이터베이스 생성:
+
+```bash
+# MariaDB 설치 (Ubuntu)
+sudo apt update
+sudo apt install mariadb-server
+
+# MariaDB 접속
+sudo mysql -u root -p
+
+# 데이터베이스 생성
+CREATE DATABASE anonymous_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+# 사용자 생성 및 권한 부여 (선택사항)
+CREATE USER 'db_user'@'localhost' IDENTIFIED BY 'your_password';
+GRANT ALL PRIVILEGES ON anonymous_db.* TO 'db_user'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+```
+
+#### 프로덕션 환경
+
+`.env` 파일에 다음을 필수로 설정:
+
+```env
+DB_NAME=anonymous_db
+DB_USER=db_user
+DB_PASSWORD=your_secure_password
+DB_HOST=localhost
+DB_PORT=3306
+```
+
+### 5. 데이터베이스 마이그레이션
 
 ```bash
 python manage.py migrate
 ```
 
-### 5. 개발 서버 실행
+### 6. 개발 서버 실행
 
 ```bash
 python manage.py runserver
@@ -90,6 +180,8 @@ anonymous_project/
 
 - Python 3.x
 - Django 6.0
+- MariaDB (데이터베이스)
+- PyMySQL (MariaDB/MySQL 연결)
 - python-dotenv (환경 변수 관리)
 - HTML5/CSS3
 - JavaScript
@@ -113,6 +205,18 @@ anonymous_project/
 SECRET_KEY=your-secret-key-here
 DEBUG=True
 ALLOWED_HOSTS=localhost,127.0.0.1
+
+# 데이터베이스 설정 (선택사항)
+# MariaDB 사용 시:
+DB_ENGINE=mysql
+DB_NAME=anonymous_db
+DB_USER=root
+DB_PASSWORD=your_password
+DB_HOST=localhost
+DB_PORT=3306
+
+# SQLite 사용 시 (기본값):
+# DB_ENGINE 설정하지 않으면 SQLite 사용
 ```
 
 ### 배포 환경 (EC2 Ubuntu)
@@ -128,23 +232,54 @@ DJANGO_SETTINGS_MODULE=anonymous_project.settings.production
 SECRET_KEY=your-production-secret-key
 DEBUG=False
 ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
+
+# 데이터베이스 설정 (필수)
+DB_NAME=anonymous_db
+DB_USER=db_user
+DB_PASSWORD=your_secure_password
+DB_HOST=localhost
+DB_PORT=3306
 ```
 
 ## 배포
 
 EC2 Ubuntu 서버에 배포 시:
 
-1. `.env` 파일을 서버에 생성하고 프로덕션 값 설정
-2. `DJANGO_SETTINGS_MODULE` 환경 변수 설정:
+1. MariaDB 설치 및 데이터베이스 생성:
+   ```bash
+   sudo apt update
+   sudo apt install mariadb-server
+   sudo mysql_secure_installation
+   
+   # 데이터베이스 생성
+   sudo mysql -u root -p
+   CREATE DATABASE anonymous_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+   CREATE USER 'db_user'@'localhost' IDENTIFIED BY 'your_secure_password';
+   GRANT ALL PRIVILEGES ON anonymous_db.* TO 'db_user'@'localhost';
+   FLUSH PRIVILEGES;
+   EXIT;
+   ```
+
+2. `.env` 파일을 서버에 생성하고 프로덕션 값 설정 (데이터베이스 정보 포함)
+
+3. `DJANGO_SETTINGS_MODULE` 환경 변수 설정:
    ```bash
    export DJANGO_SETTINGS_MODULE=anonymous_project.settings.production
    ```
-3. `python manage.py collectstatic` 실행
-4. Gunicorn으로 서버 실행:
+
+4. 데이터베이스 마이그레이션:
+   ```bash
+   python manage.py migrate
+   ```
+
+5. `python manage.py collectstatic` 실행
+
+6. Gunicorn으로 서버 실행:
    ```bash
    gunicorn anonymous_project.wsgi:application
    ```
-5. Nginx를 리버스 프록시로 설정
+
+7. Nginx를 리버스 프록시로 설정
 
 ### systemd 서비스 파일 예시
 
