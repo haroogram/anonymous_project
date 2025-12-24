@@ -52,3 +52,20 @@ class Topic(models.Model):
             'category': self.category.slug,
             'topic': self.slug
         })
+
+
+class VisitorStats(models.Model):
+    """일별 접속자 수 통계 모델"""
+    date = models.DateField(unique=True, verbose_name='날짜', db_index=True)
+    visitor_count = models.PositiveIntegerField(default=0, verbose_name='접속자 수')
+    unique_visitor_count = models.PositiveIntegerField(default=0, verbose_name='고유 접속자 수')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='생성일')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='수정일')
+
+    class Meta:
+        verbose_name = '접속자 통계'
+        verbose_name_plural = '접속자 통계'
+        ordering = ['-date']
+
+    def __str__(self):
+        return f"{self.date} - {self.visitor_count}명"
