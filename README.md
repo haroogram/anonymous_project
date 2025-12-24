@@ -22,6 +22,7 @@ chmod +x setup.sh
 ./setup.sh
 
 # Windows PowerShell
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 .\setup.ps1
 ```
 
@@ -54,7 +55,6 @@ python manage.py runserver
 
 ```bash
 # Windows
-Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 .\venv\Scripts\activate
 
 # Linux/Mac
