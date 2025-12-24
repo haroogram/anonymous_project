@@ -174,6 +174,7 @@ fi
 # 5. 데이터베이스 마이그레이션
 echo ""
 echo "[5/7] 데이터베이스 마이그레이션 실행 중..."
+python manage.py makemigrations
 python manage.py migrate --noinput
 echo "✅ 데이터베이스 마이그레이션 완료"
 
