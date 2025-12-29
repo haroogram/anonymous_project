@@ -3,6 +3,7 @@
 """
 from datetime import datetime, date
 from django.conf import settings
+from django.db import models
 from django_redis import get_redis_connection
 import logging
 
@@ -123,18 +124,33 @@ def get_today_unique_visitors_count():
 
 def get_total_visitors_count():
     """
-    누적 접속자 수를 반환합니다.
+    누적 접속자 수를 반환합니다 (DB에 저장된 일별 unique_visitor_count의 총합).
+    오늘 날짜의 데이터는 아직 DB에 동기화되지 않았을 수 있으므로 Redis에서 가져와 합산합니다.
     
     Returns:
-        int: 누적 접속자 수, Redis 연결 실패 시 0
+        int: 누적 접속자 수 (DB의 unique_visitor_count 합계 + 오늘의 unique_visitor_count)
     """
-    redis_client = get_redis_client()
-    if not redis_client:
-        return 0
+    from main.models import VisitorStats
     
     try:
-        count = redis_client.get(TOTAL_VISITORS_KEY)
-        return int(count) if count else 0
+        today = date.today()
+        
+        # DB에 저장된 모든 날짜의 unique_visitor_count 합계
+        db_total = VisitorStats.objects.aggregate(
+            total=models.Sum('unique_visitor_count')
+        )['total'] or 0
+        
+        # 오늘 날짜가 DB에 있는지 확인
+        today_stats = VisitorStats.objects.filter(date=today).first()
+        
+        if today_stats:
+            # 오늘 날짜가 DB에 있으면 DB 값을 사용 (이미 합계에 포함되어 있음)
+            return int(db_total)
+        else:
+            # 오늘 날짜가 DB에 없으면 Redis에서 오늘의 unique_visitor_count를 가져와 합산
+            today_unique = get_today_unique_visitors_count()
+            return int(db_total) + int(today_unique)
+            
     except Exception as e:
         logger.error(f"누적 접속자 수 조회 실패: {e}")
         return 0
