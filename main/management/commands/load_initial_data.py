@@ -70,22 +70,269 @@ class Command(BaseCommand):
         topics_data = {
             'network': [
                 {
-                    'title': '네트워크 기초',
-                    'slug': 'network-basics',
-                    'content': '<h1>네트워크란?</h1><p>네트워크는 두 개 이상의 컴퓨터나 장치가 서로 연결되어 데이터를 주고받을 수 있는 통신 시스템입니다.</p>',
+                    'title': '개요 및 큰 그림',
+                    'slug': 'network-overview',
+                    'content': '''<h2>개요 및 큰 그림</h2>
+<p>네트워크는 데이터를 서로 전달하는 <strong>길</strong>과 이를 관리하는 <strong>규칙</strong>의 집합입니다. 여기서 길은 <em>라우팅(Routing)</em>과 <em>스위칭(Switching)</em>으로 나뉘고, 규칙은 <em>프로토콜(Protocol)</em>과 <em>보안 정책</em>으로 볼 수 있습니다.</p>
+<div class="diagram">
+<pre>
+[PC/서버] → [스위치(L2)] → [라우터(L3)] → [방화벽/ACL] → [NAT] → [인터넷]
+</pre>
+</div>
+<p>이 흐름을 이해하면, 네트워크가 어디에서 멈췄는지 빠르게 찾을 수 있습니다.</p>''',
                     'order': 1,
                 },
                 {
-                    'title': 'TCP/IP 프로토콜',
-                    'slug': 'tcp-ip',
-                    'content': '<h1>TCP/IP란?</h1><p>TCP/IP는 인터넷에서 사용되는 가장 중요한 통신 프로토콜 스위트입니다. TCP는 전송 제어 프로토콜, IP는 인터넷 프로토콜을 의미합니다.</p>',
+                    'title': '기본 용어와 개념',
+                    'slug': 'network-concepts',
+                    'content': '''<h2>기본 용어와 개념</h2>
+<h3>핵심 용어 표</h3>
+<table>
+<thead>
+<tr>
+<th>쉬운 말</th>
+<th>전문 용어</th>
+<th>설명</th>
+<th>현업 예시</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>동네</td>
+<td>Subnet</td>
+<td>같은 네트워크 범위(같은 서브넷이면 L2에서 바로 연결)</td>
+<td>사무실에서 192.168.10.0/24 대역</td>
+</tr>
+<tr>
+<td>주소</td>
+<td>IP</td>
+<td>인터넷에서 목적지를 가리키는 숫자</td>
+<td>공인 IP 203.0.113.10</td>
+</tr>
+<tr>
+<td>이름표</td>
+<td>MAC Address</td>
+<td>L2에서 장비를 구분하는 식별자</td>
+<td>스위치가 프레임 전달시 참고</td>
+</tr>
+<tr>
+<td>규칙표</td>
+<td>ACL</td>
+<td>허용/차단 규칙의 목록</td>
+<td>방화벽, 클라우드 Security Group</td>
+</tr>
+<tr>
+<td>전화번호부</td>
+<td>DNS</td>
+<td>이름을 IP로 변환</td>
+<td>example.com → 203.0.113.10</td>
+</tr>
+<tr>
+<td>자동주소</td>
+<td>DHCP</td>
+<td>IP/게이트웨이/DNS를 자동 배정</td>
+<td>사무실 PC IP 자동 할당</td>
+</tr>
+</tbody>
+</table>
+<h3>용어 설명</h3>
+<p><strong>IP 주소</strong>는 컴퓨터의 주소를 나타냅니다. 집으로 비유하면, 집(호스트)과 동네(네트워크)를 구분하는 동·호수입니다.<br>
+<strong>MAC 주소</strong>는 같은 네트워크 안에서 장비를 찾을 때 사용합니다. L2 스위칭이 이를 사용해 프레임을 전달합니다.<br>
+<strong>포트(Port)</strong>는 같은 IP 내에서 어떤 서비스인지를 구분하는 창구입니다. 예를 들어, HTTP는 80번, HTTPS는 443번 포트를 사용합니다.</p>''',
                     'order': 2,
                 },
                 {
-                    'title': 'HTTP/HTTPS',
-                    'slug': 'http-https',
-                    'content': '<h1>HTTP/HTTPS란?</h1><p>HTTP는 웹 브라우저와 서버 간의 통신을 위한 프로토콜이며, HTTPS는 보안이 강화된 버전입니다.</p>',
+                    'title': '토폴로지와 설계',
+                    'slug': 'network-topology',
+                    'content': '''<h2>토폴로지와 설계</h2>
+<p>네트워크 토폴로지는 장비를 어떻게 연결할지를 결정하는 설계 구조입니다. 설계가 잘못되면 장애가 빠르게 확산될 수 있습니다.</p>
+<h3>대표 토폴로지 비교</h3>
+<table>
+<thead>
+<tr>
+<th>형태</th>
+<th>장점</th>
+<th>단점</th>
+<th>적합한 환경</th>
+<th>예시</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>스타형</td>
+<td>관리 편리</td>
+<td>중앙 허브 장애 시 전체 영향</td>
+<td>소규모 사무실</td>
+<td>PC들이 한 스위치에 모두 연결</td>
+</tr>
+<tr>
+<td>트리형</td>
+<td>확장성 좋음</td>
+<td>상위 장애 영향 큼</td>
+<td>대규모 조직</td>
+<td>코어 스위치 → 분배 → 접속</td>
+</tr>
+<tr>
+<td>메시형</td>
+<td>이중화 강력</td>
+<td>설치 비용과 복잡도</td>
+<td>중요 백본 네트워크</td>
+<td>멀티벤더 스위치 간 백업 링크</td>
+</tr>
+<tr>
+<td>하이브리드</td>
+<td>유연한 설계</td>
+<td>설계가 중요</td>
+<td>현실 대부분</td>
+<td>스타 + 메시</td>
+</tr>
+</tbody>
+</table>
+<h3>디자인 팁</h3>
+<div class="callout">
+<p>토폴로지 설계 시 다음을 고려하세요:</p>
+<ul>
+<li>중앙 장비의 고가용성(H/A) – 이중화 설계</li>
+<li>장애 시 우회 경로 – STP 설정 및 트래픽 분산</li>
+<li>확장성 – 사무실 확장시 트리형 구조가 유리</li>
+</ul>
+</div>''',
                     'order': 3,
+                },
+                {
+                    'title': 'IP 주소와 서브넷',
+                    'slug': 'network-ip-subnet',
+                    'content': '''<h2>IP 주소와 서브넷</h2>
+<p>네트워크 주소와 호스트 주소를 구분하는 법을 배우면, 라우팅과 접근제어의 기본을 이해할 수 있습니다.</p>
+<h3>동네(서브넷) 계산</h3>
+<p>서브넷이란 같은 네트워크에 속하는 IP 주소의 범위입니다. CIDR 표기에서 <code>/24</code>처럼 슬래시 뒤 숫자가 작을수록 대역이 크고, 숫자가 클수록 대역이 작습니다.</p>
+<div class="example">
+<strong>예:</strong> 192.168.10.0/24<br>
+<ul>
+<li>네트워크 주소: 192.168.10.0</li>
+<li>브로드캐스트: 192.168.10.255</li>
+<li>할당 가능한 주소: 192.168.10.1 ~ 192.168.10.254</li>
+</ul>
+</div>
+<h3>VLSM과 슈퍼네팅</h3>
+<p><strong>VLSM</strong>은 필요한 크기만큼 서브넷을 다양한 크기로 나눌 수 있게 합니다.<br>
+<strong>슈퍼네팅</strong>은 여러 작은 서브넷을 묶어 하나의 큰 대역으로 표현합니다. 라우팅 테이블을 단순화할 때 사용합니다.</p>
+<div class="example">
+<strong>현업 예시:</strong> 지사별로 각기 다른 서브넷을 배정해야 할 때, 인원수가 적은 지사에 /28, 큰 지사에 /23 등을 할당합니다.
+</div>''',
+                    'order': 4,
+                },
+                {
+                    'title': 'L2/L3 동작 원리',
+                    'slug': 'network-l2-l3',
+                    'content': '''<h2>L2/L3 동작 원리</h2>
+<h3>L2: Ethernet과 MAC</h3>
+<p>스위치는 L2 영역에서 MAC 주소를 기반으로 프레임을 전송합니다. ARP(Address Resolution Protocol)를 이용해 IP→MAC을 확인합니다.</p>
+<h3>L3: IP와 라우팅</h3>
+<p>라우터는 L3에서 IP 주소를 기반으로 패킷을 전달합니다. 라우팅 테이블을 참고하여 목적지에 맞는 다음 홉을 결정합니다.</p>
+<div class="diagram">
+<pre>
+[L2] 192.168.10.5 (MAC: aa:bb) ↔ [스위치] ↔ 192.168.10.10 (MAC: cc:dd)
+ ↳ 같은 서브넷이면 L2에서 직접 전달
+[L3] 192.168.10.5 → 10.0.0.20
+ ↳ 다른 서브넷이면 라우터를 경유 (게이트웨이)
+</pre>
+</div>''',
+                    'order': 5,
+                },
+                {
+                    'title': '스위칭과 VLAN',
+                    'slug': 'network-switching-vlan',
+                    'content': '''<h2>스위칭과 VLAN</h2>
+<h3>MAC 학습과 포워딩</h3>
+<p>스위치는 프레임이 들어오면 출발지 MAC을 CAM 테이블에 기록하고, 목적지 MAC을 알아두었다면 해당 포트로만 보냅니다.</p>
+<h3>VLAN</h3>
+<p>VLAN은 스위치 내에서 브로드캐스트 영역을 나누어 서로 다른 구역처럼 동작하게 합니다.</p>
+<div class="example">
+<strong>예:</strong> 인사부는 VLAN 10, 개발부는 VLAN 20으로 나누어 브로드캐스트가 교차되지 않도록 설계할 수 있습니다.
+</div>
+<h3>Trunk, Native VLAN</h3>
+<p>Trunk는 여러 VLAN을 한 포트로 통과시키며, 프레임에 VLAN 번호를 태깅(802.1Q)합니다. Native VLAN은 태그 없이 전달되는 VLAN으로, 설정이 다르면 프레임이 섞일 수 있습니다.</p>''',
+                    'order': 6,
+                },
+                {
+                    'title': '라우팅과 경로 제어',
+                    'slug': 'network-routing',
+                    'content': '''<h2>라우팅과 경로 제어</h2>
+<h3>정적 라우팅과 동적 라우팅</h3>
+<p>정적 라우팅은 관리자가 직접 경로를 지정하고, 동적 라우팅은 라우터끼리 정보(OSPF, BGP 등)를 교환하여 자동으로 경로를 설정합니다.</p>
+<h3>기본 경로(Default Route)</h3>
+<p>모든 알 수 없는 경로는 기본 경로로 보내라는 규칙입니다. 예를 들어 "인터넷으로 나가는 모든 패킷은 203.0.113.1로 보내라"와 같이 설정합니다.</p>
+<h3>최장 일치 원칙</h3>
+<p>라우터는 여러 경로가 일치할 때, 가장 상세한(프리픽스가 긴) 경로를 우선합니다.</p>
+<div class="example">
+<strong>예:</strong> 192.168.0.0/16과 192.168.1.0/24가 동시에 존재하면, 192.168.1.100은 /24가 일치하므로 해당 경로로 갑니다.
+</div>''',
+                    'order': 7,
+                },
+                {
+                    'title': '네트워크 핵심 서비스',
+                    'slug': 'network-services',
+                    'content': '''<h2>네트워크 핵심 서비스</h2>
+<h3>DNS</h3>
+<p>DNS는 도메인 이름을 IP 주소로 변환해 줍니다. 인터넷 이용 시 사용자가 기억하기 쉬운 이름을 사용할 수 있게 해 줍니다.</p>
+<h3>DHCP</h3>
+<p>DHCP는 네트워크 장치에 IP, 게이트웨이, DNS를 자동으로 할당합니다. 관리자가 수동으로 설정할 필요가 없어 편리합니다.</p>
+<h3>NTP</h3>
+<p>네트워크 장치 간 시간 동기화를 위해 NTP 서버를 사용합니다. 시간이 정확해야 로그 분석이나 인증서 검증에 문제가 생기지 않습니다.</p>''',
+                    'order': 8,
+                },
+                {
+                    'title': '보안, ACL, NAT',
+                    'slug': 'network-security',
+                    'content': '''<h2>보안, ACL, NAT</h2>
+<h3>ACL(Access Control List)</h3>
+<p>ACL은 네트워크 접근을 허용하거나 차단하는 규칙 집합입니다. 순서대로 처리되고, 일치하는 규칙이 있으면 이후 규칙은 평가하지 않습니다. 마지막에는 보통 암묵적인 거부가 존재합니다.</p>
+<h3>NAT</h3>
+<p>NAT(Network Address Translation)은 사설 IP를 공인 IP로 변환하는 기술입니다. 공유기에 연결된 여러 장치들이 하나의 공인 IP로 인터넷을 사용할 때 사용됩니다.</p>
+<h3>보안 그룹과 NACL</h3>
+<p>AWS 등 클라우드에서 보안 그룹(Security Group)은 인스턴스 단위, NACL(Network ACL)은 서브넷 단위로 적용되는 접근 제어입니다.</p>''',
+                    'order': 9,
+                },
+                {
+                    'title': '무선(Wi-Fi)과 클라우드 네트워킹',
+                    'slug': 'network-wifi-cloud',
+                    'content': '''<h2>무선(Wi-Fi)과 클라우드 네트워킹</h2>
+<h3>무선 네트워크의 환경 요인</h3>
+<p>무선 네트워크는 2.4GHz와 5GHz 대역을 주로 사용합니다. 2.4GHz는 도달 범위가 길지만 간섭이 많고, 5GHz는 빠르지만 도달 범위가 짧습니다. 채널을 잘 선택해야 간섭을 줄일 수 있습니다.</p>
+<h3>클라우드(VPC, Subnet) 매핑</h3>
+<p>클라우드에서는 VPC를 사설망으로 보고, 서브넷으로 구역을 나눕니다. 인터넷 출입을 위해 Internet Gateway(IGW)를, 프라이빗 구역에서 외부로만 나가기 위해 NAT Gateway를 사용합니다.</p>''',
+                    'order': 10,
+                },
+                {
+                    'title': '운영과 트러블슈팅',
+                    'slug': 'network-troubleshooting',
+                    'content': '''<h2>운영과 트러블슈팅</h2>
+<h3>기본 진단 도구</h3>
+<ul>
+<li><strong>ping</strong>: 네트워크 연결 확인</li>
+<li><strong>traceroute</strong>: 경로 추적</li>
+<li><strong>nslookup / dig</strong>: DNS 문제 확인</li>
+<li><strong>curl / netcat</strong>: 특정 포트 연결 테스트</li>
+</ul>
+<h3>문제 해결 순서</h3>
+<ol>
+<li>네트워크 환경(물리/무선) 확인</li>
+<li>내 IP, 서브넷, 게이트웨이 확인</li>
+<li>라우팅 테이블과 DNS 확인</li>
+<li>포트와 ACL/방화벽 확인</li>
+<li>NAT 설정, 클라우드 보안 그룹 확인</li>
+</ol>
+<h3>현업 사례</h3>
+<div class="example">
+<strong>예:</strong> VPN 접속 시, 특정 사이트만 열리지 않는다면?
+<ul>
+<li>VPN 경로가 강제되어 DNS 서버가 다르게 설정될 수 있음</li>
+<li>VPN 터널이 MTU를 낮춰 단편화 문제가 발생할 수 있음</li>
+<li>직원용 ACL에서 해당 포트가 차단될 수 있음</li>
+</ul>
+</div>''',
+                    'order': 11,
                 },
             ],
             'linux': [
