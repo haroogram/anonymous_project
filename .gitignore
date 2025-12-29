@@ -49,3 +49,13 @@ ENV/
 # OS
 .DS_Store
 Thumbs.db
+
+# Deployment
+deploy.zip
+*.zip
+appspec.yml.bak
+logs/
+*.log
+
+# Backup
+app_backup_*/
