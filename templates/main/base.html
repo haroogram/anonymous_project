@@ -13,10 +13,22 @@
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <div class="logo">
-                    <a href="{% url 'index' %}">
-                        <h1>Anonymous Project</h1>
-                    </a>
+                <div class="logo-section">
+                    <div class="logo">
+                        <a href="{% url 'index' %}">
+                            <h1>Anonymous Project</h1>
+                        </a>
+                    </div>
+                    <div class="visitor-stats">
+                        <span class="visitor-stat-item">
+                            <span class="visitor-label">오늘:</span>
+                            <span class="visitor-count">{{ today_visitors|default:0 }}</span>
+                        </span>
+                        <span class="visitor-stat-item">
+                            <span class="visitor-label">전체:</span>
+                            <span class="visitor-count">{{ total_visitors|default:0 }}</span>
+                        </span>
+                    </div>
                 </div>
                 <nav class="main-nav">
                     <ul>
