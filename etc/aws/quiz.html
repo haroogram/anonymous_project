@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>AWS 지식 테스트 - 10문제 심화</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .quiz-item { background: #fff; border: 1px solid #ddd; padding: 20px; border-radius: 10px; margin-bottom: 25px; transition: 0.3s; }
+        .quiz-item:hover { border-color: var(--main-orange); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .question { font-size: 1.15rem; font-weight: bold; color: var(--main-navy); margin-bottom: 15px; display: block; }
+        .options-list { list-style: none; padding: 0; }
+        .option-item { margin-bottom: 10px; }
+        .option-label { display: block; padding: 12px; border: 1px solid #eee; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .option-label:hover { background: #f9f9f9; }
+        .option-label input { margin-right: 10px; }
+
+        #result-box { display: none; padding: 30px; background: var(--main-navy); color: white; border-radius: 12px; text-align: center; margin-top: 40px; }
+        .explanation { display: none; margin-top: 15px; padding: 15px; background: #e7f5ff; border-left: 5px solid #007bff; color: #333; border-radius: 4px; font-size: 0.95rem; }
+        .btn-submit { display: block; width: 100%; padding: 15px; background: var(--main-orange); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        .btn-submit:hover { background: #e68a00; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html">홈</a>
+        <a href="cloud-basic.html">기초</a>
+        <a href="history.html">역사</a>
+        <a href="services.html">서비스</a>
+        <a href="cert.html">자격증</a>
+        <a href="quiz.html" class="active">퀴즈</a>
+    </nav>
+
+    <div class="container">
+        <h1>🧠 AWS 실력 점검 퀴즈</h1>
+        <p>10문제를 모두 풀고 하단의 결과 확인 버튼을 눌러주세요.</p>
+        <hr>
+
+        <div id="quiz-display">
+            </div>
+
+        <button class="btn-submit" onclick="calculateScore()">결과 확인 및 해설 보기</button>
+
+        <div id="result-box">
+            <h2 id="score-text"></h2>
+            <p>정답과 해설은 각 문제 아래에서 확인하실 수 있습니다.</p>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            { q: "1. AWS 리전(Region)에 대한 설명으로 옳은 것은?", a: 1, options: ["하나의 리전은 반드시 하나의 데이터 센터로 구성된다.", "지리적으로 격리된 전 세계의 물리적 위치를 의미한다.", "모든 리전의 서비스 비용은 전 세계적으로 동일하다.", "사용자는 리전을 직접 선택할 수 없다."], exp: "해설: 리전은 가용성을 위해 최소 2개 이상의 독립된 가용 영역(AZ)으로 구성된 지리적 거점입니다." },
+            { q: "2. 서버 관리 없이 코드만 실행하는 '서버리스' 서비스는?", a: 1, options: ["Amazon EC2", "AWS Lambda", "Amazon RDS", "Amazon Redshift"], exp: "해설: Lambda는 인프라 관리 없이 이벤트에 반응하여 코드를 실행하는 대표적인 서버리스 서비스입니다." },
+            { q: "3. 책임 공유 모델에서 '클라우드 자체의 보안'을 책임지는 주체는?", a: 0, options: ["AWS", "고객", "정부", "하드웨어 제조사"], exp: "해설: 물리적 인프라, 하이퍼바이저 등 클라우드 자체의 보안은 AWS의 책임입니다." },
+            { q: "4. Amazon S3의 특징으로 옳지 않은 것은?", a: 2, options: ["저장 용량에 제한이 거의 없다.", "버킷이라는 단위로 데이터를 관리한다.", "운영체제를 설치하여 부팅 디스크로 사용한다.", "정적 웹사이트 호스팅이 가능하다."], exp: "해설: 부팅 디스크용 스토리지는 블록 스토리지인 EBS입니다. S3는 객체 스토리지입니다." },
+            { q: "5. 트래픽에 따라 EC2 수량을 자동으로 조절하는 서비스는?", a: 2, options: ["Elastic Load Balancing", "CloudWatch", "Amazon EC2 Auto Scaling", "Route 53"], exp: "해설: Auto Scaling은 설정된 조건에 따라 서버 대수를 확장/축소하여 가용성을 관리합니다." },
+            { q: "6. 입문자가 가장 먼저 도전하기 좋은 기초 단계의 자격증은?", a: 0, options: ["Certified Cloud Practitioner", "Solutions Architect Associate", "Developer Associate", "SysOps Administrator"], exp: "해설: CCP(Cloud Practitioner)는 클라우드의 기본 개념을 다루는 가장 기초적인 인증입니다." },
+            { q: "7. 다음 중 NoSQL 데이터베이스 서비스는?", a: 3, options: ["Amazon RDS", "Amazon Aurora", "Amazon Redshift", "Amazon DynamoDB"], exp: "해설: DynamoDB는 완전 관리형 NoSQL 데이터베이스 서비스입니다." },
+            { q: "8. 사용하지 않는 리소스를 중지하여 비용을 아끼는 설계 원칙은?", a: 1, options: ["운영 우수성", "비용 최적화", "성능 효율성", "신뢰성"], exp: "해설: 불필요한 비용을 줄이고 효율을 높이는 것은 '비용 최적화'의 핵심입니다." },
+            { q: "9. 사용자나 그룹의 접근 권한을 제어하는 보안 서비스는?", a: 2, options: ["AWS Shield", "AWS WAF", "AWS IAM", "AWS KMS"], exp: "해설: IAM(Identity and Access Management)은 신원 및 접근 권한을 제어하는 핵심 서비스입니다." },
+            { q: "10. 필요한 리소스를 단 몇 분 만에 확보하여 빠르게 실험하는 능력은?", a: 3, options: ["탄력성", "내구성", "가용성", "민첩성"], exp: "해설: 인프라 구축 시간을 단축하여 비즈니스 변화에 빠르게 대응하는 능력을 '민첩성(Agility)'이라 합니다." }
+        ];
+
+        function renderQuiz() {
+            const quizDisplay = document.getElementById('quiz-display');
+            quizData.forEach((item, index) => {
+                const quizHtml = `
+                    <div class="quiz-item">
+                        <span class="question">${item.q}</span>
+                        <div class="options-list">
+                            ${item.options.map((opt, i) => `
+                                <div class="option-item">
+                                    <label class="option-label">
+                                        <input type="radio" name="q${index}" value="${i}"> ${opt}
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="explanation" id="exp${index}">${item.exp}</div>
+                    </div>
+                `;
+                quizDisplay.innerHTML += quizHtml;
+            });
+        }
+
+        function calculateScore() {
+            let score = 0;
+            quizData.forEach((item, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                if (selected && parseInt(selected.value) === item.a) {
+                    score++;
+                }
+                document.getElementById(`exp${index}`).style.display = 'block';
+            });
+
+            const resultBox = document.getElementById('result-box');
+            const scoreText = document.getElementById('score-text');
+            resultBox.style.display = 'block';
+            scoreText.innerText = `결과: ${quizData.length}문제 중 ${score}문제를 맞히셨습니다!`;
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        renderQuiz();
+    </script>
+</body>
+</html>
