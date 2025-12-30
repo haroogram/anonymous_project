@@ -104,3 +104,35 @@ def visitor_stats_detail(request):
             'total': get_total_visitors_count(),
             'date': get_visitor_stats()['date'],
         })
+
+
+def search(request):
+    """검색 기능"""
+    query = request.GET.get('q', '').strip()
+    results = []
+    
+    if query:
+        # 제목과 내용에서 검색 (대소문자 구분 없음)
+        topics = Topic.objects.filter(
+            Q(title__icontains=query) | Q(content__icontains=query)
+        ).select_related('category').order_by('category__order', 'order')
+        
+        # 검색 결과를 카테고리별로 그룹화
+        results_by_category = {}
+        for topic in topics:
+            category_name = topic.category.name
+            if category_name not in results_by_category:
+                results_by_category[category_name] = {
+                    'category': topic.category,
+                    'topics': []
+                }
+            results_by_category[category_name]['topics'].append(topic)
+        
+        results = list(results_by_category.values())
+    
+    context = {
+        'query': query,
+        'results': results,
+        'results_count': sum(len(r['topics']) for r in results) if results else 0,
+    }
+    return render(request, 'main/search.html', context)

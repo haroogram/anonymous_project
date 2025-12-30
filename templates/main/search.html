@@ -1,0 +1,79 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}검색 결과 - anonymous{% endblock %}
+
+{% block sidebar %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .content-wrapper {
+        grid-template-columns: 1fr !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="search-results-header">
+    <h1>검색 결과</h1>
+    {% if query %}
+    <p class="search-query">"{{ query }}"에 대한 검색 결과</p>
+    {% endif %}
+</div>
+
+<div class="search-results-content">
+    {% if query %}
+        {% if results %}
+            <div class="search-summary">
+                <p>총 <strong>{{ results_count }}</strong>개의 결과를 찾았습니다.</p>
+            </div>
+            
+            {% for result_group in results %}
+            <div class="search-category-group">
+                <h2 class="category-name">
+                    <a href="{% url 'tutorial' result_group.category.slug %}">
+                        {{ result_group.category.name }}
+                    </a>
+                </h2>
+                
+                <div class="search-topics-list">
+                    {% for topic in result_group.topics %}
+                    <div class="search-topic-item">
+                        <h3>
+                            <a href="{% url 'topic_detail' result_group.category.slug topic.slug %}">
+                                {{ topic.title }}
+                            </a>
+                        </h3>
+                        <p class="topic-excerpt">
+                            {% if query in topic.content|slice:":200" %}
+                                {{ topic.content|striptags|truncatewords:30 }}
+                            {% else %}
+                                {{ topic.content|striptags|truncatewords:30 }}
+                            {% endif %}
+                        </p>
+                        <a href="{% url 'topic_detail' result_group.category.slug topic.slug %}" class="read-more-link">
+                            자세히 보기 →
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-results">
+                <p>검색 결과가 없습니다.</p>
+                <p class="suggestion">다른 키워드로 검색해보세요.</p>
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="no-query">
+            <p>검색어를 입력해주세요.</p>
+        </div>
+    {% endif %}
+</div>
+
+<div class="search-again">
+    <a href="{% url 'index' %}" class="btn btn-outline">홈으로 돌아가기</a>
+</div>
+{% endblock %}
+
