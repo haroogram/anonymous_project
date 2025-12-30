@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Linux 편의 및 필수 툴</title>
+</head>
+<body>
+
+<h3>1) Hostname 수정</h3>
+<p>
+  기본 hostname이 길어 터미널 사용 시 가독성이 떨어지므로,
+  식별이 쉬운 이름으로 변경한다.
+</p>
+
+<img src="img/편의-1.png" width="800">
+
+<pre><code>sudo hostnamectl set-hostname server1</code></pre>
+
+<img src="img/편의-2.png" width="800">
+
+<hr>
+
+<h3>2) 한글 입력기 설치</h3>
+<p>
+  Ubuntu 기본 설치 환경에서는 한글 입력이 불가능하므로
+  IBus 기반 한글 입력기를 설치한다.
+</p>
+
+<h4>① 시스템 업데이트</h4>
+<pre><code>sudo apt update && sudo apt upgrade -y</code></pre>
+
+<h4>② IBus 및 한글 입력기 설치</h4>
+<pre><code>sudo apt install -y ibus ibus-hangul</code></pre>
+
+<h4>③ 입력기 프레임워크 설정</h4>
+<pre><code>im-config -n ibus</code></pre>
+
+<p>설정 후 재부팅</p>
+
+<h4>④ 한글 입력 소스 추가</h4>
+<p>
+Settings → Keyboard → Add Input Source에서  
+Korean(Hangul)을 추가한다.
+</p>
+
+<img src="img/한글-4.png" width="800">
+
+<h4>⑤ 입력 전환 키 설정</h4>
+<p>
+터미널에서 <code>ibus-setup</code> 실행 후  
+Preferences → Hangul Toggle Key를 <strong>Right Alt (Alt_R)</strong>로 설정한다.
+</p>
+
+<img src="img/한글-5.png" width="800">
+<img src="img/한글-6.png" width="800">
+
+<p><strong>※ 위 설정을 통해 터미널 및 브라우저에서 한글 입력이 가능해진다.</strong></p>
+
+<h3>3) vim (기본 텍스트 에디터)</h3>
+<p>
+  vim은 리눅스 환경에서 널리 사용되는 텍스트 편집기
+</p>
+
+<pre><code>sudo apt install -y vim</code></pre>
+
+<hr>
+
+<h3>4) curl / wget (API 테스트 및 파일 다운로드)</h3>
+<p>
+  curl과 wget은 네트워크 통신 및 파일 다운로드에 사용되는 도구로,
+  클라우드 환경 및 API 테스트 시 필수적이다.
+</p>
+
+<pre><code>sudo apt install -y curl wget</code></pre>
+
+<ul>
+  <li><strong>curl</strong> : HTTP 요청, REST API 테스트</li>
+  <li><strong>wget</strong> : 파일 다운로드 전용</li>
+</ul>
+
+<hr>
+
+<h3>5) net-tools + iproute2 (네트워크 확인)</h3>
+<p>
+  네트워크 인터페이스 및 IP 정보를 확인하기 위한 도구를 설치한다.
+</p>
+
+<pre><code>sudo apt install -y net-tools iproute2</code></pre>
+
+<hr>
+
+<h3>6) tree (디렉토리 구조 확인)</h3>
+<p>
+  tree 명령어는 디렉토리 구조를 계층적으로 출력
+</p>
+
+<pre><code>sudo apt install -y tree</code></pre>
+
+<p><strong>※ 위 도구들은 실습 및 서버 운용을 위해 필수적으로 설치된다.</strong></p>
+
+
+</body>
+</html>
