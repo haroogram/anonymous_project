@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>AWS의 역사와 성장 - AWS 마스터 코스</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .timeline { position: relative; padding: 20px 0; list-style: none; }
+        .timeline-item { margin-bottom: 30px; padding-left: 20px; border-left: 3px solid var(--main-orange); }
+        .year { font-weight: bold; color: var(--main-orange); font-size: 1.2rem; display: block; }
+        .milestone { font-weight: bold; color: var(--main-navy); font-size: 1.1rem; }
+        .detail { font-size: 0.95rem; color: #555; margin-top: 5px; }
+        .infra-box { background: #eef2f7; padding: 20px; border-radius: 8px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html">홈으로</a>
+        <a href="cloud-basic.html">기초</a>
+        <a href="history.html" class="active">역사</a>
+        <a href="services.html">서비스</a>
+        <a href="cert.html">자격증</a>
+        <a href="quiz.html">퀴즈</a>
+    </nav>
+
+    <div class="container">
+        <h1>⏳ AWS의 역사: 서점 앱에서 클라우드 거인으로</h1>
+        <p>AWS는 단순히 새로운 사업을 위해 시작된 것이 아니라, Amazon.com이라는 거대 커머스 사이트를 운영하며 겪었던 <strong>인프라 고민</strong>을 해결하기 위해 탄생했습니다.</p>
+
+        <h2>주요 타임라인</h2>
+        <ul class="timeline">
+            <li class="timeline-item">
+                <span class="year">2003년</span>
+                <span class="milestone">인프라 표준화에 대한 비전 수립</span>
+                <p class="detail">앤디 제시(전 AWS CEO)와 제프 베이조스가 내부 인프라를 API화하여 확장 가능한 구조로 만들기로 결정했습니다.</p>
+            </li>
+            <li class="timeline-item">
+                <span class="year">2006년</span>
+                <span class="milestone">AWS 공식 런칭 (S3, EC2 출시)</span>
+                <p class="detail">세계 최초의 클라우드 서비스인 S3(스토리지)와 EC2(가상 서버)를 시장에 선보이며 클라우드 시대가 시작되었습니다.</p>
+            </li>
+            <li class="timeline-item">
+                <span class="year">2012년</span>
+                <span class="milestone">첫 번째 re:Invent 개최</span>
+                <p class="detail">클라우드 생태계가 커지면서 라스베이거스에서 첫 대규모 기술 컨퍼런스를 개최하기 시작했습니다.</p>
+            </li>
+            <li class="timeline-item">
+                <span class="year">2015년</span>
+                <span class="milestone">독립적인 매출 공시 시작</span>
+                <p class="detail">AWS가 아마존 전체 영업 이익의 상당 부분을 차지할 만큼 거대한 비즈니스로 성장했음을 증명했습니다.</p>
+            </li>
+            <li class="timeline-item">
+                <span class="year">현재</span>
+                <span class="milestone">AI 및 기계학습 혁신 (Amazon Bedrock)</span>
+                <p class="detail">단순한 서버 대여를 넘어 생성형 AI 모델 개발을 지원하는 플랫폼으로 진화했습니다.</p>
+            </li>
+        </ul>
+
+        <h2>AWS 글로벌 인프라의 철학</h2>
+        <p>AWS가 세계 1위인 이유는 강력한 **글로벌 인프라** 덕분입니다.</p>
+        
+        
+
+        <div class="infra-box">
+            <h3>리전(Region) vs 가용 영역(AZ)</h3>
+            <ul>
+                <li><strong>리전(Region):</strong> 전 세계 지리적으로 떨어진 영역 (예: 서울 리전).</li>
+                <li><strong>가용 영역(Availability Zone):</strong> 리전 내의 격리된 데이터 센터 군집. 하나의 리전은 보통 3개 이상의 AZ를 가집니다.</li>
+                <li><strong>엣지 로케이션(Edge Location):</strong> 사용자에게 더 빠르게 컨텐츠를 전달하기 위한 캐싱 서버 거점.</li>
+            </ul>
+        </div>
+        
+        <blockquote style="border-left: 5px solid #ccc; padding-left: 15px; font-style: italic; color: #666; margin-top: 30px;">
+            "Everything fails, all the time." (모든 것은 언제나 실패한다) <br>
+            - Werner Vogels (AWS CTO)
+        </blockquote>
+        <p>이 철학 때문에 AWS는 장애에 대비해 인프라를 여러 가용 영역에 분산하는 구조를 갖게 되었습니다.</p>
+    </div>
+
+    <footer style="text-align: center; padding: 20px; color: #888;">
+        &copy; 2025 AWS 학습 수강생 모임
+    </footer>
+</body>
+</html>
