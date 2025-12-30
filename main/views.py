@@ -1,9 +1,17 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
+from django.db.models import Q
+from django.views.decorators.cache import cache_page
+from django.conf import settings
 from .models import Category, Topic
 from .utils import get_visitor_stats, get_today_visitors_count, get_total_visitors_count, get_daily_visitors_count
 
 
+# 개발 환경에서는 캐싱 비활성화, 프로덕션에서는 24시간 캐싱
+cache_timeout = 0 if settings.DEBUG else 60 * 60 * 24
+
+
+@cache_page(cache_timeout)
 def index(request):
     """메인 페이지"""
     categories = Category.objects.all()
@@ -13,6 +21,7 @@ def index(request):
     return render(request, 'main/index.html', context)
 
 
+@cache_page(cache_timeout)
 def tutorial(request, category):
     """카테고리별 튜토리얼 목록"""
     category_obj = get_object_or_404(Category, slug=category)
@@ -27,6 +36,7 @@ def tutorial(request, category):
     return render(request, 'main/tutorial.html', context)
 
 
+@cache_page(cache_timeout)
 def topic_detail(request, category, topic):
     """주제 상세 페이지"""
     category_obj = get_object_or_404(Category, slug=category)
@@ -104,3 +114,35 @@ def visitor_stats_detail(request):
             'total': get_total_visitors_count(),
             'date': get_visitor_stats()['date'],
         })
+
+
+def search(request):
+    """검색 기능"""
+    query = request.GET.get('q', '').strip()
+    results = []
+    
+    if query:
+        # 제목과 내용에서 검색 (대소문자 구분 없음)
+        topics = Topic.objects.filter(
+            Q(title__icontains=query) | Q(content__icontains=query)
+        ).select_related('category').order_by('category__order', 'order')
+        
+        # 검색 결과를 카테고리별로 그룹화
+        results_by_category = {}
+        for topic in topics:
+            category_name = topic.category.name
+            if category_name not in results_by_category:
+                results_by_category[category_name] = {
+                    'category': topic.category,
+                    'topics': []
+                }
+            results_by_category[category_name]['topics'].append(topic)
+        
+        results = list(results_by_category.values())
+    
+    context = {
+        'query': query,
+        'results': results,
+        'results_count': sum(len(r['topics']) for r in results) if results else 0,
+    }
+    return render(request, 'main/search.html', context)

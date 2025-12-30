@@ -18,55 +18,86 @@ button:hover { background: #e68a00; }
 .dashboard {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 24px;
     margin-top: 30px;
 }
 
 .nav-card {
-    display: block;
+    display: flex;
+    flex-direction: column;
     text-decoration: none;
     color: inherit;
     background: #ffffff;
     border: 1px solid #e1e4e8;
-    padding: 25px;
+    padding: 28px;
     border-radius: 12px;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    height: 100%;
 }
 
 .nav-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
     border-color: #ff9900;
 }
 
-.nav-card .icon {
-    font-size: 2.5rem;
-    margin-bottom: 15px;
+.nav-card .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: nowrap;
 }
 
-.nav-card h3 {
-    margin: 0 0 10px 0;
+.nav-card .icon {
+    font-size: 2.2rem;
+    line-height: 1;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+}
+
+.nav-card .card-header .card-title {
+    margin: 0;
     color: #232f3e;
+    font-size: 1.15rem;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    flex: 1;
+    min-width: 0;
 }
 
 .nav-card p {
-    font-size: 0.95rem;
-    color: #666;
-    line-height: 1.5;
-    margin-bottom: 20px;
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.6;
+    margin: 0 0 20px 0;
+    letter-spacing: 0.01em;
+    flex: 1;
 }
 
 .btn-go {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
     color: #ff9900;
-    font-weight: bold;
+    font-weight: 600;
     font-size: 0.9rem;
+    margin-top: auto;
+    transition: color 0.2s ease;
+}
+
+.nav-card:hover .btn-go {
+    color: #e68a00;
 }
 
 .full-width {
     grid-column: span 2;
-    background: #fff9db; /* 퀴즈는 강조를 위해 색상 변경 */
+    background: linear-gradient(135deg, #fff9db 0%, #fff5e6 100%);
 }
 
 /* 모바일 대응 */

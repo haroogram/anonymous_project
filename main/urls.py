@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('search/', views.search, name='search'),
     path('<str:category>/', views.tutorial, name='tutorial'),
     path('<str:category>/<str:topic>/', views.topic_detail, name='topic_detail'),
     # 접속자 수 통계 API
