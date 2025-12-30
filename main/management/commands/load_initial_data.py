@@ -12,31 +12,32 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write('초기 데이터 로드를 시작합니다...')
         
-        # 기존의 불필요한 주제 삭제 (data-structures, functions-classes)
-        self.stdout.write('\n기존 불필요한 주제를 삭제합니다...')
-        slugs_to_delete = ['data-structures', 'functions-classes']
-        for slug in slugs_to_delete:
-            try:
-                topics = Topic.objects.filter(slug=slug)
-                count = topics.count()
-                if count > 0:
-                    for topic in topics:
-                        self.stdout.write(
-                            f"  삭제: {topic.title} (slug: {topic.slug}, "
-                            f"카테고리: {topic.category.name})"
-                        )
-                    topics.delete()
-                    self.stdout.write(
-                        self.style.SUCCESS(f"  '{slug}' slug를 가진 {count}개의 주제가 삭제되었습니다.")
-                    )
-                else:
-                    self.stdout.write(
-                        self.style.WARNING(f"  slug '{slug}'를 가진 주제를 찾을 수 없습니다.")
-                    )
-            except Exception as e:
-                self.stdout.write(
-                    self.style.ERROR(f"  '{slug}' 삭제 중 오류 발생: {e}")
-                )
+        # 기존 데이터베이스 초기화
+        self.stdout.write('\n기존 데이터를 초기화합니다...')
+        try:
+            topic_count = Topic.objects.count()
+            category_count = Category.objects.count()
+            
+            if topic_count > 0:
+                self.stdout.write(f'  {topic_count}개의 주제를 삭제합니다...')
+                Topic.objects.all().delete()
+                self.stdout.write(self.style.SUCCESS(f'  {topic_count}개의 주제가 삭제되었습니다.'))
+            else:
+                self.stdout.write(self.style.WARNING('  삭제할 주제가 없습니다.'))
+            
+            if category_count > 0:
+                self.stdout.write(f'  {category_count}개의 카테고리를 삭제합니다...')
+                Category.objects.all().delete()
+                self.stdout.write(self.style.SUCCESS(f'  {category_count}개의 카테고리가 삭제되었습니다.'))
+            else:
+                self.stdout.write(self.style.WARNING('  삭제할 카테고리가 없습니다.'))
+            
+            self.stdout.write(self.style.SUCCESS('\n데이터베이스 초기화가 완료되었습니다.'))
+        except Exception as e:
+            self.stdout.write(
+                self.style.ERROR(f'  데이터 초기화 중 오류 발생: {e}')
+            )
+            return
         
         # 카테고리 데이터
         categories_data = [
@@ -337,22 +338,647 @@ class Command(BaseCommand):
             ],
             'linux': [
                 {
-                    'title': 'Linux 기초',
-                    'slug': 'linux-basics',
-                    'content': '<h1>Linux란?</h1><p>Linux는 오픈소스 운영체제로, 서버와 클라우드 환경에서 널리 사용됩니다.</p>',
+                    'title': '리눅스 설치',
+                    'slug': 'linux-installation',
+                    'content': '''<h2>1. 리눅스 설치</h2>
+
+<p>
+1. <a href="https://ubuntu.com/download/desktop" target="_blank">
+  Ubuntu Desktop ISO 다운로드
+</a>
+</p>
+
+<img src="/static/img/설치-1.png" width="800" alt="Ubuntu ISO 다운로드 화면">
+<p>2. 설치 과정 </p>
+<p>기본적으로 계속 next하면 된다</p>
+<img src="/static/img/설치-2.png" width="800">
+<img src="/static/img/설치-3.png" width="800">
+<p>교육/실습은 1프로세서/2코어로 지정. 만약 서버용은 1프로세서/4코어 </p>
+<img src="/static/img/설치-4.png" width="800">
+<p>4096MB로 설정. 2048MB로 설정할 경우 우분투 설치 마지막에 프리징이 있을 수 있음. </p>
+<img src="/static/img/설치-5.png" width="800">
+<p>가상 머신 설치 후 해당 머신 마우스 우클릭 후 setting 클릭</p>
+<img src="/static/img/설치-6.png" width="800">
+<p>다운 받은 리눅스 ISO파일 설정 후 connect at power on 설정 클릭</p>
+<img src="/static/img/설치-7.png" width="800">
+<p>Enter 후 계속 next하면 된다</p>
+<img src="/static/img/설치-8.png" width="800">
+<p>원하는 언어 선택</p>
+<img src="/static/img/설치-9.png" width="800">
+<p>사용 계정 생성</p>
+<img src="/static/img/설치-10.png" width="800">
+<p>Enter 후 계속 next해가면 설치는 끝.</p>''',
                     'order': 1,
                 },
                 {
-                    'title': '명령어 사용법',
-                    'slug': 'commands',
-                    'content': '<h1>Linux 명령어</h1><p>Linux에서는 터미널을 통해 다양한 명령어를 사용하여 시스템을 제어할 수 있습니다.</p>',
+                    'title': '편의 및 필수 툴',
+                    'slug': 'linux-tools',
+                    'content': '''<h3>1) Hostname 수정</h3>
+<p>
+  기본 hostname이 길어 터미널 사용 시 가독성이 떨어지므로,
+  식별이 쉬운 이름으로 변경한다.
+</p>
+
+<img src="/static/img/편의-1.png" width="800">
+
+<pre><code>sudo hostnamectl set-hostname server1</code></pre>
+
+<img src="/static/img/편의-2.png" width="800">
+
+<hr>
+
+<h3>2) 한글 입력기 설치</h3>
+<p>
+  Ubuntu 기본 설치 환경에서는 한글 입력이 불가능하므로
+  IBus 기반 한글 입력기를 설치한다.
+</p>
+
+<h4>① 시스템 업데이트</h4>
+<pre><code>sudo apt update && sudo apt upgrade -y</code></pre>
+
+<h4>② IBus 및 한글 입력기 설치</h4>
+<pre><code>sudo apt install -y ibus ibus-hangul</code></pre>
+
+<h4>③ 입력기 프레임워크 설정</h4>
+<pre><code>im-config -n ibus</code></pre>
+
+<p>설정 후 재부팅</p>
+
+<h4>④ 한글 입력 소스 추가</h4>
+<p>
+Settings → Keyboard → Add Input Source에서  
+Korean(Hangul)을 추가한다.
+</p>
+
+<img src="/static/img/한글-4.png" width="800">
+
+<h4>⑤ 입력 전환 키 설정</h4>
+<p>
+터미널에서 <code>ibus-setup</code> 실행 후  
+Preferences → Hangul Toggle Key를 <strong>Right Alt (Alt_R)</strong>로 설정한다.
+</p>
+
+<img src="/static/img/한글-5.png" width="800">
+<img src="/static/img/한글-6.png" width="800">
+
+<p><strong>※ 위 설정을 통해 터미널 및 브라우저에서 한글 입력이 가능해진다.</strong></p>
+
+<h3>3) vim (기본 텍스트 에디터)</h3>
+<p>
+  vim은 리눅스 환경에서 널리 사용되는 텍스트 편집기
+</p>
+
+<pre><code>sudo apt install -y vim</code></pre>
+
+<hr>
+
+<h3>4) curl / wget (API 테스트 및 파일 다운로드)</h3>
+<p>
+  curl과 wget은 네트워크 통신 및 파일 다운로드에 사용되는 도구로,
+  클라우드 환경 및 API 테스트 시 필수적이다.
+</p>
+
+<pre><code>sudo apt install -y curl wget</code></pre>
+
+<ul>
+  <li><strong>curl</strong> : HTTP 요청, REST API 테스트</li>
+  <li><strong>wget</strong> : 파일 다운로드 전용</li>
+</ul>
+
+<hr>
+
+<h3>5) net-tools + iproute2 (네트워크 확인)</h3>
+<p>
+  네트워크 인터페이스 및 IP 정보를 확인하기 위한 도구를 설치한다.
+</p>
+
+<pre><code>sudo apt install -y net-tools iproute2</code></pre>
+
+<hr>
+
+<h3>6) tree (디렉토리 구조 확인)</h3>
+<p>
+  tree 명령어는 디렉토리 구조를 계층적으로 출력
+</p>
+
+<pre><code>sudo apt install -y tree</code></pre>
+
+<p><strong>※ 위 도구들은 실습 및 서버 운용을 위해 필수적으로 설치된다.</strong></p>''',
                     'order': 2,
                 },
                 {
-                    'title': '시스템 관리',
-                    'slug': 'system-admin',
-                    'content': '<h1>시스템 관리</h1><p>Linux 시스템 관리에는 사용자 관리, 프로세스 관리, 파일 시스템 관리 등이 포함됩니다.</p>',
+                    'title': '기본 명령어',
+                    'slug': 'linux-commands',
+                    'content': '''<h3>1) 경로 </h3>
+<p>
+  리눅스를 운용하기 위해선 먼저 절대 경로와 상대 경로를 이해할 필요가 있다.
+<br>절대 경로는 /(루트 디렉토리)를 기준으로 하지만 상대 경로는 현재 위치를 기준으로 한다.
+<br>보통 절대 경로를 사용하지만 실행 파일을 실행하려고 할 때 반드시 상대 경로를 사용한다.
+
+</p>
+<h3>2) cd (디렉토리 이동)</h3>
+
+<p>
+cd 명령어는 현재 작업 중인 디렉토리에서 다른 디렉토리로 이동할 때 사용한다.
+</p>
+
+<pre><code>예)cd ~/a/b/c</code></pre>
+<img src="/static/img/cd-1.png" width="800">
+
+<pre><code>예)cd ../ 현재 위치에서 상위 디렉토리로 이동</code></pre>
+<img src="/static/img/cd-2.png" width="800">
+<pre><code>예)cd ~ 홈 디렉토리로 이동</code></pre>
+<pre><code>예)cd / 루트 디렉토리로 이동</code></pre>
+<h3>3) pwd (현재 위치 확인)</h3>
+<img src="/static/img/pwd.png" width="800">
+<hr>
+
+<h3>4) ls (디렉터리 목록 표시) </h3>
+<pre><code>ls (목록만 표시)</code></pre>
+<img src="/static/img/ls-1.png" width="800">
+<pre><code>ls -l (권한,소유자,크기 등 상세하게)</code></pre>
+<img src="/static/img/ls-2.png" width="800">
+<pre><code>ls -la (l 속성에 더해서 숨김 파일까지 표시)</code></pre>
+<img src="/static/img/ls-3.png" width="800">
+<hr>
+
+<h3>5) mkidr (디렉터리 생성) & rm (디렉터리 및 파일 삭제)</h3>
+<pre><code>mkdir </code></pre>
+<img src="/static/img/mkdir-1.png" width="800">
+<pre><code>mkdir -p (상위 디렉터리까지 한번에 생성)</code></pre>
+<img src="/static/img/mkdir-2.png" width="800">
+
+<pre><code>rm -r (r 옵션은 하위 디렉터리까지 한번에 삭제)</code></pre>
+<img src="/static/img/rm.png" width="800">
+<pre><code>rm -rf 무조건 삭제</code></pre>
+<pre><code>rm -ri 삭제 전 물어봄(추천)</code></pre>
+
+<h3>6) 파일 생성 & 복사 & 이동 </h3>
+<pre><code>touch (빈 파일 생성)</code></pre>
+<img src="/static/img/touch.png" width="800">
+<pre><code>cat & echo (파일 생성 및 내용 입력)</code></pre>
+<img src="/static/img/e&c.png" width="800">
+<pre><code>echo는 문자열을 출력하고, cat은 파일 내용을 출력하는 것이 기본 기능이다.</code></pre>
+<pre><code>파일 생성이나 내용 입력은 리다이렉션(>, >>)을 사용한 응용 방식이다.
+두 명령어 모두 '>' 사용 시 덮어쓰고, '>>' 사용 시 기존 내용 뒤에 추가한다.</code></pre>
+<pre><code>보통 한 줄 입력은 echo, 여러 줄 입력은 cat을 사용한다.</code></pre>
+
+<pre><code>cp (파일 및 디렉터리 복사)</code></pre>
+<img src="/static/img/cp.png" width="800">
+<pre><code>test.txt 파일을 a.txt로 복사한다.(원본은 유지된다.)
+test.txt 파일을 myp2 디렉터리로 복사한다.
+디렉터리 myp2를 myp3로 복사한다.(디렉터리 복사에는 -r 옵션 사용)</code></pre>
+
+<pre><code>mv (파일 이동 및 이름 변경)</code></pre>
+<img src="/static/img/mv.png" width="800">
+<pre><code>a.txt 파일을 b.txt라고 파일명을 변경한다.
+b.txt 파일을 myp2 디렉터리로 옮긴다.
+디렉터리 myp3를 myp3-3로 디렉터리명을 변경한다.</code></pre>
+
+<h3>7) 권한 </h3>
+<pre><code>리눅스에서는 파일과 디렉터리에 대해 읽기(r), 쓰기(w), 실행(x) 권한을 관리한다.</code></pre>
+<pre><code>권한의 대상은 소유자(user), 그룹(group), 기타 사용자(other)로 나뉜다.</code></pre>
+<img src="/static/img/chmod-1.png" width="800">
+<pre><code>chmod (권한 부여)</code></pre>
+<pre><code>권한 부여 방식은 숫자 방식과 심볼 방식 2가지로 나뉜다.</code></pre>
+<pre><code>숫자 방식이 자주 쓰이며 의미는 다음과 같다.</code></pre>
+<pre><code>chmod [유저][그룹][그외]. r=4 w=2 x=1.</code></pre>
+<img src="/static/img/chmod-2.png" width="800">
+<pre><code>소유자는 rwx(4+2+1=7)권한을 가지고 그룹과 다른 이용자들은 rx(4+1=5) 권한만 있다</code></pre>
+<pre><code>실행 파일이 아니어도 x권한을 부여할 수 있다.</code></pre>
+
+<hr>
+<pre><code>심볼 방식 의미는 다음과 같다.</code></pre>
+<pre><code>chmod [대상][연산기호][권한]. 대상 (u g o).연산 (+ - =).권한 (r w x)</code></pre>
+<img src="/static/img/chmod-3.png" width="800">
+<pre><code>소유자의 권한만 rwx로 바뀌었다</code></pre>
+<img src="/static/img/chmod-4.png" width="800">
+<pre><code>소유자의 권한에서 w을 뺏다</code></pre>
+<pre><code>"=" 연산은 기존의 권한을 빼고 지정 권한만 설정한다.</code></pre>
+<pre><code># 꼭 알아둬야 할 것 #</code></pre>
+<pre><code>디렉터리 권한에서 실행(x)은 해당 디렉터리에 접근할 수 있는 권한을 의미하며,
+읽기(r) 권한이 있어도 실행(x) 권한이 없으면 내부 파일에 접근할 수 없다.
+파일 삭제 권한은 파일 자체가 아니라 디렉터리의 쓰기(w)와 실행(x) 권한에 의해 결정된다.</code></pre>
+<hr>
+
+<h3>7) 프로세스 </h3>
+<pre><code>프로세스란 실행 중인 프로그램이다.(예) code, sshd, ptyhon, vim 등등</code></pre>
+<pre><code>ps</code></pre>
+<img src="/static/img/ps-1.png" width="800">
+<pre><code>현재 터미널에서 실행 중인 프로세스만 표시
+(시스템 전체 프로세스는 아님)</code></pre>
+<pre><code>ps aux</code></pre>
+<img src="/static/img/ps-2.png" width="800">
+<pre><code>시스템 전체 프로세스를 출력하므로 매우 많은 정보가 표시된다.
+  모든 내용 이해할 필요 없음.</code></pre>
+<pre><code>ps -eo pid,user,comm | grep 프로세스명 </code></pre>
+<img src="/static/img/ps-3.png" width="800">
+<pre><code>해당 프로세스의 pid,user,comm 만 출력</code></pre>
+<pre><code>top </code></pre>
+<img src="/static/img/top.png" width="800">
+<pre><code>실시간 실행중인 프로세스들 목록. PID번호가 중요함.</code></pre>
+<pre><code>kill PID번호</code></pre>
+<img src="/static/img/top.png" width="800">
+<pre><code>해당 프로세스 종료</code></pre>
+<pre><code>만약 파이어폭스를 종료하고 싶으면 kill 4256을 입력하면 된다.</code></pre>
+
+<pre><code>top의 정렬 순서는 실시간으로 cpu/메모리를 많이 사용하는 프로세스부터 나온다.
+프로세스는 ps로 확인하고, top으로 관찰한 뒤, kill로 종료한다.</code></pre>
+
+<h3>8) 서비스 관리 </h3>
+<pre><code>서비스는 ps가 아니라 systemctl로 관리한다.</code></pre>
+<pre><code>사용하는 systemctl의 명령어는 다음과 같다.</code></pre>
+<pre><code>systemctl status 서비스명
+systemctl start 서비스명
+systemctl stop 서비스명
+systemctl restart 서비스명
+systemctl enable 서비스명
+systemctl disable 서비스명
+systemctl is-enabled 서비스명
+</code></pre>
+<pre><code>새로운 서비스를 시작할 경우의 실행할 명령어 순서는 
+restart -> enable -> status로 상태 확인.</code></pre>
+<img src="/static/img/status.png" width="800">
+<pre><code>스크린샷 내용처럼 activate로 뜨면 정상 작동 중이다.</code></pre>
+<pre><code>enable 명령어를 써줘야 재시작했을 때 자동으로 서비스가 시작된다.</code></pre>
+<hr>
+
+<h3>9) crontab </h3>
+<pre><code>정해진 시간에 명령을 자동으로 실행하는 기능
+
+crontab -l  등록된 작업 확인
+crontab -e  작업 편집
+crontab -r  작업 삭제</code></pre>
+
+<pre><code>크론탭 설정은 * * * * * 이며, 왼쪽부터 분 시 일 월 요일을 뜻한다.
+월은 1~12로, 1월부터 12월을 의미한다.
+요일은 0 또는 7=일요일, 1=월요일 ~ 6=토요일이다.</code></pre>
+
+<pre><code>숫자는 고정값을 의미하며, */N 형태는 N 간격 실행을 의미한다.</code></pre>
+
+<pre><code>예를 들어 * * * * * 은 매분마다 실행된다.
+예를 들어 */2 * * * * 은 2분마다 실행된다.</code></pre>
+
+<img src="/static/img/crontab-1.png" width="800">
+<pre><code>crontab -e 명령을 실행하면 편집기를 고르는 메뉴. 1번을 선택</code></pre>
+<img src="/static/img/crontab-2.png" width="800">
+<pre><code>맨 아랫줄에 */2 * * * * touch /home/tester/contrabtest.txt 추가</code></pre>
+<pre><code>2분마다 contrabtest.txt 파일을 생성한다는 뜻</code></pre>
+<pre><code>Ctrl + o(저장)후 엔터 그 다음 Ctrl + x(종료)</code></pre>
+<img src="/static/img/crontab-3.png" width="800">
+<pre><code>13:48에 파일 생성</code></pre>
+<img src="/static/img/crontab-4.png" width="800">
+<pre><code>13:50에 파일이 수정된걸 볼 수 있다</code></pre>''',
                     'order': 3,
+                },
+                {
+                    'title': '서버',
+                    'slug': 'linux-server',
+                    'content': '''<h3>Linux 서버</h3>
+<p>
+리눅스는 무료 오픈소스이며, 높은 보안성과 안정성, 뛰어난 성능과 유연성을 제공해
+서버 OS로 적합하다.
+또한 재부팅 없는 업데이트, 효율적인 자원 관리, 빠른 버그 수정,
+다양한 환경 지원, 클라우드·DevOps와의 높은 호환성이 큰 장점이다.
+
+<p>
+서버를 배우기 전에 포트의 개념을 알 필요가 있다.
+</p>
+
+<ul>
+  <li>IP 주소: 어느 서버인가</li>
+  <li>포트 번호: 그 서버 안에서 어떤 서비스인가</li>
+  <li>프로세스: 그 포트를 실제로 열고 있는 프로그램</li>
+</ul>
+
+<p><strong>즉, 서버 = IP + 포트 + 프로세스</strong></p>
+
+</p>
+
+<h3>1) 웹 사이트 서버</h3>
+<p>
+사용자가 브라우저에 주소를 입력하면 그 요청을 받아서 응답을 보내줄 서버가 필요하다.
+그 역할을 하는 것이 웹 서버다.
+네트워크가 연결되고 IP 주소를 알아도 웹사이트 서버가 없으면
+사용자는 요청을 보내도 응답을 받을 수 없다.
+</p>
+
+<p>Apache HTTP Server, Nginx, Lighttpd 등이 있다.</p>
+
+<h4>Nginx 설치</h4>
+<pre><code>sudo apt install -y nginx</code></pre>
+
+<img src="/static/img/nginx-1.png" width="800">
+
+<pre><code>systemctl enable nginx
+systemctl restart nginx
+systemctl status nginx</code></pre>
+
+<p>
+위 명령어를 차례대로 실행한 후
+<code>active (running)</code> 상태를 확인한다.
+</p>
+
+<p>리눅스 파이어폭스 접속 후 주소창에 <code>localhost</code>를 입력한다.</p>
+<img src="/static/img/nginx-2.png" width="800">
+
+<p><strong>welcome to nginx!</strong>가 뜨면 정상이다.</p>
+
+<h3>localhost</h3>
+<p>
+<code>localhost</code>는 현재 사용 중인 자기 자신의 컴퓨터를 가리키는 이름이다.
+실제로는 IP 주소 <code>127.0.0.1</code>을 의미하며,
+외부 네트워크를 거치지 않고 내 컴퓨터에서 실행 중인 서버를 확인할 때 사용한다.
+</p>
+
+<p>리눅스 터미널에서 <code>systemctl stop nginx</code>를 실행한다.</p>
+<img src="/static/img/nginx-3.png" width="800">
+
+<p>웹 서버를 꺼버리면 웹 페이지에 아무것도 표시되지 않는다.</p>
+
+<p><code>sudo ss -tulpn | grep nginx</code></p>
+<p>
+<code>ss</code> 명령어는 현재 열려 있는 포트와 해당 포트를 사용하는 프로세스를 확인할 수 있다.
+프로세스 정보는 관리자 권한이 필요하므로 <code>sudo</code>를 사용한다.
+</p>
+
+<img src="/static/img/nginx-4.png" width="800">
+<p>포트 번호가 80번인걸 확인할 수 있다.</p>
+
+<p>
+지금까지 nginx를 통해 웹 서버가
+<strong>프로세스로 실행되고, 포트를 열어 요청을 처리한다</strong>는 것을 확인했다.
+이 구조는 다른 모든 서버에서도 동일하게 적용된다.
+</p>
+
+<hr>
+
+<h3>2)DNS 서버</h3>
+<p>
+DNS는 이름을 IP 주소로 바꿔주는 서버다.
+
+사람은 숫자(IP 주소)보다 이름을 쓰기 때문에
+브라우저에서 도메인 이름을 입력하면,
+DNS 서버가 해당 이름에 대응하는 IP 주소를 알려준다.
+DNS가 없으면 IP 주소를 외워서 접속해야한다.
+
+기본 포트는 <strong>53번</strong>이다.
+</p>
+
+<p><code>sudo apt install -y bind9</code></p>
+<p><code>sudo systemctl status bind9</code></p>
+<img src="/static/img/dns-1.png" width="800">
+<p>active(running) 상태 확인.</p>
+<pre><code>sudo systemctl enable bind9
+sudo systemctl restart bind9
+sudo systemctl status bind9</code></pre>
+
+<p><code>sudo vim /etc/hosts</code></p>
+<img src="/static/img/dns-2.png" width="800">
+<p><code>127.0.0.1 linux-project.local 추가</code></p>
+<img src="/static/img/dns-3.png" width="800">
+<p><code>주소창을 보면 설정한 linux-project.local로 접속한걸 알 수 있다.</code></p>
+<hr>
+
+<h3>3) DHCP 서버</h3>
+
+<p>
+DHCP 서버는 클라이언트에게 IP 주소를 자동으로 할당해주는 서버이다.<br>
+기본 포트는 <strong>67번(서버) / 68번(클라이언트)</strong>을 사용한다.
+</p>
+
+<p><code>sudo apt install isc-dhcp-server</code></p>
+<p><code>sudo vim /etc/default/isc-dhcp-server</code></p>
+
+<img src="/static/img/dhcp-1.png" width="800">
+<p>
+INTERFACESv4="ens33"로 수정한다. (DHCP 서버가 동작할 네트워크 인터페이스 지정)
+</p>
+
+<img src="/static/img/dhcp-2.png" width="800">
+<p><code>ls /etc/netplan</code> 명령어로 설정 파일을 확인한다.</p>
+<p><code>sudo vim /etc/netplan/01-network-manager-all.yaml</code></p>
+
+<img src="/static/img/dhcp-3.png" width="800">
+<p>
+화면과 같이 수정하여 DHCP 서버에 고정 IP를 설정한다.
+</p>
+<p><code>sudo netplan apply</code> 명령어로 적용한다.</p>
+
+<p>DHCP 설정 파일을 작성한다.</p>
+<p><code>sudo vim /etc/dhcp/dhcpd.conf</code></p>
+
+<img src="/static/img/dhcp-4.png" width="800">
+
+<p>leases 파일을 생성한다.</p>
+<p>
+<code>
+sudo touch /var/lib/dhcp/dhcpd.leases<br>
+sudo chown root:root /var/lib/dhcp/dhcpd.leases<br>
+sudo chmod 644 /var/lib/dhcp/dhcpd.leases
+</code>
+</p>
+
+<p>설정 파일 문법을 최종 확인한다. (에러가 없어야 함)</p>
+<p><code>sudo dhcpd -t -cf /etc/dhcp/dhcpd.conf</code></p>
+
+<p>
+<code>
+sudo systemctl restart isc-dhcp-server<br>
+sudo systemctl status isc-dhcp-server
+</code>
+</p>
+
+<img src="/static/img/dhcp-5.png" width="800">
+
+<p>
+VMware 환경에서 DHCP 서버(server1)가 클라이언트(serverb)에 IP를 할당하는지 확인한다.
+</p>
+
+<p>server1(DHCP 서버)에서 로그 창을 실행한다.</p>
+<p><code>sudo journalctl -u isc-dhcp-server -f</code></p>
+
+<img src="/static/img/dhcp-6.png" width="800">
+<p>DHCPREQUEST 192.168.238.130 로그를 확인한다.</p>
+
+<p>serverb(클라이언트 서버)에서 최종 IP 할당 여부를 확인한다.</p>
+
+<img src="/static/img/dhcp-7.png" width="800">
+<p>IP 주소 192.168.238.130이 DHCP를 통해 할당된 것을 확인한다.</p>
+
+<hr>
+
+<h3>4) 데이터베이스(DB) 서버</h3>
+
+<p>
+데이터베이스 서버는 데이터를 체계적으로 저장하고 관리하기 위한 서버이다.
+본 실습에서는 리눅스 환경에서 MariaDB를 설치하여
+기본적인 데이터베이스 구성과 데이터 조작을 진행한다.
+</p>
+
+<p><code>sudo apt install -y mariadb-server</code></p>
+<p><code>sudo systemctl status mariadb</code></p>
+<img src="/static/img/db-1.png" width="800">
+
+<p>서비스 상태가 <strong>Active: active (running)</strong> 인지 확인한다.</p>
+<img src="/static/img/db-2.png" width="800">
+
+<p>보안 설정 실행</p>
+<p><code>sudo mysql_secure_installation</code></p>
+<img src="/static/img/db-3.png" width="800">
+
+<p>
+처음 나오는 비밀번호 입력 질문은 Enter를 입력하고,
+이후 질문은 모두 Y로 설정한다.
+중간에 root 비밀번호 설정 단계에서만 비밀번호를 주의하여 입력한다.
+</p>
+
+<hr>
+
+<p><strong>데이터베이스 생성</strong></p>
+<p>
+<pre><code>sudo mariadb
+CREATE DATABASE testdb;
+SHOW DATABASES;</code></pre>
+</p>
+<img src="/static/img/db-4.png" width="800">
+
+<p>
+SQL 명령어는 대문자로 작성하는 것이 관례이며,
+각 명령어의 끝에는 반드시 세미콜론(;)을 붙인다.
+</p>
+
+<hr>
+
+<p><strong>사용자 생성 및 권한 부여</strong></p>
+<p>
+<code>
+CREATE USER 'testuser'@'localhost' IDENTIFIED BY '1234';
+</code>
+</p>
+
+<p>
+<pre><code>GRANT ALL PRIVILEGES ON testdb.* TO 'testuser'@'localhost';
+FLUSH PRIVILEGES;</code></pre>
+</p>
+
+<p><code>mariadb -u testuser -p</code></p>
+<img src="/static/img/db-5.png" width="800">
+
+<p>
+testuser 계정으로 접속 후
+<code>USE testdb;</code> 명령 실행 시 에러가 발생하지 않으면
+정상적으로 권한이 부여된 것이다.
+</p>
+
+<hr>
+
+<p><strong>테이블 생성</strong></p>
+<p>
+contacts 테이블은 이름, 전화번호, 이메일 정보를 저장하기 위한 테이블이다.
+각 컬럼의 의미는 다음과 같다.
+</p>
+
+<p>
+<code>id</code> 컬럼은 각 데이터를 구분하기 위한 고유 식별자이며,
+<code>INT</code> 타입으로 설정하였다.
+<code>AUTO_INCREMENT</code> 옵션은 데이터가 추가될 때마다
+값이 자동으로 증가하도록 하였다.
+</p>
+
+<p>
+<code>PRIMARY KEY</code>는 테이블 내에서 중복될 수 없는 값이다.
+</p>
+
+<p>
+<code>name VARCHAR(50)</code>는 이름을 저장하는 컬럼으로,
+최대 50자의 문자열을 저장할 수 있다.
+<code>NOT NULL</code> 옵션을 사용하여 반드시 값이 입력되도록 설정하였다.
+</p>
+
+<p>
+<code>phone VARCHAR(20)</code>는 전화번호를 저장하는 컬럼이다.
+전화번호에는 하이픈(-)이 포함될 수 있으므로
+숫자형이 아닌 문자열 타입(VARCHAR)으로 설정하였다.
+</p>
+
+<p>
+<code>email VARCHAR(100)</code>는 이메일 주소를 저장하는 컬럼이다.
+</p>
+
+<p>
+VARCHAR는 가변 길이 문자열 타입으로,
+실제 입력된 문자열 길이에 따라 저장 공간을 사용한다.
+</p>
+
+<p>
+<pre><code>CREATE TABLE contacts (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL,
+  phone VARCHAR(20),
+  email VARCHAR(100)
+);</code></pre>
+</p>
+
+<img src="/static/img/db-6.png" width="800">
+
+<p><code>SHOW TABLES;</code></p>
+<img src="/static/img/db-7.png" width="800">
+<p>테이블 생성 확인</p>
+
+<hr>
+
+<p><strong>데이터 삽입</strong></p>
+<p>
+<pre><code>INSERT INTO contacts (name, phone, email) VALUES
+('홍길동', '010-1111-2222', 'hong@test.com'),
+('김철수', '010-3333-4444', 'kim@test.com'),
+('이영희', '010-5555-6666', 'lee@test.com');</code></pre>
+</p>
+
+<p><strong>데이터 조회 (SELECT)</strong></p>
+<p><code>SELECT * FROM contacts;</code></p>
+<img src="/static/img/db-8.png" width="800">
+
+<hr>
+
+<p><strong>특정 데이터 조회</strong></p>
+
+<p>이름으로 조회</p>
+<p><code>SELECT * FROM contacts WHERE name = '김철수';</code></p>
+
+<p>이메일로 조회</p>
+<p><code>SELECT * FROM contacts WHERE email = 'lee@test.com';</code></p>
+
+<p>전화번호 일부로 조회</p>
+<p><code>SELECT * FROM contacts WHERE phone LIKE '010-5555%';</code></p>
+
+<img src="/static/img/db-9.png" width="800">
+
+<hr>
+
+<p><strong>특정 데이터 삭제 (DELETE)</strong></p>
+
+<p>
+DELETE 명령어는 WHERE 조건 없이 실행할 경우
+테이블의 모든 데이터가 삭제되므로 주의해야 한다.
+</p>
+
+<p>삭제 전 테이블 상태 확인</p>
+<p><code>SELECT * FROM contacts;</code></p>
+
+<p>이름으로 데이터 삭제</p>
+<p><code>DELETE FROM contacts WHERE name = '김철수';</code></p>
+
+<p>전화번호 일부로 데이터 삭제</p>
+<p><code>DELETE FROM contacts WHERE phone LIKE '010-5555%';</code></p>
+
+<p>삭제 결과 확인</p>
+<p><code>SELECT * FROM contacts;</code></p>
+
+<img src="/static/img/db-10.png" width="800">
+''',
+                    'order': 4,
                 },
             ],
             'python': [
