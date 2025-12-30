@@ -1,9 +1,12 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
+from django.db.models import Q
+from django.views.decorators.cache import cache_page
 from .models import Category, Topic
 from .utils import get_visitor_stats, get_today_visitors_count, get_total_visitors_count, get_daily_visitors_count
 
 
+@cache_page(60 * 60 * 24)  # 24시간 캐싱
 def index(request):
     """메인 페이지"""
     categories = Category.objects.all()
@@ -13,6 +16,7 @@ def index(request):
     return render(request, 'main/index.html', context)
 
 
+@cache_page(60 * 60 * 24)  # 24시간 캐싱
 def tutorial(request, category):
     """카테고리별 튜토리얼 목록"""
     category_obj = get_object_or_404(Category, slug=category)
@@ -27,6 +31,7 @@ def tutorial(request, category):
     return render(request, 'main/tutorial.html', context)
 
 
+@cache_page(60 * 60 * 24)  # 24시간 캐싱
 def topic_detail(request, category, topic):
     """주제 상세 페이지"""
     category_obj = get_object_or_404(Category, slug=category)
