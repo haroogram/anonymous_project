@@ -2240,22 +2240,317 @@ session.close()
             ],
             'aws': [
                 {
-                    'title': 'AWS 시작하기',
-                    'slug': 'aws-getting-started',
-                    'content': '<h1>AWS란?</h1><p>AWS(Amazon Web Services)는 아마존에서 제공하는 클라우드 컴퓨팅 플랫폼입니다.</p>',
+                    'title': '대시보드',
+                    'slug': 'aws-index',
+                    'content': '''<div class="container">
+        <h2>전체 학습 로드맵</h2>
+        <p>원하는 학습 단계를 선택하여 시작하세요.</p>
+        
+        <div class="dashboard">
+            <a href="/aws/aws-cloud-basic/" class="nav-card">
+                <div class="card-header">
+                    <div class="icon">☁️</div>
+                    <span class="card-title">1. 클라우드 기초</span>
+                </div>
+                <p>클라우드의 정의와 주요 특징, 그리고 서비스 모델(IaaS, PaaS, SaaS)을 심층 학습합니다.</p>
+                <span class="btn-go">시작하기 →</span>
+            </a>
+
+            <a href="/aws/aws-history/" class="nav-card">
+                <div class="card-header">
+                    <div class="icon">⏳</div>
+                    <span class="card-title">2. AWS 역사 & 인프라</span>
+                </div>
+                <p>아마존의 성장 배경과 전 세계 리전 및 가용 영역(AZ)의 설계를 알아봅니다.</p>
+                <span class="btn-go">학습하기 →</span>
+            </a>
+
+            <a href="/aws/aws-services/" class="nav-card">
+                <div class="card-header">
+                    <div class="icon">🛠</div>
+                    <span class="card-title">3. 핵심 서비스 가이드</span>
+                </div>
+                <p>EC2, S3, RDS 등 실무에서 반드시 알아야 할 AWS 핵심 서비스들을 분석합니다.</p>
+                <span class="btn-go">학습하기 →</span>
+            </a>
+
+            <a href="/aws/aws-cert/" class="nav-card">
+                <div class="card-header">
+                    <div class="icon">🎓</div>
+                    <span class="card-title">4. 자격증 준비</span>
+                </div>
+                <p>자격증 로드맵 확인과 수강생을 위한 합격 팁을 제공합니다.</p>
+                <span class="btn-go">확인하기 →</span>
+            </a>
+
+            <a href="/aws/aws-quiz/" class="nav-card full-width">
+                <div class="card-header">
+                    <div class="icon">🧠</div>
+                    <span class="card-title">5. 지식 확인 퀴즈</span>
+                </div>
+                <p>학습한 내용을 문제를 통해 복습하고 실력을 점검하세요.</p>
+                <span class="btn-go">도전하기 →</span>
+            </a>
+        </div>
+    </div>''',
                     'order': 1,
                 },
                 {
-                    'title': 'EC2 인스턴스',
-                    'slug': 'ec2',
-                    'content': '<h1>EC2란?</h1><p>EC2는 AWS의 가상 서버 서비스로, 클라우드에서 컴퓨팅 용량을 제공합니다.</p>',
+                    'title': '클라우드 기초',
+                    'slug': 'aws-cloud-basic',
+                    'content': '''<div class="container">
+        <h1>☁️ 클라우드 컴퓨팅의 이해</h1>
+        <p>클라우드는 컴퓨터 자원을 소유하는 대신, 인터넷을 통해 필요한 만큼 빌려 쓰는 기술적 패러다임입니다.</p>
+        
+        <h2>1. 클라우드의 핵심 6가지 장점</h2>
+        <div class="card highlight">
+            <ul>
+                <li><strong>자본 비용을 가변 비용으로 대체:</strong> 서버를 미리 살 필요가 없습니다.</li>
+                <li><strong>규모의 경제:</strong> 수많은 사용자가 이용하므로 단가가 저렴해집니다.</li>
+                <li><strong>추측성 용량 산정 불필요:</strong> 트래픽이 늘면 즉시 서버를 늘릴 수 있습니다.</li>
+                <li><strong>속도 및 민첩성 개선:</strong> 몇 분 만에 서버 배포가 가능합니다.</li>
+                <li><strong>비용 절감:</strong> 데이터 센터 운영 비용을 걱정할 필요가 없습니다.</li>
+                <li><strong>몇 분 만에 전 세계 배포:</strong> 클릭 몇 번으로 전 세계에 서비스를 출시합니다.</li>
+            </ul>
+        </div>
+
+        <h2>2. 클라우드 서비스 모델 비교</h2>
+        <table>
+            <tr>
+                <th>IaaS</th>
+                <th>PaaS</th>
+                <th>SaaS</th>
+            </tr>
+            <tr>
+                <td>인프라 수준 제공 (서버, 네트워크)</td>
+                <td>개발 환경까지 제공 (OS 포함)</td>
+                <td>완성된 소프트웨어 제공</td>
+            </tr>
+            <tr>
+                <td>예: AWS EC2, S3</td>
+                <td>예: AWS Elastic Beanstalk</td>
+                <td>예: Gmail, Dropbox</td>
+            </tr>
+        </table>
+        
+        <h2>3. 배포 모델</h2>
+        <ul>
+            <li><strong>퍼블릭 클라우드:</strong> 누구나 가입해서 이용 가능 (AWS, Azure)</li>
+            <li><strong>프라이빗 클라우드:</strong> 특정 기업 내에서만 운영</li>
+            <li><strong>하이브리드:</strong> 퍼블릭과 프라이빗을 혼합하여 사용</li>
+        </ul>
+    </div>''',
                     'order': 2,
                 },
                 {
-                    'title': 'S3 스토리지',
-                    'slug': 's3',
-                    'content': '<h1>S3란?</h1><p>S3는 AWS의 객체 스토리지 서비스로, 대용량 데이터를 안전하게 저장할 수 있습니다.</p>',
+                    'title': 'AWS 역사 & 인프라',
+                    'slug': 'aws-history',
+                    'content': '''<div class="container">
+        <h1>⏳ AWS의 역사: 서점 앱에서 클라우드 거인으로</h1>
+        <p>AWS는 단순히 새로운 사업을 위해 시작된 것이 아니라, Amazon.com이라는 거대 커머스 사이트를 운영하며 겪었던 <strong>인프라 고민</strong>을 해결하기 위해 탄생했습니다.</p>
+
+        <h2>주요 타임라인</h2>
+        <ul class="timeline">
+            <li class="timeline-item">
+                <span class="year">2003년</span>
+                <span class="milestone">인프라 표준화에 대한 비전 수립</span>
+                <p class="detail">앤디 제시(전 AWS CEO)와 제프 베이조스가 내부 인프라를 API화하여 확장 가능한 구조로 만들기로 결정했습니다.</p>
+            </li>
+            <li class="timeline-item">
+                <span class="year">2006년</span>
+                <span class="milestone">AWS 공식 런칭 (S3, EC2 출시)</span>
+                <p class="detail">세계 최초의 클라우드 서비스인 S3(스토리지)와 EC2(가상 서버)를 시장에 선보이며 클라우드 시대가 시작되었습니다.</p>
+            </li>
+            <li class="timeline-item">
+                <span class="year">2012년</span>
+                <span class="milestone">첫 번째 re:Invent 개최</span>
+                <p class="detail">클라우드 생태계가 커지면서 라스베이거스에서 첫 대규모 기술 컨퍼런스를 개최하기 시작했습니다.</p>
+            </li>
+            <li class="timeline-item">
+                <span class="year">2015년</span>
+                <span class="milestone">독립적인 매출 공시 시작</span>
+                <p class="detail">AWS가 아마존 전체 영업 이익의 상당 부분을 차지할 만큼 거대한 비즈니스로 성장했음을 증명했습니다.</p>
+            </li>
+            <li class="timeline-item">
+                <span class="year">현재</span>
+                <span class="milestone">AI 및 기계학습 혁신 (Amazon Bedrock)</span>
+                <p class="detail">단순한 서버 대여를 넘어 생성형 AI 모델 개발을 지원하는 플랫폼으로 진화했습니다.</p>
+            </li>
+        </ul>
+
+        <h2>AWS 글로벌 인프라의 철학</h2>
+        <p>AWS가 세계 1위인 이유는 강력한 **글로벌 인프라** 덕분입니다.</p>
+        
+        
+
+        <div class="infra-box">
+            <h3>리전(Region) vs 가용 영역(AZ)</h3>
+            <ul>
+                <li><strong>리전(Region):</strong> 전 세계 지리적으로 떨어진 영역 (예: 서울 리전).</li>
+                <li><strong>가용 영역(Availability Zone):</strong> 리전 내의 격리된 데이터 센터 군집. 하나의 리전은 보통 3개 이상의 AZ를 가집니다.</li>
+                <li><strong>엣지 로케이션(Edge Location):</strong> 사용자에게 더 빠르게 컨텐츠를 전달하기 위한 캐싱 서버 거점.</li>
+            </ul>
+        </div>
+        
+        <blockquote style="border-left: 5px solid #ccc; padding-left: 15px; font-style: italic; color: #666; margin-top: 30px;">
+            "Everything fails, all the time." (모든 것은 언제나 실패한다) <br>
+            - Werner Vogels (AWS CTO)
+        </blockquote>
+        <p>이 철학 때문에 AWS는 장애에 대비해 인프라를 여러 가용 영역에 분산하는 구조를 갖게 되었습니다.</p>
+    </div>''',
                     'order': 3,
+                },
+                {
+                    'title': '핵심 서비스 가이드',
+                    'slug': 'aws-services',
+                    'content': '''<div class="container">
+        <h1>🛠 카테고리별 핵심 서비스</h1>
+        
+        <div class="service-detail">
+            <h3>1. 컴퓨팅: EC2 vs Lambda</h3>
+            <p><strong>EC2:</strong> 서버의 운영체제부터 제어가 필요할 때 사용하는 가상 서버입니다.</p>
+            <p><strong>Lambda:</strong> 서버 관리 없이 코드만 실행하고 싶을 때 사용하는 서버리스 서비스입니다.</p>
+        </div>
+        
+
+        <div class="service-detail">
+            <h3>2. 스토리지: S3 vs EBS</h3>
+            <p><strong>S3:</strong> 이미지, 영상 등 무제한 용량의 파일을 저장하는 객체 스토리지입니다.</p>
+            <p><strong>EBS:</strong> EC2 서버에 직접 꽂아서 쓰는 하드디스크 같은 블록 스토리지입니다.</p>
+        </div>
+    </div>''',
+                    'order': 4,
+                },
+                {
+                    'title': '자격증 준비',
+                    'slug': 'aws-cert',
+                    'content': '''<div class="container">
+        <h1>🎓 AWS 인증 자격증 가이드</h1>
+        
+        
+        <div class="card cert-info">
+            <h3>Cloud Practitioner (CLF-C02)</h3>
+            <p>비기술직군도 응시 가능하며, 클라우드의 전반적인 개념을 다룹니다.</p>
+        </div>
+        <div class="card cert-info highlight">
+            <h3>Solutions Architect Associate (SAA-C03)</h3>
+            <p><strong>수강생 추천!</strong> 가장 인기 있는 자격증으로, 효율적인 아키텍처 설계 능력을 검증합니다.</p>
+        </div>
+        
+        <h2>합격 팁</h2>
+        <ul>
+            <li>공식 화이트페이퍼를 정독하세요.</li>
+            <li>직접 AWS 콘솔에서 서비스를 구축해보는 실습이 필수입니다.</li>
+            <li>무료로 제공되는 AWS Skill Builder 교육을 활용하세요.</li>
+        </ul>
+    </div>''',
+                    'order': 5,
+                },
+                {
+                    'title': '지식 확인 퀴즈',
+                    'slug': 'aws-quiz',
+                    'content': '''<div class="container">
+        <h1>🧠 AWS 실력 점검 퀴즈</h1>
+        <p>10문제를 모두 풀고 하단의 결과 확인 버튼을 눌러주세요.</p>
+        <hr>
+
+        <div id="quiz-display">
+            </div>
+
+        <button class="btn-submit" onclick="calculateScore()">결과 확인 및 해설 보기</button>
+
+        <div id="result-box">
+            <h2 id="score-text"></h2>
+            <p>정답과 해설은 각 문제 아래에서 확인하실 수 있습니다.</p>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            { q: "1. AWS 리전(Region)에 대한 설명으로 옳은 것은?", a: 1, options: ["하나의 리전은 반드시 하나의 데이터 센터로 구성된다.", "지리적으로 격리된 전 세계의 물리적 위치를 의미한다.", "모든 리전의 서비스 비용은 전 세계적으로 동일하다.", "사용자는 리전을 직접 선택할 수 없다."], exp: "해설: 리전은 가용성을 위해 최소 2개 이상의 독립된 가용 영역(AZ)으로 구성된 지리적 거점입니다." },
+            { q: "2. 서버 관리 없이 코드만 실행하는 '서버리스' 서비스는?", a: 1, options: ["Amazon EC2", "AWS Lambda", "Amazon RDS", "Amazon Redshift"], exp: "해설: Lambda는 인프라 관리 없이 이벤트에 반응하여 코드를 실행하는 대표적인 서버리스 서비스입니다." },
+            { q: "3. 책임 공유 모델에서 '클라우드 자체의 보안'을 책임지는 주체는?", a: 0, options: ["AWS", "고객", "정부", "하드웨어 제조사"], exp: "해설: 물리적 인프라, 하이퍼바이저 등 클라우드 자체의 보안은 AWS의 책임입니다." },
+            { q: "4. Amazon S3의 특징으로 옳지 않은 것은?", a: 2, options: ["저장 용량에 제한이 거의 없다.", "버킷이라는 단위로 데이터를 관리한다.", "운영체제를 설치하여 부팅 디스크로 사용한다.", "정적 웹사이트 호스팅이 가능하다."], exp: "해설: 부팅 디스크용 스토리지는 블록 스토리지인 EBS입니다. S3는 객체 스토리지입니다." },
+            { q: "5. 트래픽에 따라 EC2 수량을 자동으로 조절하는 서비스는?", a: 2, options: ["Elastic Load Balancing", "CloudWatch", "Amazon EC2 Auto Scaling", "Route 53"], exp: "해설: Auto Scaling은 설정된 조건에 따라 서버 대수를 확장/축소하여 가용성을 관리합니다." },
+            { q: "6. 입문자가 가장 먼저 도전하기 좋은 기초 단계의 자격증은?", a: 0, options: ["Certified Cloud Practitioner", "Solutions Architect Associate", "Developer Associate", "SysOps Administrator"], exp: "해설: CCP(Cloud Practitioner)는 클라우드의 기본 개념을 다루는 가장 기초적인 인증입니다." },
+            { q: "7. 다음 중 NoSQL 데이터베이스 서비스는?", a: 3, options: ["Amazon RDS", "Amazon Aurora", "Amazon Redshift", "Amazon DynamoDB"], exp: "해설: DynamoDB는 완전 관리형 NoSQL 데이터베이스 서비스입니다." },
+            { q: "8. 사용하지 않는 리소스를 중지하여 비용을 아끼는 설계 원칙은?", a: 1, options: ["운영 우수성", "비용 최적화", "성능 효율성", "신뢰성"], exp: "해설: 불필요한 비용을 줄이고 효율을 높이는 것은 '비용 최적화'의 핵심입니다." },
+            { q: "9. 사용자나 그룹의 접근 권한을 제어하는 보안 서비스는?", a: 2, options: ["AWS Shield", "AWS WAF", "AWS IAM", "AWS KMS"], exp: "해설: IAM(Identity and Access Management)은 신원 및 접근 권한을 제어하는 핵심 서비스입니다." },
+            { q: "10. 필요한 리소스를 단 몇 분 만에 확보하여 빠르게 실험하는 능력은?", a: 3, options: ["탄력성", "내구성", "가용성", "민첩성"], exp: "해설: 인프라 구축 시간을 단축하여 비즈니스 변화에 빠르게 대응하는 능력을 '민첩성(Agility)'이라 합니다." }
+        ];
+
+        function renderQuiz() {
+            const quizDisplay = document.getElementById('quiz-display');
+            quizData.forEach((item, index) => {
+                const quizHtml = `
+                    <div class="quiz-item" id="quiz-item-${index}">
+                        <span class="question">${item.q}</span>
+                        <div class="options-list">
+                            ${item.options.map((opt, i) => `
+                                <div class="option-item">
+                                    <label class="option-label" data-value="${i}">
+                                        <input type="radio" name="q${index}" value="${i}"> ${opt}
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="explanation" id="exp${index}" style="display: none;">${item.exp}</div>
+                    </div>
+                `;
+                quizDisplay.innerHTML += quizHtml;
+            });
+        }
+
+        function calculateScore() {
+            let score = 0;
+            quizData.forEach((item, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                const quizItem = document.getElementById(`quiz-item-${index}`);
+                const selectedValue = selected ? parseInt(selected.value) : null;
+                const isCorrect = selectedValue === item.a;
+                
+                // 정답/오답 표시
+                if (selected) {
+                    const selectedLabel = selected.closest('label');
+                    if (isCorrect) {
+                        selectedLabel.classList.add('correct-answer');
+                        quizItem.classList.add('quiz-correct');
+                    } else {
+                        selectedLabel.classList.add('wrong-answer');
+                        quizItem.classList.add('quiz-wrong');
+                    }
+                } else {
+                    quizItem.classList.add('quiz-no-answer');
+                }
+                
+                // 정답 표시
+                const correctInput = document.querySelector(`input[name="q${index}"][value="${item.a}"]`);
+                const correctLabel = correctInput.closest('label');
+                if (!correctLabel.classList.contains('correct-answer')) {
+                    correctLabel.classList.add('show-correct');
+                }
+                
+                if (isCorrect) {
+                    score++;
+                }
+                
+                // 해설 표시
+                document.getElementById(`exp${index}`).style.display = 'block';
+            });
+
+            const resultBox = document.getElementById('result-box');
+            const scoreText = document.getElementById('score-text');
+            resultBox.style.display = 'flex';
+            resultBox.style.flexDirection = 'column';
+            resultBox.style.alignItems = 'center';
+            resultBox.style.justifyContent = 'center';
+            scoreText.innerText = `결과: ${quizData.length}문제 중 ${score}문제를 맞히셨습니다!`;
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        renderQuiz();
+    </script>''',
+                    'order': 6,
                 },
             ],
         }
@@ -2299,4 +2594,11 @@ session.close()
         
         self.stdout.write(self.style.SUCCESS(f'\n초기 데이터 로드 완료!'))
         self.stdout.write(self.style.SUCCESS(f'생성된 주제: {topic_count}개'))
+
+        from django.core.cache import cache
+
+        # 캐시 클리어
+        self.stdout.write('\n캐시를 클리어합니다...')
+        cache.clear()
+        self.stdout.write(self.style.SUCCESS('캐시 클리어 완료!'))
 

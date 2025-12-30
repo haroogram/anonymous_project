@@ -1345,3 +1345,307 @@ body {
     margin-top: 3rem;
     text-align: center;
 }
+
+/* AWS 대시보드 전용 스타일 */
+.dashboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 30px;
+}
+
+.nav-card {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    padding: 28px;
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-md);
+    height: 100%;
+}
+
+.nav-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--secondary-color);
+}
+
+.nav-card .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: nowrap;
+}
+
+.nav-card .icon {
+    font-size: 2.2rem;
+    line-height: 1;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+}
+
+.nav-card .card-header .card-title {
+    margin: 0;
+    color: var(--primary-color);
+    font-size: 1.15rem;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    flex: 1;
+    min-width: 0;
+}
+
+.nav-card p {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    line-height: 1.6;
+    margin: 0 0 20px 0;
+    letter-spacing: 0.01em;
+    flex: 1;
+}
+
+.btn-go {
+    display: inline-flex;
+    align-items: center;
+    color: var(--secondary-color);
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-top: auto;
+    transition: color 0.2s ease;
+}
+
+.nav-card:hover .btn-go {
+    color: var(--accent-color);
+}
+
+.nav-card.full-width {
+    grid-column: span 2;
+    background: linear-gradient(135deg, rgba(255, 249, 219, 0.5) 0%, rgba(255, 245, 230, 0.5) 100%);
+}
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+    .dashboard {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .nav-card.full-width {
+        grid-column: span 1;
+    }
+}
+
+/* AWS 퀴즈 스타일 */
+.quiz-item {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    padding: 24px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-md);
+}
+
+.quiz-item:hover {
+    border-color: var(--secondary-color);
+    box-shadow: var(--shadow-lg);
+}
+
+.quiz-item .question {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    display: block;
+    line-height: 1.5;
+}
+
+.quiz-item .options-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.quiz-item .option-item {
+    margin-bottom: 12px;
+}
+
+.quiz-item .option-item:last-child {
+    margin-bottom: 0;
+}
+
+.quiz-item .option-label {
+    display: block;
+    padding: 14px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: var(--white);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.quiz-item .option-label:hover {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.05));
+    border-color: var(--secondary-color);
+}
+
+.quiz-item .option-label input[type="radio"] {
+    margin-right: 12px;
+    cursor: pointer;
+    accent-color: var(--secondary-color);
+}
+
+.quiz-item .option-label input[type="radio"]:checked + span,
+.quiz-item .option-label:has(input[type="radio"]:checked) {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+    border-color: var(--secondary-color);
+    font-weight: 600;
+}
+
+.quiz-item .explanation {
+    display: none;
+    margin-top: 20px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.08));
+    border-left: 4px solid var(--secondary-color);
+    color: var(--text-color);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.quiz-item .explanation.show {
+    display: block;
+}
+
+/* 정답/오답 표시 */
+.quiz-item.quiz-correct {
+    border-left: 4px solid #10b981;
+}
+
+.quiz-item.quiz-wrong {
+    border-left: 4px solid #ef4444;
+}
+
+.quiz-item.quiz-no-answer {
+    border-left: 4px solid #f59e0b;
+}
+
+.option-label.correct-answer {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15)) !important;
+    border-color: #10b981 !important;
+    border-width: 2px;
+    position: relative;
+}
+
+.option-label.correct-answer::after {
+    content: '✓ 정답';
+    position: absolute;
+    right: 12px;
+    color: #10b981;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.option-label.wrong-answer {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(220, 38, 38, 0.15)) !important;
+    border-color: #ef4444 !important;
+    border-width: 2px;
+    position: relative;
+}
+
+.option-label.wrong-answer::after {
+    content: '✗ 오답';
+    position: absolute;
+    right: 12px;
+    color: #ef4444;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.option-label.show-correct {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1)) !important;
+    border-color: #10b981 !important;
+    border-width: 2px;
+    position: relative;
+}
+
+.option-label.show-correct:not(.correct-answer)::after {
+    content: '정답';
+    position: absolute;
+    right: 12px;
+    color: #10b981;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+#result-box {
+    display: none;
+    padding: 32px;
+    background: linear-gradient(135deg, var(--primary-color), #16213e);
+    color: var(--white);
+    border-radius: 12px;
+    text-align: center;
+    margin-top: 40px;
+    box-shadow: var(--shadow-lg);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 120px;
+}
+
+#result-box.show {
+    display: flex;
+}
+
+#result-box h2 {
+    color: var(--white);
+    margin: 0 0 12px 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+#result-box p {
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.btn-submit {
+    display: block;
+    width: 100%;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 32px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-md);
+    letter-spacing: 0.3px;
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.btn-submit:active {
+    transform: translateY(0);
+}
