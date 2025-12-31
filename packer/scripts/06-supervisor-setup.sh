@@ -5,6 +5,9 @@ echo "================================"
 echo "[6/8] Supervisor 설치"
 echo "================================"
 
+# 패키지 목록 업데이트
+sudo DEBIAN_FRONTEND=noninteractive apt-get update -y
+
 # Supervisor 설치 (프로세스 관리)
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y supervisor
 

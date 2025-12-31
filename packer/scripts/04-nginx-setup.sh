@@ -5,6 +5,9 @@ echo "================================"
 echo "[4/8] Nginx 설치 및 설정"
 echo "================================"
 
+# 패키지 목록 업데이트
+sudo DEBIAN_FRONTEND=noninteractive apt-get update -y
+
 # Nginx 설치
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y nginx
 
