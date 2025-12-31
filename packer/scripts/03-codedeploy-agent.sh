@@ -14,6 +14,9 @@ if [ -d "$CODEDEPLOY_HOME" ]; then
     exit 0
 fi
 
+# 패키지 목록 업데이트
+sudo DEBIAN_FRONTEND=noninteractive apt-get update -y
+
 # Ruby 설치 (CodeDeploy Agent는 Ruby로 작성됨)
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
     ruby \
