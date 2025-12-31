@@ -119,6 +119,17 @@ build {
     script = "packer/scripts/02-python-setup.sh"
   }
 
+  # 2.5. requirements.txt 복사 (AMI 빌드 시점에 패키지 설치용)
+  provisioner "file" {
+    source      = "requirements.txt"
+    destination = "/tmp/requirements.txt"
+  }
+
+  # 2.6. Python 패키지 사전 설치 (인터넷 접근 가능한 AMI 빌드 시점에 설치)
+  provisioner "shell" {
+    script = "packer/scripts/02-5-python-packages.sh"
+  }
+
   # 3. CodeDeploy Agent 설치
   provisioner "shell" {
     script = "packer/scripts/03-codedeploy-agent.sh"

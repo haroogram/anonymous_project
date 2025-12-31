@@ -22,8 +22,12 @@ sudo python3 -m pip install --upgrade pip setuptools wheel
 python3 --version
 pip3 --version
 
+# 전역 Python 패키지 설치 (AMI 빌드 시점에 미리 설치)
+# gunicorn: 웹 서버 (배포 시 가상환경에도 설치되지만, AMI에 미리 설치해두면 빠름)
+sudo pip3 install gunicorn
+
 # 전역 Python 패키지 (필요한 경우만)
 # sudo pip3 install --upgrade pip setuptools wheel
 
-echo "✅ Python 3 설치 완료"
+echo "✅ Python 3 및 gunicorn 설치 완료"
 
