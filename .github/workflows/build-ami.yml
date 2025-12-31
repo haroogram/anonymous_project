@@ -8,6 +8,18 @@ on:
         required: false
         default: false
         type: boolean
+      asg_desired_capacity:
+        description: 'ASG Desired Capacity (leave empty to keep current)'
+        required: false
+        type: string
+      asg_min_size:
+        description: 'ASG Min Size (leave empty to keep current)'
+        required: false
+        type: string
+      asg_max_size:
+        description: 'ASG Max Size (leave empty to keep current)'
+        required: false
+        type: string
 #   push:
 #     paths:
 #       - 'packer/**'
@@ -156,13 +168,90 @@ jobs:
           echo ""
           if [ "${{ job.status }}" == "success" ]; then
             echo "✅ AMI 빌드가 성공적으로 완료되었습니다!"
-            echo ""
-            echo "다음 단계:"
-            echo "1. EC2 인스턴스 생성 시 이 AMI를 사용하세요"
-            echo "2. 또는 기존 EC2 인스턴스를 이 AMI로 교체하세요"
           else
             echo "❌ AMI 빌드가 실패했습니다."
             echo "로그를 확인하세요."
           fi
+
+        # [5] 최신 AMI ID 가져오기
+      - name: Get Latest AMI ID
+        id: ami
+        run: |
+            echo "[AMI] Retrieving latest AMI..."
+            AMI_ID=$(aws ec2 describe-images \
+                --owners self \
+                --filters "Name=name,Values=anonymous-project-*" \
+                --query "Images | sort_by(@, &CreationDate)[-1].ImageId" \
+                --output text)
+            echo "AMI_ID=$AMI_ID" >> $GITHUB_ENV
+            echo "[AMI] Latest AMI: $AMI_ID"
+
+        # [6] Launch Template 새 버전 생성
+      - name: Create New Launch Template Version
+        run: |
+            LT_ID=${{ secrets.LAUNCH_TEMPLATE_ID }}
+            echo "[LT] Fetching current version..."
+            LATEST_VERSION=$(aws ec2 describe-launch-template-versions \
+                --launch-template-id $LT_ID \
+                --query 'sort_by(LaunchTemplateVersions, &VersionNumber)[-1].VersionNumber' \
+                --output text)
+            echo "[LT] Creating new version with AMI: ${AMI_ID}"
+            aws ec2 create-launch-template-version \
+                --launch-template-id $LT_ID \
+                --source-version $LATEST_VERSION \
+                --launch-template-data "{
+                \"ImageId\": \"${AMI_ID}\",
+                \"TagSpecifications\": [
+                    {\"ResourceType\": \"instance\", \"Tags\": [{\"Key\": \"Name\", \"Value\": \"anonymous-project\"}]}
+                ]
+                }"
+
+        # [7] 기본 Launch Template 버전 갱신
+      - name: Set Default Launch Template Version
+        run: |
+            LT_ID=${{ secrets.LAUNCH_TEMPLATE_ID }}
+            LATEST_VERSION=$(aws ec2 describe-launch-template-versions \
+                --launch-template-id $LT_ID \
+                --query 'sort_by(LaunchTemplateVersions, &VersionNumber)[-1].VersionNumber' \
+                --output text)
+            aws ec2 modify-launch-template \
+                --launch-template-id $LT_ID \
+                --default-version $LATEST_VERSION
+            echo "[LT] Default version updated to ${LATEST_VERSION}"
+
+        # [8] Auto Scaling Group 설정 업데이트 (선택적)
+      - name: Update ASG Capacity Settings
+        if: ${{ inputs.asg_desired_capacity != '' || inputs.asg_min_size != '' || inputs.asg_max_size != '' }}
+        run: |
+            echo "[ASG] Updating capacity settings..."
+            ASG_NAME="${{ secrets.ASG_NAME }}"
+            UPDATE_ARGS="--auto-scaling-group-name $ASG_NAME"
+            
+            if [ -n "${{ inputs.asg_min_size }}" ]; then
+                UPDATE_ARGS="$UPDATE_ARGS --min-size ${{ inputs.asg_min_size }}"
+                echo "[ASG] Min Size: ${{ inputs.asg_min_size }}"
+            fi
+            
+            if [ -n "${{ inputs.asg_max_size }}" ]; then
+                UPDATE_ARGS="$UPDATE_ARGS --max-size ${{ inputs.asg_max_size }}"
+                echo "[ASG] Max Size: ${{ inputs.asg_max_size }}"
+            fi
+            
+            if [ -n "${{ inputs.asg_desired_capacity }}" ]; then
+                UPDATE_ARGS="$UPDATE_ARGS --desired-capacity ${{ inputs.asg_desired_capacity }}"
+                echo "[ASG] Desired Capacity: ${{ inputs.asg_desired_capacity }}"
+            fi
+            
+            aws autoscaling update-auto-scaling-group $UPDATE_ARGS
+            echo "[ASG] Capacity settings updated successfully."
+
+        # [9] Auto Scaling Group 롤링 업데이트 트리거
+      - name: Trigger ASG Rolling Update
+        run: |
+            echo "[ASG] Starting rolling update..."
+            aws autoscaling start-instance-refresh \
+                --auto-scaling-group-name ${{ secrets.ASG_NAME }} \
+                --strategy Rolling
+            echo "[ASG] Rolling update triggered successfully."
 
 
