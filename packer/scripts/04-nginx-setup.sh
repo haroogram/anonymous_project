@@ -29,6 +29,13 @@ server {
 
     client_max_body_size 100M;
 
+    # 헬스 체크
+    location /health {
+        access_log off;
+        return 200 'OK';
+        add_header Content-Type text/plain;
+    }
+
     # Static files
     location /static/ {
         alias /home/ubuntu/anonymous/staticfiles/;
