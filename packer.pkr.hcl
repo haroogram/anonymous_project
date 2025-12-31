@@ -88,7 +88,7 @@ source "amazon-ebs" "anonymous_project" {
   # SSH 접근을 위한 보안 그룹 설정
   # Public Subnet: 인터넷에서 접근 가능하도록 설정
   # 보안을 위해 특정 IP만 허용하려면 CIDR 블록을 변경하세요
-  temporary_security_group_source_cidr = "0.0.0.0/0"  # Public Subnet이므로 인터넷 접근 허용
+  temporary_security_group_source_cidrs = "0.0.0.0/0"  # Public Subnet이므로 인터넷 접근 허용
 
   # User data로 초기 설정 (선택사항)
   # user_data_file = "packer/user-data.sh"
