@@ -1,0 +1,10 @@
+# Packer 변수 파일 (민감 정보 포함)
+variables.pkr.hcl
+
+# Packer 빌드 결과
+packer-manifest.json
+*.pkr.hcl.backup
+
+# Packer 캐시
+.packer/
+
