@@ -51,7 +51,8 @@ jobs:
             -x ".vscode/*" \
             -x ".idea/*" \
             -x "db.sqlite3" \
-            -x "logs/*"
+            -x "logs/*" \
+            -x "*.md"
 
       - name: Upload to S3
         run: |
