@@ -5,10 +5,8 @@ echo "================================"
 echo "[5/8] MariaDB Client 설치"
 echo "================================"
 
-# 패키지 목록 업데이트
-sudo DEBIAN_FRONTEND=noninteractive apt-get update -y
-
 # MariaDB Client 설치 (RDS MariaDB 접속용)
+# 참고: apt-get update는 01-base-setup.sh에서 이미 실행됨
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
     mariadb-client \
     libmariadb-dev \
