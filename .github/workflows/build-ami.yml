@@ -208,6 +208,7 @@ jobs:
 
         # [7] 기본 Launch Template 버전 갱신
       - name: Set Default Launch Template Version
+        id: lt_version
         run: |
             LT_ID=${{ secrets.LAUNCH_TEMPLATE_ID }}
             LATEST_VERSION=$(aws ec2 describe-launch-template-versions \
@@ -218,8 +219,31 @@ jobs:
                 --launch-template-id $LT_ID \
                 --default-version $LATEST_VERSION
             echo "[LT] Default version updated to ${LATEST_VERSION}"
+            echo "LATEST_VERSION=${LATEST_VERSION}" >> $GITHUB_ENV
+            echo "LT_ID=${LT_ID}" >> $GITHUB_ENV
 
-        # [8] Auto Scaling Group 설정 업데이트 (선택적)
+        # [8] ASG의 Launch Template 버전 업데이트 (중요!)
+      - name: Update ASG Launch Template Version
+        run: |
+            echo "[ASG] Updating Launch Template version..."
+            ASG_NAME="${{ secrets.ASG_NAME }}"
+            LT_ID="${{ env.LT_ID }}"
+            LATEST_VERSION="${{ env.LATEST_VERSION }}"
+            
+            echo "[ASG] Current ASG configuration:"
+            aws autoscaling describe-auto-scaling-groups \
+                --auto-scaling-group-names $ASG_NAME \
+                --query 'AutoScalingGroups[0].{LaunchTemplate:LaunchTemplate,DesiredCapacity:DesiredCapacity,MinSize:MinSize,MaxSize:MaxSize}' \
+                --output json
+            
+            echo "[ASG] Updating to Launch Template version ${LATEST_VERSION}..."
+            aws autoscaling update-auto-scaling-group \
+                --auto-scaling-group-name $ASG_NAME \
+                --launch-template "LaunchTemplateId=${LT_ID},Version=${LATEST_VERSION}"
+            
+            echo "[ASG] Launch Template version updated successfully to ${LATEST_VERSION}"
+
+        # [9] Auto Scaling Group 설정 업데이트 (선택적)
       - name: Update ASG Capacity Settings
         if: ${{ inputs.asg_desired_capacity != '' || inputs.asg_min_size != '' || inputs.asg_max_size != '' }}
         run: |
@@ -245,13 +269,44 @@ jobs:
             aws autoscaling update-auto-scaling-group $UPDATE_ARGS
             echo "[ASG] Capacity settings updated successfully."
 
-        # [9] Auto Scaling Group 롤링 업데이트 트리거
+        # [10] ASG 설정 확인 (디버깅용)
+      - name: Verify ASG Configuration
+        run: |
+            echo "[ASG] Verifying ASG configuration..."
+            ASG_NAME="${{ secrets.ASG_NAME }}"
+            aws autoscaling describe-auto-scaling-groups \
+                --auto-scaling-group-names $ASG_NAME \
+                --query 'AutoScalingGroups[0].{
+                    LaunchTemplate:LaunchTemplate,
+                    DesiredCapacity:DesiredCapacity,
+                    MinSize:MinSize,
+                    MaxSize:MaxSize,
+                    Instances:Instances[*].{InstanceId:InstanceId,LaunchTemplate:LaunchTemplate}
+                }' \
+                --output json
+            echo "[ASG] Configuration verification complete."
+
+        # [11] Auto Scaling Group 롤링 업데이트 트리거
       - name: Trigger ASG Rolling Update
         run: |
             echo "[ASG] Starting rolling update..."
-            aws autoscaling start-instance-refresh \
-                --auto-scaling-group-name ${{ secrets.ASG_NAME }} \
-                --strategy Rolling
+            ASG_NAME="${{ secrets.ASG_NAME }}"
+            
+            # Instance Refresh 시작
+            REFRESH_ID=$(aws autoscaling start-instance-refresh \
+                --auto-scaling-group-name $ASG_NAME \
+                --preferences '{
+                    "MinHealthyPercentage": 50,
+                    "InstanceWarmup": 300,
+                    "CheckpointPercentages": [50, 100],
+                    "CheckpointDelay": 60,
+                    "SkipMatching": false
+                }' \
+                --query 'InstanceRefreshId' \
+                --output text)
+            
             echo "[ASG] Rolling update triggered successfully."
+            echo "[ASG] Instance Refresh ID: ${REFRESH_ID}"
+            echo "[ASG] Monitor progress with: aws autoscaling describe-instance-refreshes --auto-scaling-group-name ${ASG_NAME} --instance-refresh-ids ${REFRESH_ID}"
 
 
