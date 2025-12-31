@@ -144,11 +144,12 @@ build {
     script = "packer/scripts/07-directories-setup.sh"
   }
 
-  # 8. 환경 변수 및 설정 파일 복사
-  provisioner "file" {
-    source      = "packer/configs/"
-    destination = "/tmp/packer-configs/"
-  }
+  # 8. 환경 변수 및 설정 파일 복사 (선택사항)
+  # configs 디렉토리가 없으면 이 단계는 스킵됩니다
+  # provisioner "file" {
+  #   source      = "packer/configs/"
+  #   destination = "/tmp/packer-configs/"
+  # }
 
   # 9. 최종 정리 및 최적화
   provisioner "shell" {
