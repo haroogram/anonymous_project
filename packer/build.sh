@@ -25,11 +25,15 @@ fi
 chmod +x packer/scripts/*.sh
 
 echo ""
-echo "[1/3] Packer 설정 검증 중..."
+echo "[1/3] Packer 플러그인 초기화 중..."
+packer init packer.pkr.hcl
+
+echo ""
+echo "[2/3] Packer 설정 검증 중..."
 packer validate -var-file=packer/variables.pkr.hcl packer.pkr.hcl
 
 echo ""
-echo "[2/3] AMI 빌드 시작..."
+echo "[3/3] AMI 빌드 시작..."
 echo "이 작업은 10-15분 정도 소요될 수 있습니다."
 echo ""
 

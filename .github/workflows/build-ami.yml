@@ -55,6 +55,12 @@ jobs:
           fi
           echo "✅ 변수 파일 확인 완료"
 
+      - name: Initialize Packer plugins
+        run: |
+          echo "Packer 플러그인 초기화 중..."
+          packer init packer.pkr.hcl
+          echo "✅ Packer 플러그인 초기화 완료"
+
       - name: Validate Packer configuration
         run: |
           echo "Packer 설정 검증 중..."
