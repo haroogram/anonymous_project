@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>서버</title>
+</head>
+<body>
+
+<h3>Linux 서버</h3>
+<p>
+리눅스는 무료 오픈소스이며, 높은 보안성과 안정성, 뛰어난 성능과 유연성을 제공해
+서버 OS로 적합하다.
+또한 재부팅 없는 업데이트, 효율적인 자원 관리, 빠른 버그 수정,
+다양한 환경 지원, 클라우드·DevOps와의 높은 호환성이 큰 장점이다.
+
+<p>
+서버를 배우기 전에 포트의 개념을 알 필요가 있다.
+</p>
+
+<ul>
+  <li>IP 주소: 어느 서버인가</li>
+  <li>포트 번호: 그 서버 안에서 어떤 서비스인가</li>
+  <li>프로세스: 그 포트를 실제로 열고 있는 프로그램</li>
+</ul>
+
+<p><strong>즉, 서버 = IP + 포트 + 프로세스</strong></p>
+
+</p>
+
+<h3>1) 웹 사이트 서버</h3>
+<p>
+사용자가 브라우저에 주소를 입력하면 그 요청을 받아서 응답을 보내줄 서버가 필요하다.
+그 역할을 하는 것이 웹 서버다.
+네트워크가 연결되고 IP 주소를 알아도 웹사이트 서버가 없으면
+사용자는 요청을 보내도 응답을 받을 수 없다.
+</p>
+
+<p>Apache HTTP Server, Nginx, Lighttpd 등이 있다.</p>
+
+<h4>Nginx 설치</h4>
+<pre>sudo apt install -y nginx</pre>
+
+<img src="img/nginx-1.png" width="800">
+
+<pre>
+systemctl enable nginx
+systemctl restart nginx
+systemctl status nginx
+</pre>
+
+<p>
+위 명령어를 차례대로 실행한 후
+<code>active (running)</code> 상태를 확인한다.
+</p>
+
+<p>리눅스 파이어폭스 접속 후 주소창에 <code>localhost</code>를 입력한다.</p>
+<img src="img/nginx-2.png" width="800">
+
+<p><strong>welcome to nginx!</strong>가 뜨면 정상이다.</p>
+
+<h3>localhost</h3>
+<p>
+<code>localhost</code>는 현재 사용 중인 자기 자신의 컴퓨터를 가리키는 이름이다.
+실제로는 IP 주소 <code>127.0.0.1</code>을 의미하며,
+외부 네트워크를 거치지 않고 내 컴퓨터에서 실행 중인 서버를 확인할 때 사용한다.
+</p>
+
+<p>리눅스 터미널에서 <code>systemctl stop nginx</code>를 실행한다.</p>
+<img src="img/nginx-3.png" width="800">
+
+<p>웹 서버를 꺼버리면 웹 페이지에 아무것도 표시되지 않는다.</p>
+
+<p><code>sudo ss -tulpn | grep nginx</code></p>
+<p>
+<code>ss</code> 명령어는 현재 열려 있는 포트와 해당 포트를 사용하는 프로세스를 확인할 수 있다.
+프로세스 정보는 관리자 권한이 필요하므로 <code>sudo</code>를 사용한다.
+</p>
+
+<img src="img/nginx-4.png" width="800">
+<p>포트 번호가 80번인걸 확인할 수 있다.</p>
+
+<p>
+지금까지 nginx를 통해 웹 서버가
+<strong>프로세스로 실행되고, 포트를 열어 요청을 처리한다</strong>는 것을 확인했다.
+이 구조는 다른 모든 서버에서도 동일하게 적용된다.
+</p>
+
+<hr>
+
+<h3>2)DNS 서버</h3>
+<p>
+DNS는 이름을 IP 주소로 바꿔주는 서버다.
+
+사람은 숫자(IP 주소)보다 이름을 쓰기 때문에
+브라우저에서 도메인 이름을 입력하면,
+DNS 서버가 해당 이름에 대응하는 IP 주소를 알려준다.
+DNS가 없으면 IP 주소를 외워서 접속해야한다.
+
+기본 포트는 <strong>53번</strong>이다.
+</p>
+
+<p><code>sudo apt install -y bind9</code></p>
+<p><code>sudo systemctl status bind9</code></p>
+<img src="img/dns-1.png" width="800">
+<p>active(running) 상태 확인.</p>
+<pre>
+sudo systemctl enable bind9
+sudo systemctl restart bind9
+sudo systemctl status bind9
+</pre>
+
+<p><code>sudo vim /etc/hosts</code></p>
+<img src="img/dns-2.png" width="800">
+<p><code>127.0.0.1 linux-project.local 추가</code></p>
+<img src="img/dns-3.png" width="800">
+<p><code>주소창을 보면 설정한 linux-project.local로 접속한걸 알 수 있다.</code></p>
+<hr>
+
+<h3>3) DHCP 서버</h3>
+
+<p>
+DHCP 서버는 클라이언트에게 IP 주소를 자동으로 할당해주는 서버이다.<br>
+기본 포트는 <strong>67번(서버) / 68번(클라이언트)</strong>을 사용한다.
+</p>
+
+<p><code>sudo apt install isc-dhcp-server</code></p>
+<p><code>sudo vim /etc/default/isc-dhcp-server</code></p>
+
+<img src="img/dhcp-1.png" width="800">
+<p>
+INTERFACESv4="ens33"로 수정한다. (DHCP 서버가 동작할 네트워크 인터페이스 지정)
+</p>
+
+<img src="img/dhcp-2.png" width="800">
+<p><code>ls /etc/netplan</code> 명령어로 설정 파일을 확인한다.</p>
+<p><code>sudo vim /etc/netplan/01-network-manager-all.yaml</code></p>
+
+<img src="img/dhcp-3.png" width="800">
+<p>
+화면과 같이 수정하여 DHCP 서버에 고정 IP를 설정한다.
+</p>
+<p><code>sudo netplan apply</code> 명령어로 적용한다.</p>
+
+<p>DHCP 설정 파일을 작성한다.</p>
+<p><code>sudo vim /etc/dhcp/dhcpd.conf</code></p>
+
+<img src="img/dhcp-4.png" width="800">
+
+<p>leases 파일을 생성한다.</p>
+<p>
+<code>
+sudo touch /var/lib/dhcp/dhcpd.leases<br>
+sudo chown root:root /var/lib/dhcp/dhcpd.leases<br>
+sudo chmod 644 /var/lib/dhcp/dhcpd.leases
+</code>
+</p>
+
+<p>설정 파일 문법을 최종 확인한다. (에러가 없어야 함)</p>
+<p><code>sudo dhcpd -t -cf /etc/dhcp/dhcpd.conf</code></p>
+
+<p>
+<code>
+sudo systemctl restart isc-dhcp-server<br>
+sudo systemctl status isc-dhcp-server
+</code>
+</p>
+
+<img src="img/dhcp-5.png" width="800">
+
+<p>
+VMware 환경에서 DHCP 서버(server1)가 클라이언트(serverb)에 IP를 할당하는지 확인한다.
+</p>
+
+<p>server1(DHCP 서버)에서 로그 창을 실행한다.</p>
+<p><code>sudo journalctl -u isc-dhcp-server -f</code></p>
+
+<img src="img/dhcp-6.png" width="800">
+<p>DHCPREQUEST 192.168.238.130 로그를 확인한다.</p>
+
+<p>serverb(클라이언트 서버)에서 최종 IP 할당 여부를 확인한다.</p>
+
+<img src="img/dhcp-7.png" width="800">
+<p>IP 주소 192.168.238.130이 DHCP를 통해 할당된 것을 확인한다.</p>
+
+<hr>
+
+<h3>4) 데이터베이스(DB) 서버</h3>
+
+<p>
+데이터베이스 서버는 데이터를 체계적으로 저장하고 관리하기 위한 서버이다.
+본 실습에서는 리눅스 환경에서 MariaDB를 설치하여
+기본적인 데이터베이스 구성과 데이터 조작을 진행한다.
+</p>
+
+<p><code>sudo apt install -y mariadb-server</code></p>
+<p><code>sudo systemctl status mariadb</code></p>
+<img src="img/db-1.png" width="800">
+
+<p>서비스 상태가 <strong>Active: active (running)</strong> 인지 확인한다.</p>
+<img src="img/db-2.png" width="800">
+
+<p>보안 설정 실행</p>
+<p><code>sudo mysql_secure_installation</code></p>
+<img src="img/db-3.png" width="800">
+
+<p>
+처음 나오는 비밀번호 입력 질문은 Enter를 입력하고,
+이후 질문은 모두 Y로 설정한다.
+중간에 root 비밀번호 설정 단계에서만 비밀번호를 주의하여 입력한다.
+</p>
+
+<hr>
+
+<p><strong>데이터베이스 생성</strong></p>
+<p>
+<code>
+sudo mariadb<br>
+CREATE DATABASE testdb;<br>
+SHOW DATABASES;
+</code>
+</p>
+<img src="img/db-4.png" width="800">
+
+<p>
+SQL 명령어는 대문자로 작성하는 것이 관례이며,
+각 명령어의 끝에는 반드시 세미콜론(;)을 붙인다.
+</p>
+
+<hr>
+
+<p><strong>사용자 생성 및 권한 부여</strong></p>
+<p>
+<code>
+CREATE USER 'testuser'@'localhost' IDENTIFIED BY '1234';
+</code>
+</p>
+
+<p>
+<code>
+GRANT ALL PRIVILEGES ON testdb.* TO 'testuser'@'localhost';<br>
+FLUSH PRIVILEGES;
+</code>
+</p>
+
+<p><code>mariadb -u testuser -p</code></p>
+<img src="img/db-5.png" width="800">
+
+<p>
+testuser 계정으로 접속 후
+<code>USE testdb;</code> 명령 실행 시 에러가 발생하지 않으면
+정상적으로 권한이 부여된 것이다.
+</p>
+
+<hr>
+
+<p><strong>테이블 생성</strong></p>
+<p>
+contacts 테이블은 이름, 전화번호, 이메일 정보를 저장하기 위한 테이블이다.
+각 컬럼의 의미는 다음과 같다.
+</p>
+
+<p>
+<code>id</code> 컬럼은 각 데이터를 구분하기 위한 고유 식별자이며,
+<code>INT</code> 타입으로 설정하였다.
+<code>AUTO_INCREMENT</code> 옵션은 데이터가 추가될 때마다
+값이 자동으로 증가하도록 하였다.
+</p>
+
+<p>
+<code>PRIMARY KEY</code>는 테이블 내에서 중복될 수 없는 값이다.
+</p>
+
+<p>
+<code>name VARCHAR(50)</code>는 이름을 저장하는 컬럼으로,
+최대 50자의 문자열을 저장할 수 있다.
+<code>NOT NULL</code> 옵션을 사용하여 반드시 값이 입력되도록 설정하였다.
+</p>
+
+<p>
+<code>phone VARCHAR(20)</code>는 전화번호를 저장하는 컬럼이다.
+전화번호에는 하이픈(-)이 포함될 수 있으므로
+숫자형이 아닌 문자열 타입(VARCHAR)으로 설정하였다.
+</p>
+
+<p>
+<code>email VARCHAR(100)</code>는 이메일 주소를 저장하는 컬럼이다.
+</p>
+
+<p>
+VARCHAR는 가변 길이 문자열 타입으로,
+실제 입력된 문자열 길이에 따라 저장 공간을 사용한다.
+</p>
+
+<p>
+<code>
+CREATE TABLE contacts (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL,
+  phone VARCHAR(20),
+  email VARCHAR(100)
+);
+</code>
+</p>
+
+<img src="img/db-6.png" width="800">
+
+<p><code>SHOW TABLES;</code></p>
+<img src="img/db-7.png" width="800">
+<p>테이블 생성 확인</p>
+
+<hr>
+
+<p><strong>데이터 삽입</strong></p>
+<p>
+<code>
+INSERT INTO contacts (name, phone, email) VALUES<br>
+('홍길동', '010-1111-2222', 'hong@test.com'),<br>
+('김철수', '010-3333-4444', 'kim@test.com'),<br>
+('이영희', '010-5555-6666', 'lee@test.com');
+</code>
+</p>
+
+<p><strong>데이터 조회 (SELECT)</strong></p>
+<p><code>SELECT * FROM contacts;</code></p>
+<img src="img/db-8.png" width="800">
+
+<hr>
+
+<p><strong>특정 데이터 조회</strong></p>
+
+<p>이름으로 조회</p>
+<p><code>SELECT * FROM contacts WHERE name = '김철수';</code></p>
+
+<p>이메일로 조회</p>
+<p><code>SELECT * FROM contacts WHERE email = 'lee@test.com';</code></p>
+
+<p>전화번호 일부로 조회</p>
+<p><code>SELECT * FROM contacts WHERE phone LIKE '010-5555%';</code></p>
+
+<img src="img/db-9.png" width="800">
+
+<hr>
+
+<p><strong>특정 데이터 삭제 (DELETE)</strong></p>
+
+<p>
+DELETE 명령어는 WHERE 조건 없이 실행할 경우
+테이블의 모든 데이터가 삭제되므로 주의해야 한다.
+</p>
+
+<p>삭제 전 테이블 상태 확인</p>
+<p><code>SELECT * FROM contacts;</code></p>
+
+<p>이름으로 데이터 삭제</p>
+<p><code>DELETE FROM contacts WHERE name = '김철수';</code></p>
+
+<p>전화번호 일부로 데이터 삭제</p>
+<p><code>DELETE FROM contacts WHERE phone LIKE '010-5555%';</code></p>
+
+<p>삭제 결과 확인</p>
+<p><code>SELECT * FROM contacts;</code></p>
+
+<img src="img/db-10.png" width="800">
+
+<hr>
+<p>이상 리눅스 교육 자료 파트 종료</p>
+</body>
+</html>

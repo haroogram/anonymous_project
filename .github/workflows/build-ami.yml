@@ -1,0 +1,162 @@
+name: Build AMI with Packer
+
+on:
+  workflow_dispatch:  # 수동 실행
+    inputs:
+      force_rebuild:
+        description: 'Force rebuild even if no changes'
+        required: false
+        default: false
+        type: boolean
+  push:
+    paths:
+      - 'packer/**'
+      - 'packer.pkr.hcl'
+      - 'requirements.txt'
+      - '.github/workflows/build-ami.yml'
+    branches:
+      - main
+#   schedule:
+    # 매월 1일 자정에 자동 실행 (보안 업데이트 반영)
+    # - cron: '0 0 1 * *'
+
+env:
+  AWS_REGION: ap-northeast-2
+  PACKER_VERSION: "1.11.0"
+
+jobs:
+  build-ami:
+    name: Build Custom AMI
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Packer
+        uses: hashicorp/setup-packer@main
+        with:
+          version: ${{ env.PACKER_VERSION }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Check Packer variables file
+        id: check-vars
+        run: |
+          if [ ! -f "packer/variables.pkr.hcl" ]; then
+            echo "❌ packer/variables.pkr.hcl 파일이 없습니다."
+            echo "packer/variables.pkr.hcl.example을 복사하여 설정하세요."
+            exit 1
+          fi
+          echo "✅ 변수 파일 확인 완료"
+
+      - name: Validate Packer configuration
+        run: |
+          echo "Packer 설정 검증 중..."
+          packer validate -var-file=packer/variables.pkr.hcl packer.pkr.hcl
+          echo "✅ Packer 설정 검증 완료"
+
+      - name: Make scripts executable
+        run: |
+          chmod +x packer/scripts/*.sh
+          echo "✅ 스크립트 실행 권한 부여 완료"
+
+      - name: Build AMI
+        id: build
+        run: |
+          echo "================================"
+          echo "AMI 빌드 시작"
+          echo "================================"
+          echo "이 작업은 10-15분 정도 소요될 수 있습니다."
+          echo ""
+          
+          # Packer 빌드 실행
+          packer build -var-file=packer/variables.pkr.hcl packer.pkr.hcl | tee packer-build.log
+          
+          # AMI ID 추출
+          AMI_ID=$(grep -oP 'ami-[a-z0-9]{17}' packer-build.log | tail -1 || grep -o 'ami-[a-z0-9]*' packer-manifest.json | head -1)
+          
+          if [ -z "$AMI_ID" ]; then
+            echo "❌ AMI ID를 찾을 수 없습니다."
+            cat packer-build.log
+            exit 1
+          fi
+          
+          echo "AMI_ID=$AMI_ID" >> $GITHUB_ENV
+          echo "✅ AMI 빌드 완료: $AMI_ID"
+          
+          # 출력 설정
+          echo "ami-id=$AMI_ID" >> $GITHUB_OUTPUT
+
+      - name: Save AMI ID to Parameter Store
+        run: |
+          echo "AMI ID를 Systems Manager Parameter Store에 저장 중..."
+          
+          aws ssm put-parameter \
+            --name "/anonymous-project/ami-id" \
+            --value "${{ env.AMI_ID }}" \
+            --type "String" \
+            --description "Latest AMI ID for anonymous-project built on $(date -u +%Y-%m-%d)" \
+            --overwrite \
+            --region ${{ env.AWS_REGION }}
+          
+          echo "✅ AMI ID 저장 완료: ${{ env.AMI_ID }}"
+
+      - name: Tag AMI
+        run: |
+          echo "AMI에 태그 추가 중..."
+          
+          aws ec2 create-tags \
+            --resources ${{ env.AMI_ID }} \
+            --tags \
+              Key=Name,Value=anonymous-project-ami \
+              Key=Project,Value=anonymous-project \
+              Key=Environment,Value=production \
+              Key=BuiltBy,Value=github-actions \
+              Key=BuildDate,Value=$(date -u +%Y-%m-%d) \
+              Key=CommitSHA,Value=${{ github.sha }} \
+            --region ${{ env.AWS_REGION }}
+          
+          echo "✅ 태그 추가 완료"
+
+      - name: Upload build manifest
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: packer-manifest
+          path: |
+            packer-manifest.json
+            packer-build.log
+          retention-days: 30
+
+      - name: Build summary
+        if: always()
+        run: |
+          echo "================================"
+          echo "AMI 빌드 요약"
+          echo "================================"
+          echo "AMI ID: ${{ env.AMI_ID }}"
+          echo "리전: ${{ env.AWS_REGION }}"
+          echo "커밋: ${{ github.sha }}"
+          echo "브랜치: ${{ github.ref }}"
+          echo ""
+          echo "AMI 확인:"
+          echo "https://console.aws.amazon.com/ec2/home?region=${{ env.AWS_REGION }}#Images:visibility=owned-by-me;search=${{ env.AMI_ID }}"
+          echo ""
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✅ AMI 빌드가 성공적으로 완료되었습니다!"
+            echo ""
+            echo "다음 단계:"
+            echo "1. EC2 인스턴스 생성 시 이 AMI를 사용하세요"
+            echo "2. 또는 기존 EC2 인스턴스를 이 AMI로 교체하세요"
+          else
+            echo "❌ AMI 빌드가 실패했습니다."
+            echo "로그를 확인하세요."
+          fi
+
+

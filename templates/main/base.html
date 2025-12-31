@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Anonymous Project{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- 헤더 -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo">
+                        <a href="{% url 'index' %}">
+                            <h1>Anonymous Project</h1>
+                        </a>
+                    </div>
+                    <div class="visitor-stats">
+                        <span class="visitor-stat-item">
+                            <span class="visitor-label">오늘:</span>
+                            <span class="visitor-count">{{ today_visitors|default:0 }}</span>
+                        </span>
+                        <span class="visitor-stat-item">
+                            <span class="visitor-label">전체:</span>
+                            <span class="visitor-count">{{ total_visitors|default:0 }}</span>
+                        </span>
+                    </div>
+                </div>
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="{% url 'index' %}">홈</a></li>
+                        <li><a href="{% url 'tutorial' 'network' %}">Network</a></li>
+                        <li><a href="{% url 'tutorial' 'linux' %}">Linux</a></li>
+                        <li><a href="{% url 'tutorial' 'python' %}">Python</a></li>
+                        <li><a href="{% url 'tutorial' 'aws' %}">AWS</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <button class="search-btn">검색</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 메인 컨텐츠 -->
+    <main class="main-content">
+        <div class="container">
+            <div class="content-wrapper">
+                {% block sidebar %}
+                {% if topics %}
+                <aside class="sidebar">
+                    <div class="sidebar-menu">
+                        <a href="{% url 'tutorial' category %}"><h3>{{ category_name|default:"목차" }}</h3></a>
+                        <ul>
+                            {% for topic_item in topics %}
+                            <li>
+                                <a href="{% url 'topic_detail' category topic_item.slug %}" 
+                                   {% if topic_item.slug == topic %}class="active"{% endif %}>
+                                    {{ topic_item.title }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </aside>
+                {% endif %}
+                {% endblock %}
+
+                <div class="content-area">
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>anonymous</h4>
+                    <p>프로그래밍을 쉽고 재미있게 배울 수 있는<br>온라인 학습 사이트입니다.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>빠른 링크</h4>
+                    <ul>
+                        <li><a href="{% url 'index' %}">홈</a></li>
+                        <li><a href="#about">소개</a></li>
+                        <li><a href="#contact">문의</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>카테고리</h4>
+                    <ul>
+                        <li><a href="{% url 'tutorial' 'network' %}">Network</a></li>
+                        <li><a href="{% url 'tutorial' 'linux' %}">Linux</a></li>
+                        <li><a href="{% url 'tutorial' 'python' %}">Python</a></li>
+                        <li><a href="{% url 'tutorial' 'aws' %}">AWS</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 anonymous. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
+

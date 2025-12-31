@@ -1,0 +1,30 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} - anonymous{% endblock %}
+
+{% block content %}
+<div class="topic-detail-header">
+    <nav class="breadcrumb">
+        <a href="{% url 'index' %}">홈</a>
+        <span> / </span>
+        <a href="{% url 'tutorial' category %}">{{ category_name }}</a>
+        <span> / </span>
+        <span>{{ title }}</span>
+    </nav>
+    <h1>{{ title }}</h1>
+</div>
+
+<div class="topic-content-area">
+    <article class="topic-article">
+        <div class="article-content">
+            {{ content|safe }}
+        </div>
+    </article>
+
+    <div class="topic-navigation">
+        <a href="{% url 'tutorial' category %}" class="btn btn-outline">목록으로</a>
+    </div>
+</div>
+{% endblock %}
+
