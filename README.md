@@ -241,9 +241,57 @@ DB_HOST=localhost
 DB_PORT=3306
 ```
 
+## AMI 빌드 (Packer)
+
+**Private Subnet 배포 시 필수**: 인터넷 접근이 없는 Private Subnet에 배포하는 경우, Packer를 사용하여 필요한 소프트웨어가 미리 설치된 커스텀 AMI를 생성해야 합니다.
+
+### Packer를 사용한 AMI 생성
+
+1. **Packer 설치**: [Packer 공식 사이트](https://www.packer.io/downloads)에서 설치
+
+2. **변수 설정 파일 생성**:
+   ```bash
+   cp packer/variables.pkr.hcl.example packer/variables.pkr.hcl
+   # packer/variables.pkr.hcl 파일을 열어 실제 VPC, Subnet ID 등 입력
+   ```
+
+3. **AMI 빌드**:
+   ```bash
+   packer validate -var-file=packer/variables.pkr.hcl packer.pkr.hcl
+   packer build -var-file=packer/variables.pkr.hcl packer.pkr.hcl
+   ```
+
+4. **빌드된 AMI 확인**: 출력된 AMI ID를 사용하여 EC2 인스턴스 생성
+
+**상세 가이드**: `packer/README.md` 참조
+
+### AMI에 포함된 소프트웨어
+
+- ✅ Python 3, pip, venv
+- ✅ AWS CodeDeploy Agent
+- ✅ Nginx (웹 서버)
+- ✅ MariaDB Client
+- ✅ Supervisor (프로세스 관리)
+- ✅ 기본 시스템 유틸리티
+
+---
+
 ## 배포
 
-EC2 Ubuntu 서버에 배포 시:
+### Private Subnet 배포 (권장)
+
+1. **커스텀 AMI 사용**: 위 Packer 가이드에 따라 생성한 AMI 사용
+2. **EC2 인스턴스 생성**: Private Subnet에 배치
+3. **CodeDeploy Agent 시작**:
+   ```bash
+   sudo systemctl start codedeploy-agent
+   sudo systemctl enable codedeploy-agent
+   ```
+4. **CodeDeploy 배포**: 아래 배포 절차 참조
+
+### EC2 Ubuntu 서버에 배포 (Public Subnet)
+
+일반적인 EC2 Ubuntu 서버에 배포 시:
 
 1. MariaDB 설치 및 데이터베이스 생성:
    ```bash
