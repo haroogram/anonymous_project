@@ -5,11 +5,8 @@ echo "================================"
 echo "[2/8] Python 3 및 pip 설치"
 echo "================================"
 
-# 패키지 목록 업데이트 (필요시)
-echo "패키지 목록 확인 중..."
-sudo DEBIAN_FRONTEND=noninteractive apt-get update -y || true
-
 # Python 3.12 설치 (Ubuntu 22.04는 기본적으로 3.10이지만 최신 버전 설치)
+# 참고: apt-get update는 01-base-setup.sh에서 이미 실행됨
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
     python3 \
     python3-pip \

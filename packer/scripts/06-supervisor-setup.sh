@@ -5,10 +5,8 @@ echo "================================"
 echo "[6/8] Supervisor 설치"
 echo "================================"
 
-# 패키지 목록 업데이트
-sudo DEBIAN_FRONTEND=noninteractive apt-get update -y
-
 # Supervisor 설치 (프로세스 관리)
+# 참고: apt-get update는 01-base-setup.sh에서 이미 실행됨
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y supervisor
 
 # Supervisor 설정 디렉토리 확인
