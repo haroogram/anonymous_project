@@ -16,10 +16,10 @@ fi
 
 # Ruby 설치 (CodeDeploy Agent는 Ruby로 작성됨)
 # 참고: apt-get update는 01-base-setup.sh에서 이미 실행됨
+# 참고: wget은 01-base-setup.sh에서 이미 설치됨
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
     ruby \
-    ruby-dev \
-    wget
+    ruby-dev
 
 # CodeDeploy Agent 다운로드 및 설치
 # 참고: Private Subnet에서는 S3 VPC Endpoint 또는 NAT Gateway를 통해 접근해야 함

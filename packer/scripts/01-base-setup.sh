@@ -68,9 +68,6 @@ sudo timedatectl set-timezone Asia/Seoul
 sudo locale-gen ko_KR.UTF-8
 sudo update-locale LANG=ko_KR.UTF-8
 
-# 불필요한 패키지 정리
-sudo apt-get autoremove -y
-sudo apt-get autoclean -y
-
 echo "✅ 기본 시스템 패키지 설치 완료"
+echo "⚠️  참고: 패키지 정리는 08-cleanup.sh에서 수행됩니다."
 
