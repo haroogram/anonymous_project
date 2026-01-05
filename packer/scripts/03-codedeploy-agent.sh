@@ -35,16 +35,19 @@ sudo ./install auto
 # 설치 확인
 if sudo service codedeploy-agent status > /dev/null 2>&1; then
     echo "✅ CodeDeploy Agent 설치 완료"
-    # 서비스 비활성화 (AMI에서는 시작하지 않음, 실제 EC2에서 시작)
-    sudo systemctl stop codedeploy-agent || true
-    sudo systemctl disable codedeploy-agent || true
+    # 서비스 활성화 및 시작 (AMI에서 enable 상태로 유지, EC2 시작 시 자동 실행)
+    sudo systemctl enable codedeploy-agent
+    sudo systemctl start codedeploy-agent || true
+    echo "✅ CodeDeploy Agent 서비스 활성화 및 시작 완료"
 else
     echo "⚠️  CodeDeploy Agent 설치 확인 필요"
+    # 설치 실패해도 서비스는 활성화 시도
+    sudo systemctl enable codedeploy-agent || true
 fi
 
 # 설치 파일 정리
 rm -f ./install
 
 echo "✅ CodeDeploy Agent 설치 스크립트 완료"
-echo "⚠️  참고: 실제 EC2 인스턴스에서 CodeDeploy Agent를 시작해야 합니다."
+echo "✅ CodeDeploy Agent가 enable 상태로 설정되어 EC2 시작 시 자동 실행됩니다."
 
