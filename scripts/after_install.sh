@@ -11,7 +11,7 @@ echo "================================"
 echo "AfterInstall 시작"
 echo "================================"
 
-APP_DIR="/home/ubuntu/app"
+APP_DIR="/home/ubuntu/anonymous_project"
 VENV_DIR="/home/ubuntu/venv"
 
 # Python 가상환경 확인

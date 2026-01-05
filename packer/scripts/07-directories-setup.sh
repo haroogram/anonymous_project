@@ -6,9 +6,9 @@ echo "[7/8] 디렉토리 구조 생성"
 echo "================================"
 
 # 애플리케이션 디렉토리
-APP_DIR="/home/ubuntu/anonymous"
+APP_DIR="/home/ubuntu/anonymous_project"
 VENV_DIR="/home/ubuntu/venv"
-LOG_DIR="/home/ubuntu/anonymous/logs"
+LOG_DIR="/home/ubuntu/anonymous_project/logs"
 
 # 디렉토리 생성
 sudo mkdir -p $APP_DIR

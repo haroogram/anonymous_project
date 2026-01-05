@@ -38,14 +38,14 @@ server {
 
     # Static files
     location /static/ {
-        alias /home/ubuntu/anonymous/staticfiles/;
+        alias /home/ubuntu/anonymous_project/staticfiles/;
         expires 30d;
         add_header Cache-Control "public, immutable";
     }
 
     # Media files (필요한 경우)
     # location /media/ {
-    #     alias /home/ubuntu/anonymous/media/;
+    #     alias /home/ubuntu/anonymous_project/media/;
     #     expires 30d;
     # }
 
@@ -72,9 +72,12 @@ sudo rm -f /etc/nginx/sites-enabled/default
 # Nginx 설정 테스트
 sudo nginx -t
 
-# Nginx 중지 (AMI에서는 시작하지 않음)
-sudo systemctl stop nginx || true
-sudo systemctl disable nginx || true
+# Nginx 서비스 활성화 및 시작 (AMI에서 enable 상태로 유지, EC2 시작 시 자동 실행)
+# ASG health check가 정상 응답을 받기 위해 필요
+sudo systemctl enable nginx
+sudo systemctl start nginx || true
+echo "✅ Nginx 서비스 활성화 및 시작 완료"
 
 echo "✅ Nginx 설치 및 기본 설정 완료"
+echo "✅ Nginx가 enable 상태로 설정되어 EC2 시작 시 자동 실행됩니다."
 
