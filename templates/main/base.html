@@ -40,7 +40,17 @@
                     </ul>
                 </nav>
                 <div class="header-actions">
-                    <button class="search-btn">검색</button>
+                    <form class="search-form" action="{% url 'search' %}" method="get">
+                        <input 
+                            type="text" 
+                            name="q" 
+                            class="search-input" 
+                            placeholder="검색어를 입력하세요..." 
+                            value="{% if request.GET.q %}{{ request.GET.q }}{% endif %}"
+                            autocomplete="off"
+                        >
+                        <button type="submit" class="search-btn">검색</button>
+                    </form>
                 </div>
             </div>
         </div>
