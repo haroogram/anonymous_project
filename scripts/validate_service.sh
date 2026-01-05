@@ -9,7 +9,7 @@ echo "================================"
 echo "ValidateService 시작"
 echo "================================"
 
-APP_DIR="/home/ubuntu/app"
+APP_DIR="/home/ubuntu/anonymous_project"
 MAX_RETRIES=5
 RETRY_INTERVAL=10
 

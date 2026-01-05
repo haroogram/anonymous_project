@@ -9,7 +9,7 @@ echo "================================"
 echo "ApplicationStart 시작"
 echo "================================"
 
-APP_DIR="/home/ubuntu/app"
+APP_DIR="/home/ubuntu/anonymous_project"
 VENV_DIR="/home/ubuntu/venv"
 
 # 가상환경 활성화
