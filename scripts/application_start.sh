@@ -86,7 +86,7 @@ if command -v supervisorctl &> /dev/null; then
     else
         echo "⚠️  Supervisor 설정 파일을 찾을 수 없습니다: /etc/supervisor/conf.d/anonymous_project.conf"
     fi
-    
+
     # Supervisor 설정 다시 읽기
     echo "Supervisor 설정 다시 읽기..."
     sudo supervisorctl reread || true
@@ -94,6 +94,7 @@ if command -v supervisorctl &> /dev/null; then
     
     # 먼저 상태 확인
     status=$(sudo supervisorctl status anonymous_project 2>/dev/null || echo "")
+
     if echo "$status" | grep -q "RUNNING"; then
         echo "애플리케이션이 이미 실행 중입니다. 재시작합니다..."
         sudo supervisorctl restart anonymous_project
