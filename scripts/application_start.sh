@@ -44,8 +44,35 @@ fi
 # Supervisor 설정 파일이 /etc/supervisor/conf.d/ 아래에 있다고 가정
 if command -v supervisorctl &> /dev/null; then
     echo "Supervisor로 애플리케이션 시작 중..."
+    
+    # 사전 체크: 필요한 디렉토리 및 파일 확인
+    echo "사전 체크 중..."
+    
+    # 로그 디렉토리 생성
+    if [ ! -d "$APP_DIR/logs" ]; then
+        echo "로그 디렉토리 생성 중..."
+        mkdir -p $APP_DIR/logs
+        chmod 755 $APP_DIR/logs
+    fi
+    
+    # 작업 디렉토리 확인
+    if [ ! -d "$APP_DIR" ]; then
+        echo "❌ 작업 디렉토리가 존재하지 않습니다: $APP_DIR"
+        exit 1
+    fi
+    
+    # gunicorn 실행 파일 확인
+    if [ ! -f "$VENV_DIR/bin/gunicorn" ]; then
+        echo "❌ gunicorn 실행 파일을 찾을 수 없습니다: $VENV_DIR/bin/gunicorn"
+        exit 1
+    fi
+    
+    # Supervisor 설정 다시 읽기
+    echo "Supervisor 설정 다시 읽기..."
+    sudo supervisorctl reread || true
+    sudo supervisorctl update || true
+    
     # 먼저 상태 확인
-
     status=$(sudo supervisorctl status anonymous_project 2>/dev/null || echo "")
 
     if echo "$status" | grep -q "RUNNING"; then
@@ -59,13 +86,30 @@ if command -v supervisorctl &> /dev/null; then
     # 시작 확인 (최대 30초 대기)
     echo "애플리케이션 시작 대기 중..."
     for i in {1..30}; do
-        if sudo supervisorctl status anonymous_project 2>/dev/null | grep -q "RUNNING"; then
+        status=$(sudo supervisorctl status anonymous_project 2>/dev/null || echo "")
+        if echo "$status" | grep -q "RUNNING"; then
             echo "✅ 애플리케이션이 시작되었습니다."
             sleep 2  # 포트 바인딩을 위한 추가 대기
             break
+        elif echo "$status" | grep -q "FATAL\|BACKOFF\|EXITED"; then
+            echo "❌ 애플리케이션 시작 실패: $status"
+            echo "Supervisor 로그 확인 중..."
+            sudo tail -n 20 /var/log/supervisor/supervisord.log 2>/dev/null || true
+            if [ -f "$APP_DIR/logs/gunicorn.log" ]; then
+                echo "Gunicorn 로그 (마지막 20줄):"
+                tail -n 20 $APP_DIR/logs/gunicorn.log || true
+            fi
+            exit 1
         fi
         sleep 1
     done
+    
+    # 최종 상태 확인
+    final_status=$(sudo supervisorctl status anonymous_project 2>/dev/null || echo "")
+    if ! echo "$final_status" | grep -q "RUNNING"; then
+        echo "❌ 애플리케이션 시작 실패 (타임아웃): $final_status"
+        exit 1
+    fi
 fi
 
 # 또는 systemd를 사용하는 경우
