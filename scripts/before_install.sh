@@ -59,7 +59,7 @@ echo "AWS SSM Parameter Store에서 환경 변수 가져오는 중..."
 AWS_REGION="${AWS_REGION:-$(curl -s http://169.254.169.254/latest/meta-data/placement/region 2>/dev/null || echo 'ap-northeast-2')}"
 
 # SSM 파라미터 베이스 경로 (필요에 따라 수정)
-SSM_BASE_PATH="/anonymous_project"
+SSM_BASE_PATH="/anonymous-project"
 
 # SSM 파라미터 가져오는 함수
 get_ssm_parameter() {
