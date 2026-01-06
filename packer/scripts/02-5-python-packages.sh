@@ -24,8 +24,9 @@ fi
 echo "가상환경 활성화 및 패키지 설치 중..."
 source $VENV_DIR/bin/activate
 
-# pip 업그레이드 (최신 버전으로)
-pip install --upgrade pip setuptools wheel
+# pip 업그레이드 (setuptools는 81 미만으로 고정)
+pip install --upgrade pip wheel
+pip install "setuptools<81"
 
 # requirements.txt의 패키지들 설치 (AMI 빌드 시점에 인터넷 접근 가능)
 echo "requirements.txt 패키지 설치 중..."

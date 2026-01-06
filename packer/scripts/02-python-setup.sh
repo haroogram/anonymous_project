@@ -15,8 +15,9 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
     python3-setuptools \
     python3-wheel
 
-# pip 업그레이드
-sudo python3 -m pip install --upgrade pip setuptools wheel
+# pip 업그레이드 (setuptools는 81 미만으로 고정)
+sudo python3 -m pip install --upgrade pip wheel
+sudo python3 -m pip install "setuptools<81"
 
 # Python 버전 확인
 python3 --version
