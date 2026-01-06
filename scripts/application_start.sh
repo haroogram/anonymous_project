@@ -67,6 +67,26 @@ if command -v supervisorctl &> /dev/null; then
         exit 1
     fi
     
+    # gunicorn 실행 가능 여부 확인
+    if [ ! -x "$VENV_DIR/bin/gunicorn" ]; then
+        echo "⚠️  gunicorn 실행 파일에 실행 권한이 없습니다. 권한 부여 중..."
+        chmod +x $VENV_DIR/bin/gunicorn
+    fi
+    
+    # gunicorn 버전 확인 (실행 가능한지 테스트)
+    echo "gunicorn 버전 확인 중..."
+    $VENV_DIR/bin/gunicorn --version || {
+        echo "❌ gunicorn 실행 실패. 가상환경이나 의존성 문제일 수 있습니다."
+        exit 1
+    }
+    
+    # Supervisor 설정 파일 확인
+    if [ -f "/etc/supervisor/conf.d/anonymous_project.conf" ]; then
+        echo "Supervisor 설정 파일 확인됨"
+    else
+        echo "⚠️  Supervisor 설정 파일을 찾을 수 없습니다: /etc/supervisor/conf.d/anonymous_project.conf"
+    fi
+
     # Supervisor 설정 다시 읽기
     echo "Supervisor 설정 다시 읽기..."
     sudo supervisorctl reread || true
