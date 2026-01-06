@@ -28,7 +28,7 @@ check_health() {
         echo "   포트 8000 리스닝 상태:"
         netstat -tuln 2>/dev/null | grep ":8000 " || ss -tuln 2>/dev/null | grep ":8000 " || echo "   포트 8000이 리스닝하지 않음"
         echo "   Supervisor 상태:"
-        supervisorctl status anonymous_project 2>/dev/null || echo "   Supervisor 상태 확인 실패"
+        sudo supervisorctl status anonymous_project 2>/dev/null || echo "   Supervisor 상태 확인 실패 (권한 문제일 수 있음)"
         return 1
     fi
 }
@@ -37,7 +37,7 @@ check_health() {
 check_process() {
     # Supervisor를 사용하는 경우 (우선 확인)
     if command -v supervisorctl &> /dev/null; then
-        local status=$(supervisorctl status anonymous_project 2>/dev/null || echo "")
+        local status=$(sudo supervisorctl status anonymous_project 2>/dev/null || echo "")
         if echo "$status" | grep -q "RUNNING"; then
             echo "✅ Supervisor로 관리되는 애플리케이션 실행 중"
             # 포트가 실제로 리스닝하는지 확인
