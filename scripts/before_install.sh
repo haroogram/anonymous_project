@@ -112,14 +112,14 @@ EOF
 ENV_LOAD_ERROR=false
 
 # 필수 환경 변수들
-SECRET_KEY=$(get_ssm_parameter "secret_key")
+SECRET_KEY=$(get_ssm_parameter "django/secret_key")
 if [ -z "$SECRET_KEY" ]; then
     echo "❌ SECRET_KEY를 가져올 수 없습니다. SSM Parameter Store에 ${SSM_BASE_PATH}/secret_key가 설정되어 있는지 확인하세요."
     ENV_LOAD_ERROR=true
 fi
 echo "SECRET_KEY=$SECRET_KEY" >> $TEMP_ENV_FILE
 
-ALLOWED_HOSTS=$(get_ssm_parameter "allowed-hosts")
+ALLOWED_HOSTS=$(get_ssm_parameter "django/allowed-hosts")
 if [ -z "$ALLOWED_HOSTS" ]; then
     echo "❌ ALLOWED_HOSTS를 가져올 수 없습니다. SSM Parameter Store에 ${SSM_BASE_PATH}/allowed-hosts가 설정되어 있는지 확인하세요."
     ENV_LOAD_ERROR=true
