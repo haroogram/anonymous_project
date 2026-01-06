@@ -43,8 +43,27 @@ fi
 # 또는 Supervisor를 사용하는 경우 (권장)
 # Supervisor 설정 파일이 /etc/supervisor/conf.d/ 아래에 있다고 가정
 if command -v supervisorctl &> /dev/null; then
-    echo "Supervisor로 애플리케이션 재시작 중..."
-    sudo supervisorctl restart anonymous_project || sudo supervisorctl start anonymous_project || true
+    echo "Supervisor로 애플리케이션 시작 중..."
+    # 먼저 상태 확인
+    status=$(sudo supervisorctl status anonymous_project 2>/dev/null || echo "")
+    if echo "$status" | grep -q "RUNNING"; then
+        echo "애플리케이션이 이미 실행 중입니다. 재시작합니다..."
+        sudo supervisorctl restart anonymous_project
+    else
+        echo "애플리케이션을 시작합니다..."
+        sudo supervisorctl start anonymous_project
+    fi
+    
+    # 시작 확인 (최대 30초 대기)
+    echo "애플리케이션 시작 대기 중..."
+    for i in {1..30}; do
+        if sudo supervisorctl status anonymous_project 2>/dev/null | grep -q "RUNNING"; then
+            echo "✅ 애플리케이션이 시작되었습니다."
+            sleep 2  # 포트 바인딩을 위한 추가 대기
+            break
+        fi
+        sleep 1
+    done
 fi
 
 # 또는 systemd를 사용하는 경우
