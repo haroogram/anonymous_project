@@ -119,9 +119,9 @@ if [ -z "$SECRET_KEY" ]; then
 fi
 echo "SECRET_KEY=$SECRET_KEY" >> $TEMP_ENV_FILE
 
-ALLOWED_HOSTS=$(get_ssm_parameter "django/allowed-hosts")
+ALLOWED_HOSTS=$(get_ssm_parameter "django/allowed_hosts")
 if [ -z "$ALLOWED_HOSTS" ]; then
-    echo "❌ ALLOWED_HOSTS를 가져올 수 없습니다. SSM Parameter Store에 ${SSM_BASE_PATH}/allowed-hosts가 설정되어 있는지 확인하세요."
+    echo "❌ ALLOWED_HOSTS를 가져올 수 없습니다. SSM Parameter Store에 ${SSM_BASE_PATH}/allowed_hosts가 설정되어 있는지 확인하세요."
     ENV_LOAD_ERROR=true
 fi
 echo "ALLOWED_HOSTS=$ALLOWED_HOSTS" >> $TEMP_ENV_FILE
