@@ -52,8 +52,9 @@ else
     echo "⚠️  새 가상환경에 패키지 설치 시도 중..."
     echo "   (인터넷 접근 불가 시 실패할 수 있음)"
     
-    # pip 업그레이드 시도 (실패해도 계속 진행)
-    pip install --upgrade pip setuptools wheel 2>&1 | grep -v "WARNING" || echo "⚠️  pip 업그레이드 실패 (계속 진행)"
+    # pip 업그레이드 시도 (setuptools는 81 미만으로 고정, 실패해도 계속 진행)
+    pip install --upgrade pip wheel 2>&1 | grep -v "WARNING" || echo "⚠️  pip 업그레이드 실패 (계속 진행)"
+    pip install "setuptools<81" 2>&1 | grep -v "WARNING" || echo "⚠️  setuptools 설치 실패 (계속 진행)"
     
     # requirements.txt 설치 시도 (실패해도 계속 진행)
     if [ -f "$APP_DIR/requirements.txt" ]; then
