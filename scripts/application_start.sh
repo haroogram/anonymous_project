@@ -74,6 +74,7 @@ if command -v supervisorctl &> /dev/null; then
     
     # 먼저 상태 확인
     status=$(sudo supervisorctl status anonymous_project 2>/dev/null || echo "")
+
     if echo "$status" | grep -q "RUNNING"; then
         echo "애플리케이션이 이미 실행 중입니다. 재시작합니다..."
         sudo supervisorctl restart anonymous_project
