@@ -59,7 +59,7 @@ echo "AWS SSM Parameter Store에서 환경 변수 가져오는 중..."
 AWS_REGION="${AWS_REGION:-$(curl -s http://169.254.169.254/latest/meta-data/placement/region 2>/dev/null || echo 'ap-northeast-2')}"
 
 # SSM 파라미터 베이스 경로 (필요에 따라 수정)
-SSM_BASE_PATH="/anonymous_project"
+SSM_BASE_PATH="/anonymous-project"
 
 # SSM 파라미터 가져오는 함수
 get_ssm_parameter() {
@@ -67,7 +67,8 @@ get_ssm_parameter() {
     local default_value=${2:-}
     local ssm_path="${SSM_BASE_PATH}/${param_name}"
     
-    echo "  - ${param_name} 가져오는 중..."
+    # 디버그 메시지는 stderr로 출력 (변수 할당 시 캡처되지 않도록)
+    echo "  - ${param_name} 가져오는 중..." >&2
     
     # AWS CLI로 파라미터 가져오기 (WithDecryption으로 SecureString도 복호화)
     local value=$(aws ssm get-parameter \
@@ -78,13 +79,13 @@ get_ssm_parameter() {
         --output text 2>/dev/null || echo "")
     
     if [ -z "$value" ] && [ -n "$default_value" ]; then
-        echo "    ⚠️  파라미터를 찾을 수 없어 기본값 사용: $default_value"
+        echo "    ⚠️  파라미터를 찾을 수 없어 기본값 사용: $default_value" >&2
         echo "$default_value"
     elif [ -n "$value" ]; then
-        echo "    ✅ 파라미터 가져오기 성공"
+        echo "    ✅ 파라미터 가져오기 성공" >&2
         echo "$value"
     else
-        echo "    ❌ 파라미터를 찾을 수 없고 기본값도 없습니다"
+        echo "    ❌ 파라미터를 찾을 수 없고 기본값도 없습니다" >&2
         echo ""
     fi
 }
@@ -111,14 +112,14 @@ EOF
 ENV_LOAD_ERROR=false
 
 # 필수 환경 변수들
-SECRET_KEY=$(get_ssm_parameter "secret_key")
+SECRET_KEY=$(get_ssm_parameter "django/secret_key")
 if [ -z "$SECRET_KEY" ]; then
     echo "❌ SECRET_KEY를 가져올 수 없습니다. SSM Parameter Store에 ${SSM_BASE_PATH}/secret_key가 설정되어 있는지 확인하세요."
     ENV_LOAD_ERROR=true
 fi
 echo "SECRET_KEY=$SECRET_KEY" >> $TEMP_ENV_FILE
 
-ALLOWED_HOSTS=$(get_ssm_parameter "allowed-hosts")
+ALLOWED_HOSTS=$(get_ssm_parameter "django/allowed-hosts")
 if [ -z "$ALLOWED_HOSTS" ]; then
     echo "❌ ALLOWED_HOSTS를 가져올 수 없습니다. SSM Parameter Store에 ${SSM_BASE_PATH}/allowed-hosts가 설정되어 있는지 확인하세요."
     ENV_LOAD_ERROR=true
