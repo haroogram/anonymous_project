@@ -67,7 +67,8 @@ get_ssm_parameter() {
     local default_value=${2:-}
     local ssm_path="${SSM_BASE_PATH}/${param_name}"
     
-    echo "  - ${param_name} 가져오는 중..."
+    # 디버그 메시지는 stderr로 출력 (변수 할당 시 캡처되지 않도록)
+    echo "  - ${param_name} 가져오는 중..." >&2
     
     # AWS CLI로 파라미터 가져오기 (WithDecryption으로 SecureString도 복호화)
     local value=$(aws ssm get-parameter \
@@ -78,13 +79,13 @@ get_ssm_parameter() {
         --output text 2>/dev/null || echo "")
     
     if [ -z "$value" ] && [ -n "$default_value" ]; then
-        echo "    ⚠️  파라미터를 찾을 수 없어 기본값 사용: $default_value"
+        echo "    ⚠️  파라미터를 찾을 수 없어 기본값 사용: $default_value" >&2
         echo "$default_value"
     elif [ -n "$value" ]; then
-        echo "    ✅ 파라미터 가져오기 성공"
+        echo "    ✅ 파라미터 가져오기 성공" >&2
         echo "$value"
     else
-        echo "    ❌ 파라미터를 찾을 수 없고 기본값도 없습니다"
+        echo "    ❌ 파라미터를 찾을 수 없고 기본값도 없습니다" >&2
         echo ""
     fi
 }
