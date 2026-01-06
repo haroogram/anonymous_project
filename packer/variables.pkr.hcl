@@ -2,8 +2,8 @@
 # 이 파일을 variables.pkr.hcl로 복사하고 실제 값으로 수정하세요
 
 aws_region = "ap-northeast-2"  # AWS 리전
-vpc_id     = "vpc-06a5648bfd2e395c2"    # VPC ID
-subnet_id  = "subnet-06ff2d6a4ac7002e4" # Public Subnet ID (AMI 빌드용, 인터넷 접근 필요)
+vpc_id     = "vpc-036f7b32780e36cbf"    # VPC ID
+subnet_id  = "subnet-0baf70c968b9fec3c" # Public Subnet ID (AMI 빌드용, 인터넷 접근 필요)
 # 주의: 이 AMI는 Public Subnet에서 빌드되지만, Private Subnet의 EC2에서 사용됩니다
 
 # 소스 AMI ID (Ubuntu 22.04 LTS)
