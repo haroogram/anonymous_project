@@ -41,5 +41,32 @@ document.addEventListener('DOMContentLoaded', function() {
             this.style.transition = 'all 0.3s ease';
         });
     });
+
+    // 방문자 통계 동적 로드
+    (function loadVisitorStats() {
+        const todayEl = document.getElementById('today-visitors');
+        const totalEl = document.getElementById('total-visitors');
+        if (!todayEl || !totalEl) {
+            return;
+        }
+
+        fetch('/api/visitors/stats/')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // API 스펙: views.visitor_stats에서 today, today_unique, total 반환
+                const today = data.today_unique ?? data.today ?? 0;
+                const total = data.total ?? 0;
+                todayEl.textContent = today;
+                totalEl.textContent = total;
+            })
+            .catch(error => {
+                console.error('방문자 통계 로드 실패:', error);
+            });
+    })();
 });
 
