@@ -22,6 +22,8 @@ class VisitorCountMiddleware:
         '/media',
         '/favicon.ico',
         '/api/',
+        '/health',
+        '/healthz',
     ]
     
     def __init__(self, get_response):

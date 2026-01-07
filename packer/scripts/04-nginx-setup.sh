@@ -30,9 +30,9 @@ server {
     client_max_body_size 100M;
 
     # 헬스 체크
-    location /health {
+    location /healthz {
         access_log off;
-        return 200 'OK';
+        return 200 'OK--!';
         add_header Content-Type text/plain;
     }
 
