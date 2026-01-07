@@ -2,9 +2,9 @@
 
 # AfterInstall 스크립트
 # 배포 후 설치 및 설정 작업 수행
-# 주의: EC2는 인터넷 접근이 불가능하므로 AMI에 미리 설치된 패키지를 사용합니다.
+# NAT Gateway를 통해 인터넷 접근이 가능하므로 배포 시 패키지 설치/업데이트를 진행합니다.
 
-# set -e를 사용하지 않음 (인터넷 접근 불가 시 일부 명령이 실패할 수 있음)
+# set -e를 사용하지 않음 (일부 명령이 실패해도 계속 진행)
 # 대신 중요한 명령에만 에러 처리를 추가
 
 echo "================================"
@@ -14,20 +14,17 @@ echo "================================"
 APP_DIR="/home/ubuntu/anonymous_project"
 VENV_DIR="/home/ubuntu/venv"
 
-# Python 가상환경 확인
+# Python 가상환경 확인 및 생성
 if [ ! -d "$VENV_DIR" ]; then
-    echo "⚠️  가상환경이 없습니다. AMI에 가상환경이 포함되어 있어야 합니다."
-    echo "가상환경 생성 시도 중... (인터넷 접근 불가 시 실패할 수 있음)"
+    echo "⚠️  가상환경이 없습니다. 새로 생성합니다..."
     python3 -m venv $VENV_DIR || {
-        echo "❌ 가상환경 생성 실패. AMI에 가상환경이 포함되어 있는지 확인하세요."
+        echo "❌ 가상환경 생성 실패."
         exit 1
     }
-    echo "⚠️  새 가상환경이 생성되었습니다. 패키지 설치를 시도하지만 인터넷 접근 불가 시 실패할 수 있습니다."
-    NEED_INSTALL=true
+    sudo chown -R ubuntu:ubuntu $VENV_DIR
+    echo "✅ 가상환경 생성 완료"
 else
-    echo "✅ 기존 가상환경 발견 (AMI에 미리 설치됨)"
-    echo "   인터넷 접근 없이 기존 패키지를 사용합니다."
-    NEED_INSTALL=false
+    echo "✅ 기존 가상환경 발견"
 fi
 
 # 가상환경 활성화
@@ -39,36 +36,38 @@ fi
 echo "Python 가상환경 활성화..."
 source $VENV_DIR/bin/activate
 
-# 가상환경이 이미 존재하는 경우 (AMI에 미리 설치됨)
-# pip 업그레이드나 패키지 설치를 시도하지 않음 (인터넷 접근 불가)
-if [ "$NEED_INSTALL" = false ]; then
-    echo "✅ AMI에 설치된 패키지 사용 중"
-    echo "   gunicorn 버전 확인:"
-    $VENV_DIR/bin/gunicorn --version || echo "⚠️  gunicorn을 찾을 수 없습니다."
-    echo "   Django 버전 확인:"
-    python -c "import django; print(django.get_version())" || echo "⚠️  Django를 찾을 수 없습니다."
-else
-    # 새로 생성된 가상환경인 경우에만 설치 시도 (인터넷 접근 불가 시 실패)
-    echo "⚠️  새 가상환경에 패키지 설치 시도 중..."
-    echo "   (인터넷 접근 불가 시 실패할 수 있음)"
-    
-    # pip 업그레이드 시도 (setuptools는 81 미만으로 고정, 실패해도 계속 진행)
-    pip install --upgrade pip wheel 2>&1 | grep -v "WARNING" || echo "⚠️  pip 업그레이드 실패 (계속 진행)"
-    pip install "setuptools<81" 2>&1 | grep -v "WARNING" || echo "⚠️  setuptools 설치 실패 (계속 진행)"
-    
-    # requirements.txt 설치 시도 (실패해도 계속 진행)
-    if [ -f "$APP_DIR/requirements.txt" ]; then
-        cd $APP_DIR
-        pip install -r requirements.txt 2>&1 | grep -v "WARNING" || {
-            echo "❌ 패키지 설치 실패 (인터넷 접근 불가)"
-            echo "   AMI에 패키지가 미리 설치되어 있어야 합니다."
-            exit 1
-        }
+# requirements.txt 패키지 설치/업데이트 (매 배포마다 실행)
+echo "================================"
+echo "Python 패키지 설치/업데이트 중..."
+echo "================================"
+
+# pip 업그레이드
+pip install --upgrade pip wheel --quiet || echo "⚠️  pip 업그레이드 실패 (계속 진행)"
+pip install --upgrade "setuptools<81" --quiet || echo "⚠️  setuptools 설치 실패 (계속 진행)"
+
+# requirements.txt 설치
+if [ -f "$APP_DIR/requirements.txt" ]; then
+    echo "requirements.txt 패키지 설치 중..."
+    if pip install -r $APP_DIR/requirements.txt --quiet; then
+        echo "✅ 패키지 설치 성공"
     else
-        echo "❌ requirements.txt를 찾을 수 없습니다."
+        echo "❌ 패키지 설치 실패"
+        echo "에러 상세 내용:"
+        pip install -r $APP_DIR/requirements.txt 2>&1 | tail -n 20
         exit 1
     fi
+else
+    echo "❌ requirements.txt를 찾을 수 없습니다."
+    exit 1
 fi
+
+# 설치된 주요 패키지 버전 확인
+echo ""
+echo "설치된 주요 패키지 버전:"
+echo "  - Django: $(python -c "import django; print(django.get_version())" 2>/dev/null || echo "N/A")"
+echo "  - gunicorn: $($VENV_DIR/bin/gunicorn --version 2>/dev/null || echo "N/A")"
+echo "  - django-storages: $(pip show django-storages 2>/dev/null | grep Version | awk '{print $2}' || echo "N/A")"
+echo "  - boto3: $(pip show boto3 2>/dev/null | grep Version | awk '{print $2}' || echo "N/A")"
 
 # 로그 디렉토리 생성
 mkdir -p $APP_DIR/logs

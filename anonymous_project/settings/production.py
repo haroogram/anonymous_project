@@ -57,6 +57,45 @@ DATABASES = {
     }
 }
 
+# Static files 설정 - S3 사용 (프로덕션)
+USE_S3_STATIC = os.getenv('USE_S3_STATIC', 'False') == 'True'
+
+if USE_S3_STATIC:
+    # S3를 사용하는 경우
+    INSTALLED_APPS += ['storages']
+    
+    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STATIC_BUCKET_NAME')
+    AWS_S3_REGION_NAME = os.getenv('AWS_REGION', 'ap-northeast-2')
+    
+    if not all([AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_STORAGE_BUCKET_NAME]):
+        raise ValueError("S3 Static files를 사용하려면 AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_STATIC_BUCKET_NAME 환경 변수가 필요합니다!")
+    
+    # S3 설정
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400',  # 1일 캐시
+    }
+    AWS_DEFAULT_ACL = 'public-read'  # Static files는 public 읽기 허용
+    AWS_S3_FILE_OVERWRITE = False  # 같은 이름의 파일 덮어쓰기 방지
+    AWS_QUERYSTRING_AUTH = False  # URL에 인증 정보 포함하지 않음
+    
+    # Static files를 S3에 저장
+    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+    
+    # Media files도 S3를 사용하려면 아래 주석 해제
+    # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    # MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+    
+    print("✅ S3 Static files 스토리지 사용 중")
+else:
+    # 로컬 파일 시스템 사용 (기본값)
+    STATIC_URL = '/static/'
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
+    print("✅ 로컬 Static files 스토리지 사용 중")
+
 # 로깅 설정
 LOGGING = {
     'version': 1,

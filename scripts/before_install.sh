@@ -171,6 +171,25 @@ echo "SECURE_SSL_REDIRECT=$SECURE_SSL_REDIRECT" >> $TEMP_ENV_FILE
 echo "SESSION_COOKIE_SECURE=$SESSION_COOKIE_SECURE" >> $TEMP_ENV_FILE
 echo "CSRF_COOKIE_SECURE=$CSRF_COOKIE_SECURE" >> $TEMP_ENV_FILE
 
+# S3 Static files 설정 (선택사항)
+USE_S3_STATIC=$(get_ssm_parameter "use-s3-static" "True")
+AWS_ACCESS_KEY_ID=$(get_ssm_parameter "aws-access-key-id")
+AWS_SECRET_ACCESS_KEY=$(get_ssm_parameter "aws-secret-access-key")
+AWS_STATIC_BUCKET_NAME=$(get_ssm_parameter "aws-static-bucket-name")
+# AWS_REGION=$(get_ssm_parameter "aws-region" "ap-northeast-2")
+
+echo "USE_S3_STATIC=$USE_S3_STATIC" >> $TEMP_ENV_FILE
+if [ -n "$AWS_ACCESS_KEY_ID" ]; then
+    echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >> $TEMP_ENV_FILE
+fi
+if [ -n "$AWS_SECRET_ACCESS_KEY" ]; then
+    echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> $TEMP_ENV_FILE
+fi
+if [ -n "$AWS_STATIC_BUCKET_NAME" ]; then
+    echo "AWS_STATIC_BUCKET_NAME=$AWS_STATIC_BUCKET_NAME" >> $TEMP_ENV_FILE
+fi
+echo "AWS_REGION=$AWS_REGION" >> $TEMP_ENV_FILE
+
 # 에러 발생 시 처리
 if [ "$ENV_LOAD_ERROR" = true ]; then
     echo ""

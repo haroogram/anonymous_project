@@ -85,7 +85,8 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
-STATIC_URL = 'static/'
+# 주의: production.py에서 S3를 사용하는 경우 이 값이 덮어써집니다.
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
