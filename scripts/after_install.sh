@@ -120,30 +120,157 @@ print(f'AWS_SECRET_ACCESS_KEY 설정됨: {bool(getattr(settings, \"AWS_SECRET_AC
 # collectstatic 실행 (상세 로그)
 echo ""
 echo "collectstatic 실행 중..."
-if python manage.py collectstatic --noinput --clear --verbosity 2; then
+# S3 사용 시 상세한 출력을 위해 verbosity를 3으로 설정
+VERBOSITY_LEVEL=2
+if [ "$USE_S3_STATIC" = "True" ]; then
+    VERBOSITY_LEVEL=3
+fi
+
+COLLECTSTATIC_OUTPUT=$(python manage.py collectstatic --noinput --clear --verbosity $VERBOSITY_LEVEL 2>&1)
+COLLECTSTATIC_EXIT_CODE=$?
+
+echo "$COLLECTSTATIC_OUTPUT"
+
+if [ $COLLECTSTATIC_EXIT_CODE -eq 0 ]; then
     echo "✅ Static files 수집 성공"
     
     # S3 사용 시 업로드 확인
     if [ "$USE_S3_STATIC" = "True" ]; then
         echo ""
+        echo "================================"
         echo "S3 업로드 확인 중..."
+        echo "================================"
         python -c "
 import os
+import sys
 import django
+import traceback
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'anonymous_project.settings.production')
 django.setup()
+
 from django.conf import settings
 from storages.backends.s3boto3 import S3Boto3Storage
-storage = S3Boto3Storage()
+import boto3
+from botocore.exceptions import ClientError, NoCredentialsError
+
 try:
-    # S3에 파일이 있는지 확인 (예: css/style.css)
-    if storage.exists('static/css/style.css'):
-        print('✅ S3에 파일 업로드 확인됨: static/css/style.css')
+    # AWS 자격 증명 확인
+    print('1. AWS 자격 증명 확인 중...')
+    if not settings.AWS_ACCESS_KEY_ID:
+        print('❌ AWS_ACCESS_KEY_ID가 설정되지 않았습니다.')
+        sys.exit(1)
+    if not settings.AWS_SECRET_ACCESS_KEY:
+        print('❌ AWS_SECRET_ACCESS_KEY가 설정되지 않았습니다.')
+        sys.exit(1)
+    print(f'   ✅ AWS_ACCESS_KEY_ID: {settings.AWS_ACCESS_KEY_ID[:10]}...')
+    print(f'   ✅ AWS_STORAGE_BUCKET_NAME: {settings.AWS_STORAGE_BUCKET_NAME}')
+    print(f'   ✅ AWS_S3_REGION_NAME: {getattr(settings, \"AWS_S3_REGION_NAME\", \"ap-northeast-2\")}')
+    
+    # boto3 클라이언트 생성 및 버킷 접근 확인
+    print('')
+    print('2. S3 버킷 접근 확인 중...')
+    s3_client = boto3.client(
+        's3',
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        region_name=getattr(settings, 'AWS_S3_REGION_NAME', 'ap-northeast-2')
+    )
+    
+    try:
+        s3_client.head_bucket(Bucket=settings.AWS_STORAGE_BUCKET_NAME)
+        print(f'   ✅ 버킷 접근 성공: {settings.AWS_STORAGE_BUCKET_NAME}')
+    except ClientError as e:
+        error_code = e.response['Error']['Code']
+        if error_code == '404':
+            print(f'   ❌ 버킷을 찾을 수 없습니다: {settings.AWS_STORAGE_BUCKET_NAME}')
+        elif error_code == '403':
+            print(f'   ❌ 버킷 접근 권한이 없습니다: {settings.AWS_STORAGE_BUCKET_NAME}')
+            print(f'   에러: {e}')
+        else:
+            print(f'   ❌ 버킷 접근 오류: {e}')
+        sys.exit(1)
+    
+    # S3Boto3Storage를 통한 파일 확인
+    print('')
+    print('3. S3에 업로드된 파일 확인 중...')
+    storage = S3Boto3Storage()
+    
+    # 여러 파일 경로 확인 (다양한 경로 시도)
+    test_files = [
+        'static/css/style.css',
+        'css/style.css',
+        'admin/css/base.css',  # Django admin 파일도 확인
+        'static/admin/css/base.css',  # Django admin 파일 (static 접두사 포함)
+    ]
+    
+    found_files = []
+    not_found_files = []
+    
+    for file_path in test_files:
+        try:
+            if storage.exists(file_path):
+                found_files.append(file_path)
+                print(f'   ✅ 파일 발견: {file_path}')
+            else:
+                not_found_files.append(file_path)
+        except Exception as e:
+            print(f'   ⚠️  파일 확인 중 오류 ({file_path}): {e}')
+            not_found_files.append(file_path)
+    
+    # boto3로 직접 확인 (더 정확한 확인)
+    print('')
+    print('4. boto3로 S3 버킷 내 파일 직접 확인 중...')
+    s3_files_found = False
+    response = None
+    try:
+        response = s3_client.list_objects_v2(
+            Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+            Prefix='static/',
+            MaxKeys=10
+        )
+        
+        if 'Contents' in response and len(response['Contents']) > 0:
+            s3_files_found = True
+            print(f'   ✅ S3 버킷에 {len(response[\"Contents\"])}개 이상의 파일이 있습니다.')
+            print('   찾은 파일 예시:')
+            for obj in response['Contents'][:5]:
+                print(f'     - {obj[\"Key\"]} ({obj[\"Size\"]} bytes)')
+        else:
+            print('   ⚠️  S3 버킷의 static/ 경로에 파일이 없습니다.')
+    except Exception as e:
+        print(f'   ⚠️  S3 목록 조회 중 오류: {e}')
+    
+    # 최종 결과
+    print('')
+    print('================================')
+    if found_files or s3_files_found:
+        print('✅ S3 업로드 확인 완료')
     else:
-        print('⚠️  S3에 파일이 없습니다. 업로드가 실패했을 수 있습니다.')
+        print('⚠️  S3에 파일이 없는 것으로 보입니다.')
+        print('   가능한 원인:')
+        print('   1. collectstatic이 실제로 S3에 업로드하지 않았을 수 있습니다.')
+        print('   2. AWS 자격 증명 또는 버킷 권한 문제')
+        print('   3. 파일 경로가 예상과 다를 수 있습니다.')
+        print('   디버깅을 위해 collectstatic 출력을 확인하세요.')
+    print('================================')
+    
+except NoCredentialsError:
+    print('❌ AWS 자격 증명을 찾을 수 없습니다.')
+    print('   AWS_ACCESS_KEY_ID와 AWS_SECRET_ACCESS_KEY를 확인하세요.')
+    sys.exit(1)
 except Exception as e:
-    print(f'⚠️  S3 확인 중 오류: {e}')
-" 2>&1 || echo "⚠️  S3 확인 실패"
+    print(f'❌ S3 확인 중 오류 발생:')
+    print(f'   {type(e).__name__}: {e}')
+    traceback.print_exc()
+    sys.exit(1)
+" 2>&1
+        S3_CHECK_EXIT_CODE=$?
+        
+        if [ $S3_CHECK_EXIT_CODE -ne 0 ]; then
+            echo ""
+            echo "⚠️  S3 확인 중 오류가 발생했습니다. (계속 진행)"
+        fi
     fi
 else
     echo "❌ Static files 수집 실패"
