@@ -28,24 +28,24 @@ stdout_logfile=/home/ubuntu/anonymous_project/logs/gunicorn.log
 environment=DJANGO_SETTINGS_MODULE="anonymous_project.settings.production"
 
 ; Celery Worker (필요한 경우)
-; [program:celery_worker]
-; command=/home/ubuntu/venv/bin/celery -A anonymous_project worker --loglevel=info
-; directory=/home/ubuntu/anonymous_project
-; user=ubuntu
-; autostart=false
-; autorestart=true
-; redirect_stderr=true
-; stdout_logfile=/home/ubuntu/anonymous_project/logs/celery_worker.log
+[program:celery_worker]
+command=/home/ubuntu/venv/bin/celery -A anonymous_project worker --loglevel=info
+directory=/home/ubuntu/anonymous_project
+user=ubuntu
+autostart=false
+autorestart=true
+redirect_stderr=true
+stdout_logfile=/home/ubuntu/anonymous_project/logs/celery_worker.log
 
 ; Celery Beat (필요한 경우)
-; [program:celery_beat]
-; command=/home/ubuntu/venv/bin/celery -A anonymous_project beat --loglevel=info
-; directory=/home/ubuntu/anonymous_project
-; user=ubuntu
-; autostart=false
-; autorestart=true
-; redirect_stderr=true
-; stdout_logfile=/home/ubuntu/anonymous_project/logs/celery_beat.log
+[program:celery_beat]
+command=/home/ubuntu/venv/bin/celery -A anonymous_project beat --loglevel=info
+directory=/home/ubuntu/anonymous_project
+user=ubuntu
+autostart=false
+autorestart=true
+redirect_stderr=true
+stdout_logfile=/home/ubuntu/anonymous_project/logs/celery_beat.log
 EOF
 
 # Supervisor 설정 확인
