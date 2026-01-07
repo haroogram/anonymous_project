@@ -52,8 +52,9 @@ else
     echo "⚠️  새 가상환경에 패키지 설치 시도 중..."
     echo "   (인터넷 접근 불가 시 실패할 수 있음)"
     
-    # pip 업그레이드 시도 (실패해도 계속 진행)
-    pip install --upgrade pip setuptools wheel 2>&1 | grep -v "WARNING" || echo "⚠️  pip 업그레이드 실패 (계속 진행)"
+    # pip 업그레이드 시도 (setuptools는 81 미만으로 고정, 실패해도 계속 진행)
+    pip install --upgrade pip wheel 2>&1 | grep -v "WARNING" || echo "⚠️  pip 업그레이드 실패 (계속 진행)"
+    pip install "setuptools<81" 2>&1 | grep -v "WARNING" || echo "⚠️  setuptools 설치 실패 (계속 진행)"
     
     # requirements.txt 설치 시도 (실패해도 계속 진행)
     if [ -f "$APP_DIR/requirements.txt" ]; then
@@ -77,14 +78,107 @@ chmod 755 $APP_DIR/logs
 mkdir -p $APP_DIR/staticfiles
 chmod 755 $APP_DIR/staticfiles
 
-# Django static files 수집
-echo "Static files 수집 중..."
-export DJANGO_SETTINGS_MODULE=anonymous_project.settings.production
-python manage.py collectstatic --noinput --clear || true
+# 작업 디렉토리로 이동
+cd $APP_DIR
 
-# Django migrations 실행
+# 환경 변수 설정
+export DJANGO_SETTINGS_MODULE=anonymous_project.settings.production
+
+# .env 파일 확인 및 로드
+if [ ! -f "$APP_DIR/.env" ]; then
+    echo "⚠️  경고: .env 파일이 없습니다. 환경 변수를 확인하세요."
+    echo "⚠️  DB 연결 및 migrations가 실패할 수 있습니다."
+else
+    echo "✅ .env 파일 확인됨"
+    # .env 파일의 환경 변수 로드 (주석 제외)
+    set -a
+    source <(grep -v '^#' $APP_DIR/.env | sed 's/^/export /')
+    set +a
+fi
+
+# Django static files 수집
+echo "================================"
+echo "Django static files 수집 중..."
+echo "================================"
+if python manage.py collectstatic --noinput --clear; then
+    echo "✅ Static files 수집 성공"
+else
+    echo "❌ Static files 수집 실패"
+    echo "에러 상세 내용:"
+    python manage.py collectstatic --noinput --clear 2>&1 | tail -n 20
+    echo "⚠️  Static files 수집 실패했지만 계속 진행합니다."
+fi
+
+# Django migrations 실행 (상세한 에러 확인)
+echo "================================"
 echo "데이터베이스 migrations 실행 중..."
-python manage.py migrate --noinput || true
+echo "================================"
+
+# DB 연결 테스트
+echo "DB 연결 테스트 중..."
+if python manage.py check --database default 2>&1 | grep -q "System check identified no issues"; then
+    echo "✅ Django 시스템 체크 통과"
+elif python -c "
+import os
+import django
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'anonymous_project.settings.production')
+django.setup()
+from django.db import connection
+connection.ensure_connection()
+print('DB 연결 성공')
+" 2>&1; then
+    echo "✅ DB 연결 확인됨"
+else
+    echo "⚠️  DB 연결 확인 실패 (migrate 시도는 계속 진행)"
+fi
+
+# Migrations 실행
+if python manage.py migrate --noinput --verbosity 2; then
+    echo "✅ Migrations 실행 성공"
+    
+    # 생성된 테이블 확인
+    echo "================================"
+    echo "생성된 테이블 확인 중..."
+    python manage.py showmigrations --list | grep -E "^\[X\]|^\[ \]" | head -n 20 || true
+    echo "================================"
+else
+    echo "❌ Migrations 실행 실패"
+    echo ""
+    echo "================================"
+    echo "에러 상세 내용:"
+    echo "================================"
+    python manage.py migrate --noinput --verbosity 2 2>&1 | tail -n 50
+    
+    echo ""
+    echo "================================"
+    echo "디버깅 정보:"
+    echo "================================"
+    echo "DB 설정 확인:"
+    python -c "
+import os
+import django
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'anonymous_project.settings.production')
+django.setup()
+from django.conf import settings
+print(f'DB_NAME: {settings.DATABASES[\"default\"][\"NAME\"]}')
+print(f'DB_USER: {settings.DATABASES[\"default\"][\"USER\"]}')
+print(f'DB_HOST: {settings.DATABASES[\"default\"][\"HOST\"]}')
+print(f'DB_PORT: {settings.DATABASES[\"default\"][\"PORT\"]}')
+" 2>&1 || echo "DB 설정 확인 실패"
+    
+    echo ""
+    echo "현재 적용된 migrations:"
+    python manage.py showmigrations --list | head -n 30 || true
+    
+    echo ""
+    echo "❌ Migrations가 실패했지만 배포는 계속 진행합니다."
+    echo "⚠️  애플리케이션이 실행 중 에러가 발생할 수 있습니다."
+    echo "⚠️  수동으로 migrate를 실행하세요:"
+    echo "   cd $APP_DIR"
+    echo "   source $VENV_DIR/bin/activate"
+    echo "   export DJANGO_SETTINGS_MODULE=anonymous_project.settings.production"
+    echo "   python manage.py migrate"
+fi
 
 # 환경 변수 파일 확인 (.env 파일은 서버에 별도로 설정되어 있어야 함)
 if [ ! -f "$APP_DIR/.env" ]; then

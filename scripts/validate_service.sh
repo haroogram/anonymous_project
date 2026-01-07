@@ -13,33 +13,57 @@ APP_DIR="/home/ubuntu/anonymous_project"
 MAX_RETRIES=5
 RETRY_INTERVAL=10
 
-# Health check 함수
+# Health check 함수 (개선)
 check_health() {
-    local url="http://localhost:8000"  # 애플리케이션 URL (필요에 따라 변경)
-    local response_code=$(curl -s -o /dev/null -w "%{http_code}" $url || echo "000")
+    local url="http://127.0.0.1:8000"
+    # 연결 타임아웃 설정 (5초)
+    local response_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 --connect-timeout 5 $url 2>/dev/null || echo "000")
     
     if [ "$response_code" -eq 200 ] || [ "$response_code" -eq 301 ] || [ "$response_code" -eq 302 ]; then
         echo "✅ Health check 성공: HTTP $response_code"
         return 0
     else
         echo "❌ Health check 실패: HTTP $response_code"
+        # 디버깅 정보 출력
+        echo "   포트 8000 리스닝 상태:"
+        netstat -tuln 2>/dev/null | grep ":8000 " || ss -tuln 2>/dev/null | grep ":8000 " || echo "   포트 8000이 리스닝하지 않음"
+        echo "   Supervisor 상태:"
+        sudo supervisorctl status anonymous_project 2>/dev/null || echo "   Supervisor 상태 확인 실패 (권한 문제일 수 있음)"
         return 1
     fi
 }
 
 # 프로세스 확인
 check_process() {
-    # Gunicorn 프로세스 확인
-    if pgrep -f "gunicorn" > /dev/null; then
-        echo "✅ Gunicorn 프로세스 실행 중"
-        return 0
+    # Supervisor를 사용하는 경우 (우선 확인)
+    if command -v supervisorctl &> /dev/null; then
+        local status=$(sudo supervisorctl status anonymous_project 2>/dev/null || echo "")
+        if echo "$status" | grep -q "RUNNING"; then
+            echo "✅ Supervisor로 관리되는 애플리케이션 실행 중"
+            # 포트가 실제로 리스닝하는지 확인
+            if netstat -tuln 2>/dev/null | grep -q ":8000 " || ss -tuln 2>/dev/null | grep -q ":8000 "; then
+                echo "✅ 포트 8000 리스닝 확인"
+                return 0
+            else
+                echo "⚠️  Supervisor는 실행 중이지만 포트 8000이 아직 리스닝하지 않음"
+                return 1
+            fi
+        else
+            echo "❌ Supervisor 프로그램이 실행 중이 아닙니다: $status"
+            return 1
+        fi
     fi
     
-    # Supervisor를 사용하는 경우
-    if command -v supervisorctl &> /dev/null; then
-        if supervisorctl status anonymous_project 2>/dev/null | grep -q "RUNNING"; then
-            echo "✅ Supervisor로 관리되는 애플리케이션 실행 중"
+    # Gunicorn 프로세스 확인 (fallback)
+    if pgrep -f "gunicorn" > /dev/null; then
+        echo "✅ Gunicorn 프로세스 실행 중"
+        # 포트 확인
+        if netstat -tuln 2>/dev/null | grep -q ":8000 " || ss -tuln 2>/dev/null | grep -q ":8000 "; then
+            echo "✅ 포트 8000 리스닝 확인"
             return 0
+        else
+            echo "⚠️  Gunicorn 프로세스는 있지만 포트 8000이 리스닝하지 않음"
+            return 1
         fi
     fi
     
