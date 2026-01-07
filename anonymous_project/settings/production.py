@@ -58,7 +58,17 @@ DATABASES = {
 }
 
 # Static files 설정 - S3 사용 (프로덕션)
-USE_S3_STATIC = os.getenv('USE_S3_STATIC', 'False') == 'True'
+# base.py의 STATIC_ROOT를 덮어쓰기 위해 명시적으로 설정
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# 환경 변수 값 정규화 (공백 제거, 대소문자 무시)
+use_s3_static_env = os.getenv('USE_S3_STATIC', 'False').strip().lower()
+USE_S3_STATIC = use_s3_static_env in ('true', '1', 'yes')
+
+# 디버깅: 환경 변수 값 확인
+import sys
+print(f"[DEBUG] USE_S3_STATIC env value: '{os.getenv('USE_S3_STATIC', 'NOT_SET')}'", file=sys.stderr)
+print(f"[DEBUG] USE_S3_STATIC parsed: {USE_S3_STATIC}", file=sys.stderr)
 
 if USE_S3_STATIC:
     # S3를 사용하는 경우
@@ -82,21 +92,25 @@ if USE_S3_STATIC:
     AWS_QUERYSTRING_AUTH = False  # URL에 인증 정보 포함하지 않음
     
     # Static files를 S3에 저장
+    # 중요: STATICFILES_STORAGE를 설정하면 collectstatic이 S3에 업로드함
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+    # STATIC_ROOT는 base.py에서 이미 설정되어 있지만, S3 사용 시에도 필요 (임시 저장용)
     
     # Media files도 S3를 사용하려면 아래 주석 해제
     # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     # MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
 
-    print("✅ S3 Static files 스토리지 사용 중")
-    print(f"   S3 버킷: {AWS_STORAGE_BUCKET_NAME}")
-    print(f"   STATICFILES_STORAGE: {STATICFILES_STORAGE}")
+    print("✅ S3 Static files 스토리지 사용 중", file=sys.stderr)
+    print(f"   S3 버킷: {AWS_STORAGE_BUCKET_NAME}", file=sys.stderr)
+    print(f"   STATICFILES_STORAGE: {STATICFILES_STORAGE}", file=sys.stderr)
+    print(f"   STATIC_URL: {STATIC_URL}", file=sys.stderr)
 else:
     # 로컬 파일 시스템 사용 (기본값)
+    # base.py의 설정을 그대로 사용하되 명시적으로 표시
     STATIC_URL = '/static/'
-    STATIC_ROOT = BASE_DIR / 'staticfiles'
-    print("✅ 로컬 Static files 스토리지 사용 중")
+    # STATIC_ROOT는 이미 base.py에서 설정됨
+    print("✅ 로컬 Static files 스토리지 사용 중", file=sys.stderr)
 
 # 로깅 설정
 LOGGING = {
