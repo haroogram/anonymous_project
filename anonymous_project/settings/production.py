@@ -65,11 +65,6 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 use_s3_static_env = os.getenv('USE_S3_STATIC', 'False').strip().lower()
 USE_S3_STATIC = use_s3_static_env in ('true', '1', 'yes')
 
-# 디버깅: 환경 변수 값 확인
-import sys
-print(f"[DEBUG] USE_S3_STATIC env value: '{os.getenv('USE_S3_STATIC', 'NOT_SET')}'", file=sys.stderr)
-print(f"[DEBUG] USE_S3_STATIC parsed: {USE_S3_STATIC}", file=sys.stderr)
-
 if USE_S3_STATIC:
     # S3를 사용하는 경우
     INSTALLED_APPS += ['storages']
@@ -101,16 +96,14 @@ if USE_S3_STATIC:
     # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     # MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
 
-    print("✅ S3 Static files 스토리지 사용 중", file=sys.stderr)
-    print(f"   S3 버킷: {AWS_STORAGE_BUCKET_NAME}", file=sys.stderr)
-    print(f"   STATICFILES_STORAGE: {STATICFILES_STORAGE}", file=sys.stderr)
-    print(f"   STATIC_URL: {STATIC_URL}", file=sys.stderr)
+    # S3 설정 완료 (로깅은 after_install.sh에서 처리)
+    pass
 else:
     # 로컬 파일 시스템 사용 (기본값)
     # base.py의 설정을 그대로 사용하되 명시적으로 표시
     STATIC_URL = '/static/'
     # STATIC_ROOT는 이미 base.py에서 설정됨
-    print("✅ 로컬 Static files 스토리지 사용 중", file=sys.stderr)
+    pass
 
 # 로깅 설정
 LOGGING = {
