@@ -154,14 +154,14 @@ CELERY_ENABLE_UTC = False
 # DatabaseScheduler를 사용하면 Django admin에서 스케줄을 관리할 수 있음
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
-# Celery Beat 스케줄 정의
-from celery.schedules import crontab
+# Celery Beat 스케줄 정의 -> DB로 관리
+# from celery.schedules import crontab
 
-CELERY_BEAT_SCHEDULE = {
-    'sync-visitor-stats-daily': {
-        'task': 'main.tasks.sync_visitor_stats_task',
-        'schedule': crontab(hour=0, minute=1),  # 매일 자정 1분에 실행
-        'options': {'expires': 60 * 60},  # 작업 만료 시간 (1시간)
-    },
-}
+# CELERY_BEAT_SCHEDULE = {
+#     'sync-visitor-stats-daily': {
+#         'task': 'main.tasks.sync_visitor_stats_task',
+#         'schedule': crontab(hour=0, minute=1),  # 매일 자정 1분에 실행
+#         'options': {'expires': 60 * 60},  # 작업 만료 시간 (1시간)
+#     },
+# }
 
