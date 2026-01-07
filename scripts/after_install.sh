@@ -99,12 +99,56 @@ fi
 echo "================================"
 echo "Django static files 수집 중..."
 echo "================================"
-if python manage.py collectstatic --noinput --clear; then
+
+# 설정 확인 (디버깅)
+echo "Static files 설정 확인 중..."
+python -c "
+import os
+import django
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'anonymous_project.settings.production')
+django.setup()
+from django.conf import settings
+print(f'USE_S3_STATIC (env): {os.getenv(\"USE_S3_STATIC\")}')
+print(f'STATICFILES_STORAGE: {getattr(settings, \"STATICFILES_STORAGE\", \"설정되지 않음\")}')
+print(f'STATIC_URL: {settings.STATIC_URL}')
+print(f'STATIC_ROOT: {getattr(settings, \"STATIC_ROOT\", \"설정되지 않음\")}')
+print(f'AWS_STORAGE_BUCKET_NAME: {getattr(settings, \"AWS_STORAGE_BUCKET_NAME\", \"설정되지 않음\")}')
+print(f'AWS_ACCESS_KEY_ID 설정됨: {bool(getattr(settings, \"AWS_ACCESS_KEY_ID\", None))}')
+print(f'AWS_SECRET_ACCESS_KEY 설정됨: {bool(getattr(settings, \"AWS_SECRET_ACCESS_KEY\", None))}')
+" 2>&1 || echo "⚠️  설정 확인 실패"
+
+# collectstatic 실행 (상세 로그)
+echo ""
+echo "collectstatic 실행 중..."
+if python manage.py collectstatic --noinput --clear --verbosity 2; then
     echo "✅ Static files 수집 성공"
+    
+    # S3 사용 시 업로드 확인
+    if [ "$USE_S3_STATIC" = "True" ]; then
+        echo ""
+        echo "S3 업로드 확인 중..."
+        python -c "
+import os
+import django
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'anonymous_project.settings.production')
+django.setup()
+from django.conf import settings
+from storages.backends.s3boto3 import S3Boto3Storage
+storage = S3Boto3Storage()
+try:
+    # S3에 파일이 있는지 확인 (예: css/style.css)
+    if storage.exists('static/css/style.css'):
+        print('✅ S3에 파일 업로드 확인됨: static/css/style.css')
+    else:
+        print('⚠️  S3에 파일이 없습니다. 업로드가 실패했을 수 있습니다.')
+except Exception as e:
+    print(f'⚠️  S3 확인 중 오류: {e}')
+" 2>&1 || echo "⚠️  S3 확인 실패"
+    fi
 else
     echo "❌ Static files 수집 실패"
     echo "에러 상세 내용:"
-    python manage.py collectstatic --noinput --clear 2>&1 | tail -n 20
+    python manage.py collectstatic --noinput --clear --verbosity 2 2>&1 | tail -n 30
     echo "⚠️  Static files 수집 실패했지만 계속 진행합니다."
 fi
 
