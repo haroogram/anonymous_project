@@ -15,7 +15,7 @@ RETRY_INTERVAL=10
 
 # Health check 함수 (개선)
 check_health() {
-    local url="http://localhost:8000"
+    local url="http://127.0.0.1:8000"
     # 연결 타임아웃 설정 (5초)
     local response_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 --connect-timeout 5 $url 2>/dev/null || echo "000")
     
