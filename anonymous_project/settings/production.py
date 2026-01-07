@@ -89,10 +89,9 @@ if USE_S3_STATIC:
     # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     # MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
 
-    # S3 사용 시 STATIC_ROOT는 사용하지 않음 (제거)
-    STATIC_ROOT = None
-    
     print("✅ S3 Static files 스토리지 사용 중")
+    print(f"   S3 버킷: {AWS_STORAGE_BUCKET_NAME}")
+    print(f"   STATICFILES_STORAGE: {STATICFILES_STORAGE}")
 else:
     # 로컬 파일 시스템 사용 (기본값)
     STATIC_URL = '/static/'
