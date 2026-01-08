@@ -1,6 +1,38 @@
 // 메인 JavaScript 파일
 
 document.addEventListener('DOMContentLoaded', function() {
+    // 모바일 메뉴 토글
+    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+    const mainNav = document.getElementById('main-nav');
+    
+    if (mobileMenuToggle && mainNav) {
+        mobileMenuToggle.addEventListener('click', function() {
+            this.classList.toggle('active');
+            mainNav.classList.toggle('active');
+        });
+
+        // 메뉴 링크 클릭 시 모바일 메뉴 닫기
+        const navLinks = mainNav.querySelectorAll('a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                mobileMenuToggle.classList.remove('active');
+                mainNav.classList.remove('active');
+            });
+        });
+
+        // 화면 크기 변경 시 메뉴 상태 초기화
+        let resizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function() {
+                if (window.innerWidth > 768) {
+                    mobileMenuToggle.classList.remove('active');
+                    mainNav.classList.remove('active');
+                }
+            }, 250);
+        });
+    }
+
     // 스크롤 시 헤더 스타일 변경
     const header = document.querySelector('.header');
     let lastScroll = 0;

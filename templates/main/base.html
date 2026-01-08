@@ -30,7 +30,12 @@
                         </span>
                     </div>
                 </div>
-                <nav class="main-nav">
+                <button class="mobile-menu-toggle" aria-label="메뉴 열기">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <nav class="main-nav" id="main-nav">
                     <ul>
                         <li><a href="{% url 'index' %}">홈</a></li>
                         <li><a href="{% url 'tutorial' 'network' %}">Network</a></li>
@@ -68,7 +73,7 @@
                         <ul>
                             {% for topic_item in topics %}
                             <li>
-                                <a href="{% url 'topic_detail' category topic_item.slug %}" 
+                                <a href="{% url 'topic_detail' category topic_item.slug %}#content-area" 
                                    {% if topic_item.slug == topic %}class="active"{% endif %}>
                                     {{ topic_item.title }}
                                 </a>
@@ -80,7 +85,7 @@
                 {% endif %}
                 {% endblock %}
 
-                <div class="content-area">
+                <div class="content-area" id="content-area">
                     {% block content %}{% endblock %}
                 </div>
             </div>
