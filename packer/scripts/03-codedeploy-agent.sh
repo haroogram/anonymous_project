@@ -1,5 +1,9 @@
 #!/bin/bash
+# Ubuntu 22.04 LTS 환경용 AWS CodeDeploy Agent 설치 스크립트
 set -e
+
+# Ubuntu/Debian 계열 시스템에서 비대화형 모드 설정
+export DEBIAN_FRONTEND=noninteractive
 
 echo "================================"
 echo "[3/8] AWS CodeDeploy Agent 설치"
@@ -17,7 +21,7 @@ fi
 # Ruby 설치 (CodeDeploy Agent는 Ruby로 작성됨)
 # 참고: apt-get update는 01-base-setup.sh에서 이미 실행됨
 # 참고: wget은 01-base-setup.sh에서 이미 설치됨
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
+sudo apt-get install -y \
     ruby \
     ruby-dev
 

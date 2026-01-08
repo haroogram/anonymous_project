@@ -1,5 +1,9 @@
 #!/bin/bash
+# Ubuntu 22.04 LTS 환경용 Nginx 설치 및 설정 스크립트
 set -e
+
+# Ubuntu/Debian 계열 시스템에서 비대화형 모드 설정
+export DEBIAN_FRONTEND=noninteractive
 
 echo "================================"
 echo "[4/8] Nginx 설치 및 설정"
@@ -7,7 +11,7 @@ echo "================================"
 
 # Nginx 설치
 # 참고: apt-get update는 01-base-setup.sh에서 이미 실행됨
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -y nginx
+sudo apt-get install -y nginx
 
 # Nginx 기본 설정 백업
 if [ -f /etc/nginx/sites-available/default ]; then
