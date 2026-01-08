@@ -77,25 +77,17 @@ if USE_S3_STATIC:
     if not all([AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_STORAGE_BUCKET_NAME]):
         raise ValueError("S3 Static files를 사용하려면 AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_STATIC_BUCKET_NAME 환경 변수가 필요합니다!")
     
-    # S3 설정
+    # S3 커스텀 도메인 (STATIC_URL 계산에 필요)
     AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
-    AWS_S3_OBJECT_PARAMETERS = {
-        'CacheControl': 'max-age=86400',  # 1일 캐시
-    }
-    AWS_DEFAULT_ACL = 'public-read'  # Static files는 public 읽기 허용
-    AWS_S3_FILE_OVERWRITE = False  # 같은 이름의 파일 덮어쓰기 방지
-    AWS_QUERYSTRING_AUTH = False  # URL에 인증 정보 포함하지 않음
     
     # Static files를 S3에 저장
-    # 중요: STATICFILES_STORAGE를 설정하면 collectstatic이 S3에 업로드함
-    # STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    # 커스텀 StaticStorage 클래스가 모든 S3 관련 설정을 포함하고 있음
     STORAGES = {
-        "default": {
-            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-        },
         "staticfiles": {
-            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+            "BACKEND": "main.storages.StaticStorage",
         },
+        # default는 Django 기본값 사용 (로컬 파일 시스템)
+        # Media files를 S3에 저장하려면 MediaStorage 클래스를 추가하세요
     }
     STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
     # STATIC_ROOT는 base.py에서 이미 설정되어 있지만, S3 사용 시에도 필요 (임시 저장용)
