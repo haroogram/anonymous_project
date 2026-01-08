@@ -88,7 +88,15 @@ if USE_S3_STATIC:
     
     # Static files를 S3에 저장
     # 중요: STATICFILES_STORAGE를 설정하면 collectstatic이 S3에 업로드함
-    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    # STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        },
+        "staticfiles": {
+            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        },
+    }
     STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
     # STATIC_ROOT는 base.py에서 이미 설정되어 있지만, S3 사용 시에도 필요 (임시 저장용)
     
