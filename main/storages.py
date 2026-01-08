@@ -13,7 +13,7 @@ class StaticStorage(S3Boto3Storage):
     static 파일들이 "static/" 경로 하위에 저장되도록 합니다.
     """
     location = "static"
-    default_acl = "public-read"
+    default_acl = None
     file_overwrite = False  # 같은 이름의 파일 덮어쓰기 방지
     querystring_auth = False  # URL에 인증 정보 포함하지 않음
     

@@ -79,6 +79,7 @@ if USE_S3_STATIC:
     
     # S3 커스텀 도메인 (STATIC_URL 계산에 필요)
     AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
+    AWS_DEFAULT_ACL = None
     
     # Static files를 S3에 저장
     # 커스텀 StaticStorage 클래스가 모든 S3 관련 설정을 포함하고 있음
