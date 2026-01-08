@@ -1,5 +1,9 @@
 #!/bin/bash
+# Ubuntu 22.04 LTS 환경용 Supervisor 설치 스크립트
 set -e
+
+# Ubuntu/Debian 계열 시스템에서 비대화형 모드 설정
+export DEBIAN_FRONTEND=noninteractive
 
 echo "================================"
 echo "[6/8] Supervisor 설치"
@@ -7,7 +11,7 @@ echo "================================"
 
 # Supervisor 설치 (프로세스 관리)
 # 참고: apt-get update는 01-base-setup.sh에서 이미 실행됨
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -y supervisor
+sudo apt-get install -y supervisor
 
 # Supervisor 설정 디렉토리 확인
 if [ ! -d /etc/supervisor/conf.d ]; then
