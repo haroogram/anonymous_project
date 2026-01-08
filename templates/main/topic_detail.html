@@ -1,5 +1,6 @@
 {% extends 'main/base.html' %}
 {% load static %}
+{% load static_url_filter %}
 
 {% block title %}{{ title }} - anonymous{% endblock %}
 
@@ -18,7 +19,7 @@
 <div class="topic-content-area">
     <article class="topic-article">
         <div class="article-content">
-            {{ content|safe }}
+            {{ content|static_url|safe }}
         </div>
     </article>
 
