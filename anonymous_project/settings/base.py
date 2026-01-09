@@ -119,12 +119,17 @@ CACHES = {
             'CONNECTION_POOL_KWARGS': {
                 'max_connections': 50,
                 'retry_on_timeout': True,
+                'socket_keepalive': True,  # TCP keepalive 활성화
+                'socket_keepalive_options': {},  # keepalive 옵션
             },
             # ElastiCache 사용 시 SSL/TLS 설정 (필요한 경우)
             # 'CONNECTION_POOL_KWARGS': {
             #     'ssl': True,
             #     'ssl_cert_reqs': None,
             # },
+            # 연결 풀 재사용 최적화
+            'COMPRESSOR': 'django_redis.compressors.zlib.ZlibCompressor',
+            'IGNORE_EXCEPTIONS': True,  # Redis 연결 실패 시에도 애플리케이션 계속 실행
         },
         'KEY_PREFIX': 'anonymous_project',
         'TIMEOUT': 300,  # 기본 캐시 타임아웃 (초)
@@ -149,6 +154,23 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE  # 'Asia/Seoul'
 CELERY_ENABLE_UTC = False
+
+# Celery 연결 최적화 (Redis 연결 수 감소)
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+CELERY_BROKER_CONNECTION_MAX_RETRIES = 10
+CELERY_BROKER_CONNECTION_RETRY = True
+CELERY_BROKER_POOL_LIMIT = 10  # 브로커 연결 풀 크기 제한
+CELERY_RESULT_BACKEND_CONNECTION_RETRY_ON_STARTUP = True
+CELERY_RESULT_BACKEND_CONNECTION_MAX_RETRIES = 10
+CELERY_RESULT_BACKEND_CONNECTION_RETRY = True
+
+# Celery 결과 백엔드 최적화 (결과 TTL 설정으로 메모리 절약)
+CELERY_RESULT_EXPIRES = 3600  # 결과 1시간 후 만료 (초)
+CELERY_RESULT_CACHE_MAX = 10000  # 최대 캐시 항목 수
+
+# Celery Worker 최적화
+CELERY_WORKER_PREFETCH_MULTIPLIER = 4  # Worker가 한 번에 가져올 작업 수
+CELERY_WORKER_MAX_TASKS_PER_CHILD = 1000  # 작업 처리 후 프로세스 재시작 (메모리 누수 방지)
 
 # Celery Beat 설정 (Redis 기반 분산 락 사용)
 # DatabaseScheduler를 사용하면 Django admin에서 스케줄을 관리할 수 있음
