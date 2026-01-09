@@ -6,25 +6,25 @@ EC2 Ubuntu 서버에서 사용합니다.
 """
 
 from .base import *
-import os
+# base.py에서 이미 env를 초기화했으므로 재사용
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # 프로덕션에서는 반드시 환경 변수로 SECRET_KEY를 설정해야 합니다
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = env('SECRET_KEY')
 if not SECRET_KEY:
     raise ValueError("SECRET_KEY 환경 변수가 설정되지 않았습니다!")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = env('DEBUG', default=False)
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
-if not ALLOWED_HOSTS or ALLOWED_HOSTS == ['']:
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
+if not ALLOWED_HOSTS:
     raise ValueError("ALLOWED_HOSTS 환경 변수가 설정되지 않았습니다!")
 
 # 보안 설정
-SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'False') == 'True'
-SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', 'False') == 'True'
-CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE', 'False') == 'True'
+SECURE_SSL_REDIRECT = env('SECURE_SSL_REDIRECT', default=False)
+SESSION_COOKIE_SECURE = env('SESSION_COOKIE_SECURE', default=False)
+CSRF_COOKIE_SECURE = env('CSRF_COOKIE_SECURE', default=False)
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
@@ -33,11 +33,12 @@ X_FRAME_OPTIONS = 'DENY'
 import pymysql
 pymysql.install_as_MySQLdb()
 
-DB_NAME = os.getenv('DB_NAME')
-DB_USER = os.getenv('DB_USER')
-DB_PASSWORD = os.getenv('DB_PASSWORD')
-DB_HOST = os.getenv('DB_HOST', 'localhost')
-DB_PORT = os.getenv('DB_PORT', '3306')
+# 데이터베이스 설정 - RDS 연결
+DB_NAME = env('DB_NAME')
+DB_USER = env('DB_USER')
+DB_PASSWORD = env('DB_PASSWORD')
+DB_HOST = env('DB_HOST', default='localhost')
+DB_PORT = env('DB_PORT', default=3306)
 
 if not all([DB_NAME, DB_USER, DB_PASSWORD]):
     raise ValueError("데이터베이스 환경 변수(DB_NAME, DB_USER, DB_PASSWORD)가 설정되지 않았습니다!")
@@ -61,18 +62,16 @@ DATABASES = {
 # base.py의 STATIC_ROOT를 덮어쓰기 위해 명시적으로 설정
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# 환경 변수 값 정규화 (공백 제거, 대소문자 무시)
-use_s3_static_env = os.getenv('USE_S3_STATIC', 'False').strip().lower()
-USE_S3_STATIC = use_s3_static_env in ('true', '1', 'yes')
+USE_S3_STATIC = env('USE_S3_STATIC', default=False)
 
 if USE_S3_STATIC:
     # S3를 사용하는 경우
     INSTALLED_APPS += ['storages']
     
-    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-    AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STATIC_BUCKET_NAME')
-    AWS_S3_REGION_NAME = os.getenv('AWS_REGION', 'ap-northeast-2')
+    AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = env('AWS_STATIC_BUCKET_NAME')
+    AWS_S3_REGION_NAME = env('AWS_REGION', default='ap-northeast-2')
     
     if not all([AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_STORAGE_BUCKET_NAME]):
         raise ValueError("S3 Static files를 사용하려면 AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_STATIC_BUCKET_NAME 환경 변수가 필요합니다!")
