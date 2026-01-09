@@ -126,6 +126,19 @@ if [ -z "$ALLOWED_HOSTS" ]; then
 fi
 echo "ALLOWED_HOSTS=$ALLOWED_HOSTS" >> $TEMP_ENV_FILE
 
+# ALB 도메인 설정 (선택사항, ALB를 사용하는 경우)
+ALB_DOMAIN=$(get_ssm_parameter "alb/domain")
+if [ -n "$ALB_DOMAIN" ]; then
+    echo "ALB_DOMAIN=$ALB_DOMAIN" >> $TEMP_ENV_FILE
+    echo "✅ ALB 도메인 설정됨: $ALB_DOMAIN"
+fi
+
+# CSRF_TRUSTED_ORIGINS 설정 (선택사항)
+CSRF_TRUSTED_ORIGINS=$(get_ssm_parameter "django/csrf-trusted-origins")
+if [ -n "$CSRF_TRUSTED_ORIGINS" ]; then
+    echo "CSRF_TRUSTED_ORIGINS=$CSRF_TRUSTED_ORIGINS" >> $TEMP_ENV_FILE
+fi
+
 # 데이터베이스 설정 (필수)
 DB_NAME=$(get_ssm_parameter "db/name")
 DB_USER=$(get_ssm_parameter "db/user")
