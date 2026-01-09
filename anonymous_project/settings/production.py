@@ -90,7 +90,7 @@ if USE_S3_STATIC:
         # default는 Django 기본값 사용 (로컬 파일 시스템)
         # Media files를 S3에 저장하려면 MediaStorage 클래스를 추가하세요
     }
-    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static'
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
     # STATIC_ROOT는 base.py에서 이미 설정되어 있지만, S3 사용 시에도 필요 (임시 저장용)
     
     # Media files도 S3를 사용하려면 아래 주석 해제
