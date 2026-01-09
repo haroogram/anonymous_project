@@ -41,7 +41,7 @@ def static_url(value):
         if static_url.startswith('http'):
             # S3 URL인 경우: STATIC_URL이 이미 /static/으로 끝나므로
             # /static/img/image.png -> img/image.png만 추출하여 STATIC_URL 뒤에 붙임
-            relative_path = path[7:]  # /static/ 제거 (7글자)
+            relative_path = path[8:]  # /static/ 제거 (7글자)
             # STATIC_URL 끝에 슬래시가 있으면 그대로, 없으면 추가
             base_url = static_url.rstrip('/')
             new_url = f"{base_url}/{relative_path}"
