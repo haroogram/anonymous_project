@@ -81,11 +81,12 @@ if USE_S3_STATIC:
     AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
     AWS_DEFAULT_ACL = None
       
-    # Static files를 S3에 저장
-    # 커스텀 StaticStorage 클래스가 모든 S3 관련 설정을 포함하고 있음
+    # Static files를 S3에 저장 (Manifest 기능 포함)
+    # ManifestStaticStorage는 파일 내용의 해시를 파일명에 추가하여
+    # CSS/JS 파일 변경 시 자동으로 새로운 URL이 생성되도록 합니다.
     STORAGES = {
         "staticfiles": {
-            "BACKEND": "main.storages.StaticStorage",
+            "BACKEND": "main.storages.ManifestStaticStorage",
         },
         # default는 Django 기본값 사용 (로컬 파일 시스템)
         # Media files를 S3에 저장하려면 MediaStorage 클래스를 추가하세요
@@ -100,8 +101,13 @@ if USE_S3_STATIC:
     # S3 설정 완료 (로깅은 after_install.sh에서 처리)
     pass
 else:
-    # 로컬 파일 시스템 사용 (기본값)
-    # base.py의 설정을 그대로 사용하되 명시적으로 표시
+    # 로컬 파일 시스템 사용 (Manifest 기능 포함)
+    # ManifestStaticFilesStorage를 사용하여 파일 변경 시 자동으로 URL이 변경되도록 함
+    STORAGES = {
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",
+        },
+    }
     STATIC_URL = '/static/'
     # STATIC_ROOT는 이미 base.py에서 설정됨
     pass

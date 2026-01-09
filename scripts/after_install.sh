@@ -133,6 +133,27 @@ echo "$COLLECTSTATIC_OUTPUT"
 
 if [ $COLLECTSTATIC_EXIT_CODE -eq 0 ]; then
     echo "✅ Static files 수집 성공"
+
+    # HTML 캐시 무효화 (새로운 static 파일 URL이 반영되도록)
+    echo ""
+    echo "HTML 캐시 무효화 중..."
+    CACHE_CLEAR_OUTPUT=$(python manage.py shell << EOF 2>&1
+from django.core.cache import cache
+try:
+    cache.clear()
+    print("✅ 캐시가 무효화되었습니다.")
+except Exception as e:
+    print(f"⚠️  캐시 무효화 중 오류 발생: {e}")
+    import sys
+    sys.exit(1)
+EOF
+    )
+    CACHE_CLEAR_EXIT_CODE=$?
+    echo "$CACHE_CLEAR_OUTPUT"
+    
+    if [ $CACHE_CLEAR_EXIT_CODE -ne 0 ]; then
+        echo "⚠️  캐시 무효화 중 오류가 발생했습니다. (계속 진행)"
+    fi
     
     # S3 사용 시 업로드 확인
     if [ "$USE_S3_STATIC" = "True" ]; then
