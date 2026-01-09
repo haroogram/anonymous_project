@@ -26,7 +26,7 @@ def static_url(value):
     if not value:
         return value
     
-    # STATIC_URL 가져오기 (끝에 슬래시 보장)
+    # STATIC_URL 가져오기 (끝에 슬래시 정규화)
     static_url = settings.STATIC_URL.rstrip('/') + '/'
     
     # HTML 내부의 /static/ 경로를 찾아서 STATIC_URL로 변환
@@ -37,10 +37,15 @@ def static_url(value):
         attr = match.group(1)  # src 또는 href
         path = match.group(2)  # /static/... 경로 (예: /static/img/image.png)
         
-        # /static/을 STATIC_URL로 교체
-        # 예: /static/img/image.png -> https://bucket.s3.region.amazonaws.com/static/img/image.png
-        # 또는 (로컬): /static/img/image.png -> /static/img/image.png
-        new_url = path.replace('/static/', static_url, 1)
+        # /static/ 이후의 경로만 추출 (예: img/image.png)
+        # /static/img/image.png -> img/image.png
+        relative_path = path[8:]  # '/static/' (8글자) 제거
+        
+        # STATIC_URL과 상대 경로 결합
+        # STATIC_URL이 이미 /로 끝나므로 바로 결합
+        # 예: https://bucket.s3.region.amazonaws.com/static/ + img/image.png
+        # 결과: https://bucket.s3.region.amazonaws.com/static/img/image.png
+        new_url = static_url + relative_path
         
         return f'{attr}="{new_url}"'
     
