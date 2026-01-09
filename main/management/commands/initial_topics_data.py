@@ -1,0 +1,5193 @@
+# -*- coding: utf-8 -*-
+"""
+초기 주제 데이터
+load_initial_data.py에서 사용하는 topics_data 딕셔너리
+"""
+
+# 주제 데이터
+topics_data = {
+            'network': [
+                {
+                    'title': '네트워크란',
+                    'slug': '네트워크란',
+                    'content': '''<h2 id="네트워크란">1. 네트워크란?</h2>
+<p><strong>요약:</strong> 네트워크는 컴퓨터와 장치가 서로 데이터를 교환할 수 있도록 연결된 구조입니다. 정보의 빠른 전달과 자원 공유를 위해 설계되며, LAN, MAN, WAN처럼 규모와 범위가 다양한 형태로 존재합니다. 신뢰성, 확장성, 보안이 네트워크 설계의 핵심 요소입니다.</p>
+<h3 id="네트워크의-목적과-구성요소">1.1 네트워크의 목적과 구성요소</h3>
+<p>네트워크는 컴퓨터와 장치 간에 데이터를 주고받기 위한 통신망을 의미합니다.
+전 세계를 연결하는 인터넷뿐 아니라 가정의 공유기, 사무실의 이더넷 LAN,
+스마트폰이 사용하는 이동통신망까지 모두 네트워크의 범주에 속합니다.
+디지털 정보의 전달 경로를 설계하고 유지하는 것이 네트워크 기술의 핵심입니다.</p>
+<p>네트워크는 단순히 여러 장치를 연결하는 것을 넘어, <strong>정보를
+신속하고 안정적으로 공유하고 협업할 수 있는 기반</strong>을 제공합니다.
+물리적인 케이블이나 무선 신호로 연결된 장치는 데이터를 주고받을 수
+있지만, 주소 지정과 경로 결정, 오류 제어, 보안 등의 기능 없이는 올바른
+상대에게 안정적으로 전달하기 어렵습니다. 네트워크 설계의 핵심 목적은
+아래와 같습니다.</p>
+<ul>
+<li><strong>연결성 보장</strong>: 사용자와 장치가 시간과 장소에 관계없이
+상호 연결될 수 있도록 합니다. 예를 들어 사무실의 컴퓨터가 클라우드
+서버와 통신하거나 스마트폰이 IoT 기기와 통신합니다.</li>
+<li><strong>효율적 자원 공유</strong>: 프린터, 스토리지, 인터넷 회선
+등의 자원을 여러 사용자가 공유해 비용을 절감합니다.</li>
+<li><strong>확장성과 유연성</strong>: 조직 규모가 커지거나 새로운
+서비스를 도입할 때 기존 인프라를 쉽게 확장할 수 있어야 합니다. 네트워크
+주소 체계와 설계는 이러한 확장을 염두에 두고 계획해야 합니다.</li>
+<li><strong>보안과 가용성</strong>: 무단 접근을 방지하고 서비스 중단
+없이 지속적으로 통신할 수 있게 합니다. 이는 방화벽, 암호화, 모니터링,
+장애 대비 구성 등을 포함합니다.</li>
+</ul>
+<p>네트워크를 구성하는 기본 장치는 다음과 같습니다:</p>
+<ul>
+  <li><strong>라우터</strong> – 서로 다른 네트워크 간 데이터 패킷을 전달하며 경로 선택을 담당합니다.</li>
+  <li><strong>스위치</strong> – 동일 네트워크 내에서 MAC 주소 기반으로 프레임을 전송하여 충돌 도메인을 분리합니다.</li>
+  <li><strong>허브</strong> – 초기 네트워크에서 사용된 단순 분배 장치로, 현재는 스위치로 대체되었습니다.</li>
+  <li><strong>무선 AP</strong> – Wi‑Fi 클라이언트를 유선 네트워크에 연결합니다.</li>
+  <li><strong>방화벽</strong> – 네트워크 경계에서 트래픽을 필터링하고 보안을 제공합니다.</li>
+</ul>
+<p>구성 요소와 그 역할을 다시 정리하면 다음과 같습니다.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>구성 요소</th>
+<th>역할 및 세부 설명</th>
+<th>도로 비유</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>연결(Connectivity)</strong></td>
+<td>케이블, 스위치, 무선 AP, 라우터 등으로 장치 간 물리적·논리적 연결을
+제공합니다. 이더넷, Wi‑Fi, 블루투스, 광섬유, 셀룰러 등 다양한 매체가
+사용됩니다.</td>
+<td>도로와 교량</td>
+</tr>
+<tr class="even">
+<td><strong>주소(Addressing)</strong></td>
+<td>통신 대상 식별에 사용되며, IP 주소(네트워크와 호스트 구분)와 MAC
+주소(물리적 식별자)가 있습니다. IPv4/IPv6의 서브넷, VLAN ID 등이 주소
+구조를 형성합니다.</td>
+<td>차량 번호판</td>
+</tr>
+<tr class="odd">
+<td><strong>경로(Path/Routing)</strong></td>
+<td>패킷이 최적 경로로 전달되도록 라우터가 라우팅 테이블을 이용해 경로를
+결정합니다. 다중 경로와 재해복구 경로를 통해 신뢰성을 확보합니다.</td>
+<td>내비게이션 경로</td>
+</tr>
+<tr class="even">
+<td><strong>규칙(Protocol)</strong></td>
+<td>데이터 포맷, 순서, 오류 처리 등을 정의합니다. TCP, UDP, HTTP, SNMP,
+OSPF 등 다양한 프로토콜이 역할을 분담합니다.</td>
+<td>교통 신호 및 법규</td>
+</tr>
+<tr class="odd">
+<td><strong>서비스 품질(QoS)</strong></td>
+<td>특정 애플리케이션(VoIP, 비디오 등)에 필요한 지연, 대역폭, 손실
+요건을 보장합니다. 패킷 분류, 마킹, 큐잉, 혼잡 관리로
+구현됩니다.</td>
+<td>고속도로와 일반도로의 차선 배분</td>
+</tr>
+</tbody>
+</table>
+<p>네트워크는 또한 <strong>회선 교환(circuit switching)</strong>과
+<strong>패킷 교환(packet switching)</strong>으로 구분할 수 있습니다.
+회선 교환은 통신 전에 회선을 독점적으로 할당하는 전화망 모델이며, 패킷
+교환은 네트워크 자원을 공유하면서 데이터를 작은 패킷으로 나누어 전달하여
+효율을 높입니다. 인터넷은 패킷 교환 기술을 기반으로 동작합니다.</p>
+<h3 id="네트워크-범위-lan-man-wan-인트라넷엑스트라넷">1.2 네트워크 범위:
+LAN, MAN, WAN, 인트라넷/엑스트라넷</h3>
+<p><strong>LAN(Local Area Network)</strong>은 사무실, 가정, 건물 내에서
+사용하는 네트워크로, 이더넷 스위치와 무선 AP가 주로 사용됩니다. 속도가
+빠르고 관리가 용이하지만 거리 제한(몇 백 미터)이 있습니다.
+<strong>MAN(Metropolitan Area Network)</strong>은 도시 규모에서
+사용하며, 메트로 이더넷, 다중 모드 광섬유, 케이블 모뎀 등을 이용합니다.
+ISP가 제공하는 전용 회선, DWDM, SDH/SONET, PON 등이 포함될 수 있습니다.
+<strong>WAN(Wide Area Network)</strong>은 국가·대륙을 넘나드는
+네트워크로, MPLS, 프레임 릴레이, 위성, 공공 인터넷 등이 사용됩니다.
+지연(latency)과 비용이 증가하지만 전 세계 연결을 제공합니다.</p>
+<p>아래 표는 LAN/MAN/WAN의 차이점을 구체적으로 비교합니다.</p>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>구분</th>
+<th>범위 및 기술</th>
+<th>전송 속도</th>
+<th>비용 및 관리</th>
+<th>사용 예</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>LAN</strong></td>
+<td>건물 내부, 이더넷(10/100/1000Base‑T), Wi‑Fi, PoE 사용</td>
+<td>수 Mbps~수 Gbps</td>
+<td>장비 비용 낮음, 자가 관리 가능</td>
+<td>사무실/가정 네트워크</td>
+</tr>
+<tr class="even">
+<td><strong>MAN</strong></td>
+<td>수 km~수십 km, 메트로 이더넷, MPLS, PON</td>
+<td>수백 Mbps~수 Gbps</td>
+<td>ISP 전용망, 월 임대 비용</td>
+<td>캠퍼스 연결, 지사 간 전용 회선</td>
+</tr>
+<tr class="odd">
+<td><strong>WAN</strong></td>
+<td>수백 km~전 세계, MPLS, VPN, 위성, SD‑WAN</td>
+<td>수 Mbps~수백 Mbps(일반 인터넷), 전용선은 수 Gbps 가능</td>
+<td>비용 높음, QoS를 위해 SLA 필수</td>
+<td>기업 지사, 클라우드 연결, CDN</td>
+</tr>
+</tbody>
+</table>
+<p>LAN은 주로 기업 내부망을 의미하며
+<strong>인트라넷(Intranet)</strong>이라고도 합니다. 인트라넷은 회사 내부
+직원만 접근 가능한 네트워크로 HR 시스템, ERP, 내부 포털이 포함됩니다.
+<strong>엑스트라넷(Extranet)</strong>은 파트너사나 고객에게 제한적으로
+내부 네트워크 일부를 개방하는 형태로, 공급망 관리, B2B 포털에서
+사용됩니다.</p>
+<h3 id="토폴로지와-설계-패턴-상세">1.3 토폴로지와 설계 패턴 상세</h3>
+<p>토폴로지는 물리적 배선과 논리적 데이터 흐름을 모두 고려합니다. 다음은
+각 토폴로지의 특성과 실제 적용 사례를 더 자세히 설명한 것입니다.</p>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>토폴로지</th>
+<th>물리·논리 구조</th>
+<th>실제 예</th>
+<th>장점</th>
+<th>단점</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>스타</strong></td>
+<td>모든 장치가 중앙 노드(스위치/허브)에 포인트‑투‑포인트 연결</td>
+<td>대부분의 기업 LAN, Wi‑Fi AP와 클라이언트 연결</td>
+<td>구성·확장·트러블슈팅이 용이, 한 링크 장애가 전체에 영향 없음</td>
+<td>중앙 장비에 장애가 발생하면 전체 통신 불가, 케이블 길이가
+늘어남</td>
+</tr>
+<tr class="even">
+<td><strong>트리</strong></td>
+<td>스타를 계층적으로 확장; 액세스–배포–코어 구조</td>
+<td>3‑Tier 기업 네트워크, 학교 캠퍼스</td>
+<td>확장성, 복원력, 구조적 설계</td>
+<td>상위 계층 실패 시 많은 세그먼트가 영향, 복잡한 설계 필요</td>
+</tr>
+<tr class="odd">
+<td><strong>메시</strong></td>
+<td>각 노드가 여러 노드와 연결; 완전 메시는 모든 노드가 연결</td>
+<td>데이터센터 스파인‑리프, WAN 백본</td>
+<td>고가용성, 경로 다수로 장애 시 우회 가능</td>
+<td>케이블·포트 수 증가, 비용 증가, 라우팅 복잡</td>
+</tr>
+<tr class="even">
+<td><strong>버스</strong></td>
+<td>하나의 공유 버스를 통해 모든 장치가 통신; 토큰 링과 유사</td>
+<td>초기 이더넷(10Base5, 10Base2), 일부 산업 장치</td>
+<td>구조 단순, 초기 비용 낮음</td>
+<td>충돌이 빈번, 확장 어려움, 한 지점 장애 시 전체 영향</td>
+</tr>
+<tr class="odd">
+<td><strong>링</strong></td>
+<td>노드들이 순환형으로 연결, 토큰을 순환하며 순서 제어</td>
+<td>FDDI, 토큰 링, 일부 메트로 이더넷 링</td>
+<td>토큰 기반으로 충돌 최소, 회전 방향 예측 가능</td>
+<td>고장 감지·복구 시간이 느릴 수 있음, 한 링크 문제 시 전체 영향</td>
+</tr>
+<tr class="even">
+<td><strong>하이브리드</strong></td>
+<td>여러 토폴로지를 조합(예: 스타+링)</td>
+<td>오늘날 대부분의 네트워크</td>
+<td>유연성, 특정 요구에 맞춘 설계 가능</td>
+<td>설계 및 관리 복잡</td>
+</tr>
+</tbody>
+</table>
+<p>현대 기업에서는 <strong>Collapsed Core</strong> 구조도 많이
+사용합니다. 이는 코어와 배포층을 한 단계로 통합하여 중규모 네트워크에서
+코어/배포 장비를 하나의 고성능 스위치로 대체하여 비용을 절감합니다.
+대규모 데이터센터에서는 <strong>스파인‑리프 구조</strong>를 사용하여
+모든 Leaf 스위치가 각 Spine 스위치와 연결되어 <strong>Equal‑Cost
+Multi‑Path(ECMP)</strong>를 통해 균등한 대역폭과 지연을
+   제공합니다.
+   스파인 수는 Leaf 수의 두 배 이상으로 설계해 확장성과 회복력을
+   확보합니다. 스파인‑리프의 장점과 단점을 자세히 설명하고 있습니다.</p>
+<h3 id="품질-지표qos-metrics와-성능-평가">1.4 품질 지표(QoS Metrics)와
+성능 평가</h3>
+<p>네트워크 품질을 평가하려면 <strong>대역폭, 지연, 지터,
+손실</strong>뿐만 아니라 <strong>가용성(Availability)</strong>과
+<strong>신뢰성(Reliability)</strong>도 고려해야 합니다.</p>
+<ul>
+<li><strong>대역폭(Bandwidth)</strong>: 링크가 제공할 수 있는 최대 비트
+전송률을 의미합니다. <strong>스루풋(Throughput)</strong>은 실제 데이터가
+전송되는 속도로, 프로토콜 오버헤드와 충돌·재전송에 의해 대역폭보다 낮을
+수 있습니다. <strong>굿풋(Goodput)</strong>은 유효한 사용자 데이터
+전송률을 의미합니다. QoS 정책에서는 대역폭을 예약하여 특정 트래픽이
+필요한 속도로 전달되도록 합니다.</li>
+<li><strong>지연(Latency)</strong>: 왕복 지연(RTT)과 단방향 지연으로
+구분할 수 있으며, <strong>전파 지연</strong>, <strong>처리
+지연</strong>, <strong>큐잉 지연</strong>으로 구성됩니다. 지연이 높으면
+VoIP 통화에서 에코가 발생하거나 웹 응답 시간이 느려집니다. 네트워크 설계
+시 라우터 수와 링크 길이, 큐 구조를 고려해야 합니다.</li>
+<li><strong>지터(Jitter)</strong>: 패킷 사이의 지연 편차를 의미하며,
+스트리밍 재생 버퍼를 늘려 지터를 완화할 수 있습니다. QoS에서는 지터를
+줄이기 위해 <strong>Priority Queuing</strong>과 <strong>Traffic
+Shaping</strong>을 사용합니다.</li>
+<li><strong>손실(Loss)</strong>: 패킷 손실률은 재전송과 지연을
+초래합니다. TCP는 손실을 감지하면 전송 속도를 줄이고 재전송하지만, UDP
+애플리케이션은 손실에 취약합니다. 손실을 줄이기 위해 링크 품질 향상,
+스위치 큐 관리, 적절한 MTU 설정이 필요합니다.</li>
+<li><strong>가용성</strong>: 네트워크가 정상적으로 서비스하는 시간을
+의미합니다. 고가용성을 위해 이중화, 라우팅 프로토콜의 빠른 수렴, 링크
+집성 등을 설계합니다. <strong>99.999% 가용성</strong>(5 nines)을 목표로
+하는 경우 연간 다운타임을 5분 이하로 제한해야 합니다.</li>
+<li><strong>신뢰성</strong>: 비트 오류율(Bit Error Rate)과 같이 데이터가
+정확하게 전달되는 정도를 의미합니다. 광케이블, 전자파 차폐, CRC 검사를
+통해 향상할 수 있습니다.</li>
+</ul>
+<p>QoS는 패킷을 <strong>분류(Classification)</strong>하고
+<strong>마킹(Marking)</strong>한 뒤 <strong>큐잉(Scheduling)</strong>과
+<strong>혼잡 제어(Congestion Management)</strong>를 통해 적용합니다.
+예를 들어 DSCP 값 46(EF)는 음성 트래픽에 할당되어 우선 순위를 높이고,
+WRED는 TCP 트래픽의 혼잡을 완화합니다. QoS의 실제 적용은 라우터와 스위치
+플랫폼에 따라 차이가 있으며, 신뢰 경계(trust boundary)를 정의하여
+클라이언트의 QoS 마킹을 신뢰할지 여부를 결정합니다.</p>
+''',
+                    'order': 1,
+                },
+                {
+                    'title': 'OSI 7계층 & TCP/IP 4계층',
+                    'slug': 'osi-7계층-tcp-ip-4계층',
+                    'content': '''<h2 id="osi-7계층-tcp-ip-4계층">2. OSI 7계층 &amp; TCP/IP 4계층</h2>
+<p><strong>요약:</strong> OSI 7계층 모델과 TCP/IP 4계층 모델은 네트워크 통신 과정을 단계별로 나눠 설명하는 참조 모델입니다. OSI는 응용·표현·세션·전송·네트워크·데이터링크·물리 계층으로 세분화되어 있으며, TCP/IP는 이를 응용·전송·인터넷·링크 4계층으로 단순화하여 실제 프로토콜 구현에 초점을 맞춥니다. 두 모델은 계층화된 구조를 통해 복잡한 네트워킹 기능을 분리하고 표준화할 수 있도록 돕습니다. 또한 OSI 모델은 교육과 프로토콜 설계에 적합하며, TCP/IP 모델은 인터넷 실무 구현을 위한 실용적인 틀로 사용됩니다. 계층화를 통해 각 계층의 독립성을 유지하면서도 상호 교체 및 확장이 용이합니다.</p>
+<h3 id="모델-비교-osi-7계층과-tcpip-4계층의-깊은-이해">2.1 모델 비교:
+OSI 7계층과 TCP/IP 4계층의 깊은 이해</h3>
+<p>OSI와 TCP/IP 모델은 네트워크 통신을 설명하는 레퍼런스 모델입니다.
+<strong>OSI 모델</strong>은 <strong>7개 계층</strong>으로 구성되어 있으며, 
+각 계층은 응용(Application)ㆍ표현(Presentation)ㆍ세션(Session)ㆍ전송(Transport)ㆍ네트워크(Network)ㆍ데이터링크(Data Link)ㆍ물리(Physical) 계층을 의미합니다. 교육과 표준화에 유용한 세분화된 구조로, 프로토콜과 장비의 역할을 세밀하게 구분합니다.
+반면 <strong>TCP/IP 스택</strong>은 <strong>4개 계층</strong>(응용(Application), 전송(Transport), 인터넷(Internet), 링크(Link))으로 실제 인터넷 프로토콜 구현에 초점을 맞춥니다. 응용 계층은 OSI의 5–7계층을 포괄하고, 링크 계층은 데이터링크와 물리 계층을 합친 개념입니다. 각
+계층에서 주로 수행하는 역할과 관련 프로토콜을 정리하면 아래와
+같습니다.</p>
+
+<p>이 두 모델은 계층화된 구조를 통해 복잡한 통신 과정을 분리하여 설명합니다.
+OSI 모델은 교육과 연구에 적합하도록 세밀하게 계층을 나누어 역할을 구분하는 반면,
+TCP/IP 모델은 실제 인터넷에서 사용하는 프로토콜을 중심으로 간단한 4계층 구조를 제공합니다.
+실무에서는 두 모델의 장점을 조합해 이해하는 경우가 많으며, 각 계층의 책임과 인터페이스를 명확히 이해하는 것이 중요합니다.</p>
+<table>
+<colgroup>
+  <col style="width: 25%" />
+  <col style="width: 35%" />
+  <col style="width: 20%" />
+  <col style="width: 20%" />
+</colgroup>
+<thead>
+  <tr class="header">
+    <th>OSI 계층</th>
+    <th>주요 기능 및 예시</th>
+    <th>TCP/IP 계층 대응</th>
+    <th>실무 장비/소프트웨어</th>
+  </tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>7계층 - 응용(Application)</strong></td>
+<td>사용자 애플리케이션과 네트워크 사이 인터페이스. HTTP, FTP, DNS,
+SMTP, SNMP, Telnet 등은 실제 서비스와 데이터를 제공하며, API와
+클라이언트/서버 소프트웨어가 위치합니다.</td>
+    <td><strong>4계층 - 응용(Application)</strong></td>
+<td>웹 서버, 이메일 서버, 클라이언트 프로그램</td>
+</tr>
+<tr class="even">
+<td><strong>6계층 - 표현(Presentation)</strong></td>
+<td>데이터 형식 변환, 암호화/복호화, 압축/해제. 예: SSL/TLS 암호화,
+JPEG/PNG 인코딩, ASCII↔︎Unicode 변환.</td>
+    <td><strong>4계층 - 응용(Application)</strong></td>
+<td>SSL 라이브러리, 미디어 코덱</td>
+</tr>
+<tr class="odd">
+<td><strong>5계층 - 세션(Session)</strong></td>
+<td>애플리케이션 간 세션 설정·유지·종료. RPC, SQL 세션, NetBIOS 세션
+관리, 서버 메시지 블록(SMB) 연결 등.</td>
+    <td><strong>4계층 - 응용(Application)</strong></td>
+<td>세션 관리 서비스, TLS 세션 유지</td>
+</tr>
+<tr class="even">
+<td><strong>4계층 - 전송(Transport)</strong></td>
+<td>종단 간 신뢰성·흐름 제어·혼잡 제어. TCP, UDP, DCCP, SCTP 등이
+있으며, 포트 번호를 사용해 여러 세션을 구분합니다. TLS/SSL은 전송과
+응용의 중간 계층에서 암호화를 제공합니다.</td>
+    <td><strong>3계층 - 전송(Transport)</strong></td>
+    <td>TCP/UDP 소켓, 로드밸런서(L4)</td>
+</tr>
+<tr class="odd">
+<td><strong>3계층 - 네트워크(Network)</strong></td>
+<td>논리 주소 할당과 라우팅. IP(IPv4/IPv6), ICMP, IGMP, PIM, EIGRP,
+OSPF, BGP, RIP 등.</td>
+    <td><strong>2계층 - 인터넷(Internet)</strong></td>
+    <td>라우터, L3 스위치</td>
+</tr>
+<tr class="even">
+<td><strong>2계층 - 데이터링크(Data Link)</strong></td>
+<td>프레임 전달, MAC 주소 학습, 오류 검출. 이더넷, PPP, HDLC, Frame
+Relay, STP, VTP, VLAN, LACP.</td>
+    <td><strong>1계층 - 링크(Link)</strong></td>
+    <td>스위치, 브리지, NIC</td>
+</tr>
+<tr class="odd">
+<td><strong>1계층 - 물리(Physical)</strong></td>
+<td>전기/광 신호 변환, 비트 스트림 전달. 케이블, 커넥터, 전송 매체,
+전압, 타이밍, BERT.</td>
+<td><strong>1계층 - 링크(Link)</strong></td>
+    <td>허브, 리피터, 케이블, 광모듈</td>
+</tr>
+</tbody>
+</table>
+<p>각 계층은 하위 계층의 기능을 사용하고 상위 계층에 서비스를
+제공합니다. 예를 들어 HTTP는 TCP를 사용하고, TCP는 IP를 사용하며, IP는
+이더넷 프레임 위에 캡슐화됩니다. OSI 모델은 구조적 사고를 돕고 프로토콜
+개발 시 참조틀로 활용되지만, 실제 구현에서는 계층 간 경계가 엄격하지
+않을 수 있습니다. 예를 들어 TLS는 전송 계층 위에서 동작하지만
+애플리케이션 계층과 밀접하게 연동되며, 일부 프로토콜은 여러 계층의
+기능을 동시에 수행합니다.</p>
+<h3 id="캡슐화와-pdu-단계별-예시">2.2 캡슐화와 PDU: 단계별 예시</h3>
+<p>네트워크 데이터 전달 과정을 이해하려면 <strong>캡슐화 과정</strong>을
+세부적으로 살펴보아야 합니다. 예를 들어, 사용자가 웹 브라우저에서
+<code>https://example.com</code> 페이지를 요청할 때 다음과 같은 단계가
+발생합니다.</p>
+<ol type="1">
+<li><strong>응용 계층</strong>: 브라우저는 HTTP 요청 메시지를 생성하고,
+URL에 포함된 도메인을 DNS 레졸버에 질의합니다. DNS 클라이언트는 DNS
+패킷을 생성하여 전송 계층에 넘깁니다.</li>
+<li><strong>전송 계층</strong>: HTTPS는 TCP를 사용합니다. 클라이언트는
+TCP 소켓을 열고 서버의 443번 포트로 <strong>SYN</strong> 패킷을
+보냅니다. 서버는 SYN/ACK로 응답하고, 클라이언트는 ACK를 보내 연결이
+성립합니다. 이후 TLS 핸드쉐이크가 시작되며 암호화된 세션 키를
+협상합니다.</li>
+<li><strong>네트워크 계층</strong>: 전송 계층의 세그먼트는 IP 패킷으로
+캡슐화됩니다. IP 헤더에는 출발지/목적지 IP, TTL, 프로토콜(6=TCP)이
+포함됩니다. 라우터는 이 헤더를 보고 최적 경로를 선택하고 TTL을
+감소시킵니다. IP는 조각화(fragmentation)를 수행할 수 있으며, MTU보다 큰
+패킷은 여러 조각으로 나뉩니다.</li>
+<li><strong>데이터링크 계층</strong>: IP 패킷은 이더넷 프레임으로
+캡슐화됩니다. 프레임 헤더에는 목적지 MAC, 출발지 MAC,
+EtherType(0x0800=IPv4)과 CRC가 포함되며, 스위치는 MAC 주소를 기반으로
+프레임을 포워딩합니다.</li>
+<li><strong>물리 계층</strong>: 최종적으로 비트 스트림이 전송
+매체(구리선, 광섬유)에 전기적·광학적 신호로 전달됩니다.</li>
+</ol>
+<p>PDU 이름을 기억하는 팁은 “<strong>Do‐Se‐Pa‐Fr‐Bi</strong>”입니다:
+Data(응용/표현/세션), Segment(전송), Packet(네트워크),
+Frame(데이터링크), Bits(물리). 역캡슐화 과정에서 각각의 헤더가 제거되며,
+최종적으로 브라우저는 HTML 컨텐츠를 렌더링합니다.</p>
+<p>각 계층 헤더의 주요 필드를 간략히 정리하면 다음과 같습니다:</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>계층</th>
+<th>주요 헤더 필드</th>
+<th>역할</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>TCP</strong></td>
+<td>Source/Destination Port, Sequence Number, Acknowledgment Number,
+Flags(SYN, ACK, FIN, RST, PSH, URG), Window Size, Checksum</td>
+<td>포트 구분, 데이터 순서·재전송, 연결 제어</td>
+</tr>
+<tr class="even">
+<td><strong>UDP</strong></td>
+<td>Source/Destination Port, Length, Checksum</td>
+<td>포트 구분, 패킷 길이, 오류 검출</td>
+</tr>
+<tr class="odd">
+<td><strong>IP(v4)</strong></td>
+<td>Version, Header Length, DSCP, Total Length, Identification,
+Flags(DF/MF), Fragment Offset, TTL, Protocol, Source/Destination
+Address, Header Checksum</td>
+<td>라우팅, 조각화, QoS 정보</td>
+</tr>
+<tr class="even">
+<td><strong>Ethernet</strong></td>
+<td>Destination/Source MAC, EtherType, Optional VLAN Tag, FCS</td>
+<td>프레임 전달, 태그 지정, 오류 검출</td>
+</tr>
+</tbody>
+</table>
+<p>MTU(Maximum Transmission Unit)는 데이터링크 계층에서 한 번에 전송할
+수 있는 최대 크기입니다. 이더넷은 1500바이트가 기본이며, <strong>Jumbo
+Frame</strong>은 9000바이트까지 확장하여 데이터센터에서 사용합니다. IP
+조각화는 성능 저하를 초래하므로, 엔드포인트에서 <strong>Path MTU
+Discovery</strong>를 수행해 최적 MTU를 찾습니다.</p>
+<p>OSI 7계층과 TCP/IP 4계층은 서로 다른 추상화 모델이지만, 실제 구성에서는 서로 매핑됩니다. TCP/IP 응용 계층은 OSI의 응용·표현·세션 계층을 통합하고, 전송 계층은 OSI 전송 계층과 대응합니다. 인터넷 계층은 OSI 네트워크 계층에, 링크 계층은 데이터링크와 물리 계층에 해당합니다. 이러한 매핑을 이해하면 프로토콜과 장비가 어떤 기능을 수행하는지 명확히 파악할 수 있습니다.</p>
+
+<h3 id="관리제어데이터-평면과-sdn">2.3 관리·제어·데이터 평면과 SDN</h3>
+<p>네트워크 장비는 <strong>관리(Management), 제어(Control), 데이터(Data)
+평면</strong>으로 역할이 구분됩니다.</p>
+<ul>
+<li><strong>관리 평면</strong>: 장비의 설정, 모니터링, 로깅을
+처리합니다. 예를 들어 CLI, SNMP, NETCONF, REST API, SSH 등이 여기에
+속합니다. 관리 평면은 종종 분리된 관리 네트워크(Out‑of‑Band)로 보호되며,
+멀티테넌트 환경에서 중요합니다.</li>
+<li><strong>제어 평면</strong>: 라우팅 프로토콜(OSPF, BGP), 스패닝 트리,
+ARP/NDP, LACP 등 네트워크 구조를 형성하는 정보를 교환합니다. 제어 평면이
+손상되면 네트워크 전반에 장애가 발생할 수 있어 CPU 보호 정책(Control
+Plane Policing)이 중요합니다.</li>
+<li><strong>데이터 평면</strong>: 실제 사용자 트래픽을 전달합니다.
+ASIC이나 FPGA가 하드웨어 가속을 통해 빠른 패킷 처리량을 제공합니다.
+스위치의 TCAM은 액세스 리스트와 QoS 정책을 실행합니다.</li>
+</ul>
+<p><strong>SDN(Software‑Defined Networking)</strong>은 제어 평면을 중앙
+컨트롤러로 이동시켜 네트워크 장비가 데이터 평면 역할만 수행하도록
+분리합니다. 이는 프로그래머블한 네트워크를 가능하게 하고,
+<strong>OpenFlow</strong>와 같은 프로토콜로 흐름(Flow Entry)을
+제어합니다. SDN의 장점은 네트워크 정책의
+일관성, 신속한 서비스 구축, 자동화이며, ACI와 NSX, OpenDaylight, ONOS
+등이 대표 솔루션입니다. <strong>SD‑WAN</strong>은 SDN 원리를 WAN에
+적용해 지사 네트워크를 중앙에서 제어하고 트래픽을 최적 경로로
+분배합니다.</p>
+<h3 id="전송-프로토콜tcpudp-세부-설명">2.4 전송 프로토콜(TCP/UDP) 세부
+설명</h3>
+<h4 id="tcp의-세부-동작">TCP의 세부 동작</h4>
+<p>TCP는 <strong>연결지향</strong> 및 <strong>신뢰성 보장</strong>을
+특징으로 합니다. 연결을 설정하려면 3‑Way Handshake가 필요하며, 각 단계는
+다음과 같습니다.</p>
+<ol type="1">
+<li><strong>SYN</strong>: 클라이언트가 임의의 초기 순서 번호(ISN)를
+포함한 SYN 패킷을 서버에 보냅니다.</li>
+<li><strong>SYN/ACK</strong>: 서버는 자신의 ISN과 ACK=클라이언트 ISN+1을
+보냅니다.</li>
+<li><strong>ACK</strong>: 클라이언트가 ACK=서버 ISN+1을 보내면서 연결이
+성립됩니다.</li>
+</ol>
+<p>연결 종료는 주로 4‑Way Handshake로 진행되며, FIN과 ACK를 주고
+받습니다. TCP는 혼잡 제어를 위해 <strong>Slow Start</strong>,
+<strong>Congestion Avoidance</strong>, <strong>Fast Retransmit/Fast
+Recovery</strong> 알고리즘을 사용합니다. <strong>Selective
+Acknowledgment(SACK)</strong>는 손실된 세그먼트만 재전송하도록 돕습니다.
+<strong>Window Scaling</strong>은 Window 크기를 65 535바이트 이상으로
+확장하여 고대역폭·장거리 네트워크에서 성능을 향상합니다. 또한,
+<strong>Nagle’s Algorithm</strong>은 작은 패킷을 묶어 효율을 높이고,
+<strong>Delayed ACK</strong>는 ACK 전송을 지연하여 혼잡을 줄입니다. TCP
+포트는 <strong>well‑known port(0–1023)</strong>, <strong>registered
+port(1024–49151)</strong>, <strong>dynamic port(49152–65535)</strong>로
+구분되고, 클라이언트는 임시 포트를 사용해 서버의 well‑known 포트와
+통신합니다.</p>
+<h4 id="udp의-특성과-활용">UDP의 특성과 활용</h4>
+<p>UDP는 <strong>헤더가 단순(8바이트)</strong>하고 연결 설정이 없으며,
+순서 보장이나 재전송을 지원하지 않습니다. 이 덕분에 오버헤드가 적어
+실시간 응용(VoIP, 비디오 컨퍼런스, 온라인 게임)에 적합합니다. DNS는
+일반적으로 UDP를 사용하지만, 답변이 크거나 영역 전송(zone transfer)이
+필요한 경우 TCP로도 동작합니다. RTP(Real-Time Transport Protocol)와
+RTCP는 UDP 기반으로 오디오·비디오를 전송하며 지터와 지연을 측정할 수
+있습니다. UDP는 멀티캐스트를 지원하여 동일 데이터를 여러 호스트에
+효율적으로 전송합니다.</p>
+<h3 id="기타-전송-프로토콜">2.5 기타 전송 프로토콜</h3>
+<p><strong>SCTP(Stream Control Transmission Protocol)</strong>는 신뢰성,
+순서 보장, 멀티홈을 지원하며 SS7 신호망에서 사용됩니다.
+<strong>DCCP(Datagram Congestion Control Protocol)</strong>는 UDP와
+유사하지만 혼잡 제어를 제공하며, 스트리밍 미디어에서 연구되고 있습니다.
+<strong>QUIC</strong>는 UDP 기반으로 TLS와 멀티플렉싱을 통합하여 0‑RTT
+연결을 제공하며, HTTP/3 표준으로 채택되었습니다.</p>
+''',
+                    'order': 2,
+                },
+                {
+                    'title': '계층별 프로토콜',
+                    'slug': '계층별-프로토콜',
+                    'content': '''<h2 id="계층별-프로토콜">계층별 프로토콜</h2>
+<p><strong>요약:</strong> 계층별 프로토콜은 각 OSI 계층과 TCP/IP 계층에서 사용되는 대표적인 통신 규칙을 의미합니다. 전송 계층에서는 TCP와 UDP가 신뢰성과 속도를 선택적으로 제공하며, 응용 계층에서는 HTTP, HTTPS, FTP, SMTP, DNS 등 서비스별 프로토콜이 동작합니다. 네트워크 계층에서는 IP, ICMP, OSPF, BGP 등이 라우팅과 주소 지정에 관여하고, 데이터 링크 계층에서는 이더넷, PPP, HDLC가 프레임 전달을 담당합니다. 예를 들어 HTTP와 HTTPS는 웹 애플리케이션을 지원하고 SMTP/POP3/IMAP은 이메일 서비스를 구현하며, OSPF와 BGP는 네트워크 계층에서 최적 경로를 결정합니다. 이 섹션에서는 각 계층별 주요 프로토콜의 역할과 특징을 간단히 정리합니다.</p>
+<h3>응용 계층의 대표 프로토콜</h3>
+<ul>
+  <li><strong>HTTP/HTTPS</strong>: 웹 서비스와 REST API를 위한 대표 프로토콜로, HTTP는 상태를 유지하지 않는 전송 규약이며 HTTPS는 TLS 암호화를 적용하여 기밀성과 무결성을 제공합니다.</li>
+  <li><strong>FTP</strong>: File Transfer Protocol로, 클라이언트와 서버 간에 파일을 전송하고 디렉터리를 탐색할 수 있도록 합니다.</li>
+  <li><strong>SMTP</strong>: Simple Mail Transfer Protocol로, 전자 메일을 서버 간에 중계하여 발송합니다.</li>
+  <li><strong>DNS</strong>: Domain Name System으로, 사람이 읽을 수 있는 도메인 이름을 IP 주소로 변환합니다.</li>
+  <li><strong>SNMP</strong>: Simple Network Management Protocol로, 네트워크 장치의 상태를 모니터링하고 관리 정보를 조회·변경하는 데 사용됩니다.</li>
+</ul>
+
+<h3>표현 계층의 대표 프로토콜</h3>
+<ul>
+  <li><strong>TLS/SSL</strong>: Transport Layer Security/SSL은 응용 계층 데이터의 암호화와 무결성을 제공하여 안전한 통신을 보장합니다.</li>
+  <li><strong>JPEG</strong>: 이미지 압축 표준으로, 사진과 그래픽 데이터를 손실 압축해 전송 효율을 높입니다.</li>
+  <li><strong>MPEG</strong>: 오디오·비디오를 압축하는 국제 표준으로, 스트리밍과 저장을 위한 효율적 멀티미디어 전송을 지원합니다.</li>
+  <li><strong>ASCII/Unicode 변환</strong>: 서로 다른 문자 인코딩 간 변환을 담당하며, 데이터의 플랫폼 간 호환성을 보장합니다.</li>
+  <li><strong>GZIP</strong>: HTTP와 기타 프로토콜에서 사용되는 데이터 압축 포맷으로, 전송 데이터의 크기를 줄여 대역폭을 절약합니다.</li>
+</ul>
+
+<h3>세션 계층의 대표 프로토콜</h3>
+<ul>
+  <li><strong>RPC</strong>: Remote Procedure Call 프로토콜로, 원격 시스템의 함수를 마치 로컬 함수처럼 호출할 수 있게 세션을 설정합니다.</li>
+  <li><strong>NetBIOS</strong>: 주로 Windows 환경에서 파일·프린터 공유를 위한 세션 서비스를 제공하며, 이름 해석과 세션 관리를 포함합니다.</li>
+  <li><strong>PPTP</strong>: Point-to-Point Tunneling Protocol로, VPN 연결을 위한 세션을 설정하지만 보안 취약점 때문에 최근에는 잘 사용하지 않습니다.</li>
+  <li><strong>SMB</strong>: Server Message Block 프로토콜로, 파일 공유와 네트워크 인쇄를 위한 세션을 관리합니다.</li>
+  <li><strong>SIP</strong>: Session Initiation Protocol로, VoIP와 화상회의에서 세션의 생성, 수정, 종료를 제어합니다.</li>
+</ul>
+
+<h3>전송 계층의 대표 프로토콜</h3>
+<ul>
+  <li><strong>TCP</strong>: 신뢰성 있는 연결형 프로토콜로, 순서 제어와 오류 복구를 통해 정확한 데이터 전송을 제공합니다.</li>
+  <li><strong>UDP</strong>: 비연결형 프로토콜로, 지연과 오버헤드가 적어 스트리밍과 VoIP에 적합하지만 신뢰성을 보장하지 않습니다.</li>
+  <li><strong>SCTP</strong>: 다중 스트림과 멀티홈을 지원하는 전송 계층 프로토콜로, SS7 신호망과 같은 통신 시스템에서 사용됩니다.</li>
+  <li><strong>DCCP</strong>: Datagram Congestion Control Protocol로, UDP와 유사하지만 혼잡 제어를 제공하여 미디어 스트리밍 연구에서 사용됩니다.</li>
+  <li><strong>QUIC</strong>: UDP 기반 프로토콜로 TLS 암호화와 멀티플렉싱을 통합하여 HTTP/3에 사용되며, 0-RTT 핸드셰이크를 제공합니다.</li>
+</ul>
+
+<h3>네트워크 계층의 대표 프로토콜</h3>
+<ul>
+  <li><strong>IPv4</strong>: 32비트 주소 체계를 가진 인터넷 프로토콜로, 전 세계 대부분의 네트워크에서 사용됩니다.</li>
+  <li><strong>IPv6</strong>: 128비트 주소 공간으로 확장된 인터넷 프로토콜로, 자동 구성과 보안 확장 헤더를 지원합니다.</li>
+  <li><strong>ICMP</strong>: 네트워크 진단과 오류 보고를 위한 메시지 프로토콜로, ping과 traceroute 명령의 기반입니다.</li>
+  <li><strong>OSPF</strong>: 링크 상태 기반의 내부 라우팅 프로토콜로, 빠른 수렴과 계층적 영역 구성을 제공합니다.</li>
+  <li><strong>BGP</strong>: AS 간의 경로 정보를 교환하는 경로 벡터 프로토콜로, 인터넷 백본의 표준 라우팅 프로토콜입니다.</li>
+</ul>
+
+<h3>데이터 링크 계층의 대표 프로토콜</h3>
+<ul>
+  <li><strong>이더넷</strong>: CSMA/CD에서 발전한 LAN 표준으로, MAC 주소를 기반으로 프레임을 전달합니다.</li>
+  <li><strong>PPP</strong>: Point-to-Point Protocol로, 직렬 링크에서 프레이밍, 인증, 압축 기능을 제공합니다.</li>
+  <li><strong>HDLC</strong>: High-Level Data Link Control로, 동기식 데이터 링크 제어 및 오류 검출을 제공하는 WAN 프로토콜입니다.</li>
+  <li><strong>프레임 릴레이</strong>: 가상 회선 기반의 WAN 기술로, 패킷 스위칭을 통해 비용 효율적인 연결을 제공합니다.</li>
+  <li><strong>Wi-Fi(802.11)</strong>: 무선 LAN 표준으로, 전파를 통해 프레임을 전달하고 WPA2/WPA3 등 보안 메커니즘을 지원합니다.</li>
+</ul>
+
+<h3>물리 계층의 대표 기술</h3>
+<ul>
+  <li><strong>이더넷 케이블 (100BASE-TX, 1000BASE-T)</strong>: 구리선과 RJ-45 커넥터를 사용하여 100Mbps 또는 1Gbps 속도의 전기 신호를 전달합니다.</li>
+  <li><strong>광섬유 (1000BASE-LX/GPON)</strong>: 빛을 매체로 사용하여 장거리와 고속 데이터 전송을 지원하는 전송 매체입니다.</li>
+  <li><strong>DSL</strong>: Digital Subscriber Line로, 기존 전화선을 통해 중거리 고속 데이터 전송을 제공합니다.</li>
+  <li><strong>블루투스</strong>: 단거리 무선 통신 표준으로, 2.4GHz 대역에서 근거리 장치 간 데이터 전송을 수행합니다.</li>
+  <li><strong>RS-232</strong>: 직렬 통신 표준으로, 포트와 신호 전압을 정의하여 컴퓨터와 모뎀 등의 연결을 지원합니다.</li>
+</ul>
+''',
+                    'order': 3,
+                },
+                {
+                    'title': 'IP주소',
+                    'slug': 'ip주소',
+                    'content': '''<h2 id="ip주소">3. IP주소</h2>
+<p><strong>요약:</strong> IP 주소는 네트워크 상에서 각 호스트를 식별하기 위한 논리적 주소로, IPv4는 32비트, IPv6는 128비트 주소 공간을 제공합니다. 주소는 공인·사설로 구분되고, 서브넷 마스크나 프리픽스를 이용해 네트워크와 호스트 부분을 정의합니다. IPv6는 더 넓은 주소 공간과 간단한 헤더 구조를 통해 IoT 및 미래 네트워크 확장을 지원합니다. 서브넷팅과 CIDR을 통해 주소 공간을 효율적으로 관리할 수 있으며, NAT와 사설 주소는 IPv4 주소 부족을 해결하기 위한 대안입니다.</p>
+<h3 id="ipv4-주소-체계-심층-설명">3.1 IPv4 주소 체계 심층 설명</h3>
+<p>IPv4 주소는 32비트이며, 8비트씩 네 옥텟으로 표현됩니다. 과거에는
+<strong>Classful</strong> 주소 체계를 사용해 A(0.0.0.0–127.255.255.255),
+B(128.0.0.0–191.255.255.255), C(192.0.0.0–223.255.255.255) 클래스로
+나누었지만, 이는 주소 낭비가 커 <strong>CIDR</strong> 방식으로
+대체되었습니다. CIDR에서는 <code>IP/prefix</code> 형태로 네트워크 길이를
+표시하여 주소 블록 크기를 자유롭게 조절합니다.</p>
+<p><strong>서브넷팅</strong>은 큰 네트워크를 여러 서브넷으로 나누어
+브로드캐스트 도메인을 분리하고, 관리와 보안을 향상합니다. 서브넷팅
+절차는 앞서 소개했지만, 조금 더 자세히 살펴봅니다.</p>
+<ol type="1">
+<li><strong>호스트 수 계산</strong>: <code>2^(32−prefix)</code>은
+서브넷당 총 주소 수이며, 네트워크와 브로드캐스트 주소를 제외한 호스트
+수는 <code>2^(32−prefix)−2</code>입니다. 예를 들어 /27은 총 32개
+주소(30개 호스트)를 제공합니다.</li>
+<li><strong>증가값 결정</strong>: 서브넷 마스크의 1이 끝나는 자리의
+비트값을 256에서 빼 계산합니다. /26(마스크 255.255.255.192)의 증가값은
+64입니다.</li>
+<li><strong>주소 범위 파악</strong>: IP가 어느 서브넷에 속하는지
+찾으려면 IP를 증가값 단위로 나누어 해당 범위를 구합니다. 예를 들어
+192.168.1.70/26은 64단위 블록에서 64~127 범위에 속하므로 네트워크 주소는
+192.168.1.64, 브로드캐스트는 192.168.1.127입니다.</li>
+<li><strong>게이트웨이 할당</strong>: 일반적으로 첫 번째 사용 가능한
+IP(네트워크+1)나 마지막 사용 가능 IP(브로드캐스트−1)를 라우터
+인터페이스로 할당합니다.</li>
+</ol>
+<p><strong>NAT(Network Address Translation)</strong>의 동작을 좀 더
+세분화해봅니다.</p>
+<ul>
+<li><strong>Static NAT</strong>: 1:1 매핑. 내부 서버를 외부에서 고정된
+IP로 접근해야 할 때 사용합니다. 예: 192.168.1.100 → 203.0.113.10.</li>
+<li><strong>Dynamic NAT</strong>: 내부 IP를 공인 IP 풀에서 임시
+매핑합니다. 풀에 남은 주소가 없으면 NAT 실패가 발생합니다.</li>
+<li><strong>PAT(Port Address Translation)</strong>: 여러 내부 호스트가
+하나의 공인 IP를 공유하며, 포트 번호로 세션을 구분합니다. 흔히
+<strong>NAT Overload</strong>라고 합니다.</li>
+<li><strong>NAT64/NAT46</strong>: IPv6–IPv4 변환. DNS64와 결합해 IPv6
+클라이언트가 IPv4 전용 서버에 접속할 수 있게 합니다. 이는 IPv6
+전환기에서 중요합니다.</li>
+<li><strong>Carrier‑Grade NAT(CGN)</strong>: ISP에서 100.64.0.0/10
+범위를 사용하여 다수 고객을 하나의 공인 IP에 매핑합니다. 이는 공인 IP
+주소 부족을 완화하지만, 추적과 법적 규제가 어렵습니다.</li>
+</ul>
+<p>NAT은 <strong>Source NAT(SNAT)</strong>와 <strong>Destination
+NAT(DNAT)</strong>로 구분할 수 있으며, DNAT는 포트 포워딩(Port
+Forwarding)이라고도 합니다. NAT는 보안과 주소 절약에 장점이 있지만,
+<strong>End‑to‑End 원칙</strong>을 약화시키고 VoIP, VPN 등의 프로토콜에
+문제가 생길 수 있습니다. 이러한 문제를 해결하기 위해 STUN/TURN, NAT
+Traversal(NAT‑T) 기법이 사용됩니다.</p>
+<h3 id="ipv6-주소-체계-심층-설명">3.2 IPv6 주소 체계 심층 설명</h3>
+<p>IPv6는 128비트 주소 공간을 제공하여 3.4×10^38개의 주소를 제공하므로
+고갈 문제를 사실상 해결합니다. 주소는 16비트 단위 8개로 구성되며, 16진수
+네 자리씩 콜론으로 구분합니다. <strong>연속된 0</strong>는
+<code>::</code>로 한번만 압축할 수 있으며, 앞의 0은 생략 가능합니다. 예:
+<code>2001:0db8:0000:0000:0000:ff00:0042:8329</code>는
+<code>2001:db8::ff00:42:8329</code>로 표현합니다. IPv6 주소 구조는
+다음과 같습니다.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>범위</th>
+<th>값</th>
+<th>기능</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Global Unicast</strong></td>
+<td><code>2000::/3</code></td>
+<td>인터넷 라우팅 가능 주소. 서브넷 구분을 위해 Global Routing
+Prefix(전세계 라우팅), Subnet ID(사이트 내부), Interface ID(64비트)로
+구성됩니다.</td>
+</tr>
+<tr class="even">
+<td><strong>Link‑local</strong></td>
+<td><code>FE80::/10</code></td>
+<td>라우터를 거치지 않고 같은 링크에서만 통신. 자동으로 할당되며, IPv6의
+ARP인 Neighbor Discovery에 사용됩니다.</td>
+</tr>
+<tr class="odd">
+<td><strong>Unique Local (ULA)</strong></td>
+<td><code>FD00::/8</code></td>
+<td>기업 내부 전용. 글로벌 유일성을 위해 전역 ID(40비트 랜덤)를
+포함합니다.</td>
+</tr>
+<tr class="even">
+<td><strong>Multicast</strong></td>
+<td><code>FF00::/8</code></td>
+<td>그룹 통신. 범위(Field)와 지속성(Time-to-live)에 따라 FF02::1(로컬
+링크 all-nodes), FF05::2(사이트 routers) 등으로 세분화됩니다.</td>
+</tr>
+<tr class="odd">
+<td><strong>Anycast</strong></td>
+<td>Global Unicast 범위 내에서 지정</td>
+<td>여러 노드가 동일 주소를 공유하고, 라우터는 최적 경로로 전달. DNS
+루트 서버에 사용됩니다.</td>
+</tr>
+<tr class="even">
+<td><strong>Loopback</strong></td>
+<td><code>::1</code></td>
+<td>자기 자신을 가리킴. IPv4의 127.0.0.1에 대응.</td>
+</tr>
+<tr class="odd">
+<td><strong>Unspecified</strong></td>
+<td><code>::</code></td>
+<td>아직 주소가 없음을 의미. 초기화되지 않은 소켓에 사용.</td>
+</tr>
+</tbody>
+</table>
+<p>IPv6의 <strong>Neighbor Discovery Protocol(NDP)</strong>는 ICMPv6
+기반으로 MAC 주소를 알아내는 <strong>Neighbor
+Solicitation/Advertisement</strong>, 기본 라우터를 찾는 <strong>Router
+Solicitation/Advertisement</strong>, 주소 중복을 확인하는
+<strong>Duplicate Address Detection(DAD)</strong> 메시지를 사용합니다.
+또한, IPv6에서는 <strong>서브넷 마스크 개념이 없으며</strong> 항상 /64
+Prefix를 기본 인터페이스 식별자로 사용합니다. 주소 자동 구성 방식은
+다음과 같습니다:</p>
+<ol type="1">
+<li><strong>SLAAC</strong>: 라우터가 Router Advertisement에서 Prefix와
+Autoconfiguration 플래그를 보내고, 호스트가 이를 기반으로 Interface
+ID(EUI‑64 또는 랜덤)를 조합해 주소를 생성합니다.</li>
+<li><strong>DHCPv6</strong>: Stateful 모드로 서버가 풀에서 주소를
+할당하며, Stateless 모드에서는 DNS 서버 등 추가 옵션만 제공합니다.</li>
+<li><strong>Privacy Extension</strong>: 정적 인터페이스 ID 대신 임의의
+주소를 주기적으로 갱신하여 추적을 방지합니다.</li>
+</ol>
+<h3 id="네임-서비스-dns-심층-설명">3.3 네임 서비스 (DNS) 심층 설명</h3>
+<p>DNS는 <strong>분산형 계층 구조 데이터베이스</strong>로, 가독성 높은
+도메인을 숫자형 IP로 변환합니다. DNS 시스템의 핵심 요소는 다음과
+같습니다.</p>
+<ul>
+<li><strong>루트 네임서버</strong>: 루트 영역(“.”)에 대한 권한을 가지며,
+13개의 루트 서버 집합이 전 세계에 분산되어 있습니다. 루트 서버는 TLD
+서버의 위치를 알려 줍니다.</li>
+<li><strong>TLD 서버</strong>: <code>.com</code>, <code>.org</code>,
+<code>.co.kr</code> 같은 최상위 도메인에 대한 권한을 가지고 해당
+네임서버를 알려 줍니다.</li>
+<li><strong>권한 네임서버(Authoritative Name Server)</strong>: 특정
+도메인의 DNS 레코드를 보유하며, SOA(Start of Authority)와 NS 레코드를
+포함합니다.</li>
+<li><strong>재귀 리졸버(Recursive Resolver)</strong>: 클라이언트의
+요청을 받아 최종 응답을 가져와 캐시에 저장합니다. ISP나 클라우드에서
+운영하며, <strong>공용 DNS</strong>(Google DNS, Cloudflare DNS)가
+대표적입니다.</li>
+</ul>
+<p>DNS는 53/UDP 포트를 기본으로 사용하지만, 응답이 큰 경우 TCP를
+사용합니다. <strong>DNS 메시지 포맷</strong>은 헤더(식별자, 플래그,
+질문/응답 수)와 질문 섹션, 응답 레코드 섹션으로 구성됩니다. 질문
+레코드는 질의 이름(QNAME), 질의 타입(QTYPE), 질의 클래스(QCLASS)로
+구성됩니다.</p>
+<p><strong>레코드 타입 추가 설명</strong>:</p>
+<ul>
+<li><strong>A/AAAA</strong>: IPv4/IPv6 주소를 매핑. CNAME의 타겟에
+사용되지 않고 직접 IP를 반환합니다.</li>
+<li><strong>CNAME</strong>: 별칭 레코드로, 한 도메인(예:
+<code>www</code>)을 다른 도메인(<code>example.com</code>)으로
+포인팅합니다. 다단계 CNAME은 성능을 떨어뜨릴 수 있어 최소화합니다.</li>
+<li><strong>MX</strong>: 우선순위(Priority)와 메일 서버 주소를
+포함합니다. 여러 MX 레코드를 설정해 장애 대비를 합니다.</li>
+<li><strong>NS</strong>: 권한 네임서버를 가리킵니다. 권한 서버가
+변경되면 NS 레코드를 업데이트해야 합니다.</li>
+<li><strong>TXT</strong>: SPF(Sender Policy Framework), DKIM(DomainKeys
+Identified Mail), DMARC 등 이메일 인증 정책, Google Site Verification,
+기타 텍스트 데이터를 담습니다.</li>
+<li><strong>SRV</strong>: 서비스별 포트와 우선순위를 지정합니다. 예:
+<code>_sip._tcp.example.com 10 60 5060 sipserver.example.com</code>.</li>
+<li><strong>PTR</strong>: IP→도메인 역방향 조회에 사용합니다(Reverse
+DNS).</li>
+</ul>
+<p><strong>DNS 캐시와 TTL</strong>: 리졸버는 응답을 캐시에 저장하며,
+TTL이 만료되면 정보를 폐기하고 다시 질의합니다. TTL을 짧게 설정하면 변경
+사항을 빨리 반영할 수 있지만 DNS 트래픽이 증가합니다. <strong>Negative
+Cache</strong>는 실패한 조회 결과를 캐싱하여 반복 질의를 줄입니다.</p>
+<p><strong>보안과 프라이버시</strong>: DNS는 기본적으로 인증과 암호화를
+제공하지 않아 <strong>DNS Spoofing</strong>과 <strong>Cache
+Poisoning</strong>에 취약합니다. 이를 방지하기 위해 <strong>DNSSEC(DNS
+Security Extensions)</strong>은 응답에 디지털 서명을 추가해 무결성을
+확인합니다. <strong>DANE(DNS-based Authentication of Named
+Entities)</strong>는 TLS 인증서를 DNSSEC에서 저장해 CA를 대체합니다.
+개인 정보 보호를 위해 DNS 요청을 HTTPS로 전송하는 <strong>DoH(DNS over
+HTTPS)</strong>와 TLS로 암호화하는 <strong>DoT(DNS over TLS)</strong>가
+도입되었습니다. DNS over QUIC(DoQ)도 연구되고 있습니다.</p>
+<h3 id="dhcp와-ipam-심층-설명">3.4 DHCP와 IPAM 심층 설명</h3>
+<p>DHCP는 IP 구성의 자동화를 제공하지만, 동작과 구성 옵션을 이해해야
+안정적으로 사용할 수 있습니다. 다음 표는 DHCP 메시지 유형과 역할을
+요약합니다.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>메시지</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>DHCPDISCOVER</strong></td>
+<td>클라이언트가 DHCP 서버를 찾기 위해 브로드캐스트. 옵션 53=1.</td>
+</tr>
+<tr class="even">
+<td><strong>DHCPOFFER</strong></td>
+<td>서버가 클라이언트에게 IP, 렌탈 시간, 기타 옵션을 제안. 옵션
+53=2.</td>
+</tr>
+<tr class="odd">
+<td><strong>DHCPREQUEST</strong></td>
+<td>클라이언트가 특정 서버의 오퍼를 선택해 요청. 옵션 53=3.</td>
+</tr>
+<tr class="even">
+<td><strong>DHCPACK</strong></td>
+<td>서버가 IP 임대 확정 및 기타 정보를 전송. 옵션 53=5.</td>
+</tr>
+<tr class="odd">
+<td><strong>DHCPNAK</strong></td>
+<td>요청이 거부되었음을 통지(중복 주소 등). 옵션 53=6.</td>
+</tr>
+<tr class="even">
+<td><strong>DHCPINFORM</strong></td>
+<td>클라이언트가 이미 IP를 가지고 추가 옵션만 요청.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>렌탈(Rent) 기간</strong>은 서버가 임대 정보와 함께 제공하며,
+클라이언트는 임대 기간의 50%(T1) 시점에 동일 서버로 갱신을 시도합니다.
+갱신 실패 시 87.5%(T2) 시점에 다른 서버에게 요청합니다. DHCP 릴레이
+에이전트는 서버가 없는 서브넷에서 Discover 메시지를 유니캐스트로
+포워딩합니다. 릴레이는 giaddr 필드를 채워 클라이언트 위치를
+나타냅니다.</p>
+<p><strong>옵션 82(DHCP Relay Agent Information)</strong>는 릴레이
+에이전트가 추가 정보를 삽입해 서버가 IP를 할당할 때 사용자를 식별하고
+정책을 적용할 수 있게 합니다. DHCP 서버는 이를 기반으로 VLAN, 포트
+정보에 따라 다른 IP 풀을 할당할 수 있습니다.</p>
+<p><strong>보안 이슈</strong>: <strong>Rogue DHCP 서버</strong>가 임의의
+IP와 게이트웨이를 할당할 수 있어 트래픽을 감청할 수 있습니다.
+스위치에서는 <strong>DHCP Snooping</strong>을 활성화해 신뢰되지 않은
+포트에서 DHCP 서버 응답을 차단하고, 허용된 포트만 서버 응답을 전달하게
+합니다.</p>
+<p><strong>IPAM(IP Address Management)</strong> 솔루션은 DHCP, DNS, IP
+주소 할당을 통합 관리하고, 주소 공간 사용량과 추세를 분석해 네트워크
+확장을 계획하는 데 도움을 줍니다. Infoblox, BlueCat, Microsoft IPAM 등이
+주요 솔루션입니다.</p>
+''',
+                    'order': 4,
+                },
+                {
+                    'title': '스위치',
+                    'slug': '스위치',
+                    'content': '''<h2 id="스위치">4. 스위치</h2>
+<p><strong>요약:</strong> 스위치는 OSI 2계층 장비로 MAC 주소 테이블을 기반으로 프레임을 포워딩하여 동일 네트워크 내 장치 간 통신을 효율적으로 수행합니다. 허브와 달리 각 포트를 별도의 충돌 도메인으로 분리하고, VLAN 지원, 트렁킹, 포트 보안 등 다양한 기능을 제공합니다. 스위치는 포트 기반 VLAN을 통해 네트워크를 논리적으로 분할하고 스패닝 트리 프로토콜(STP/RSTP)을 통해 L2 루프를 방지합니다. 또한 포트 보안과 QoS 기능을 통해 네트워크 접근을 제어하고 중요 트래픽에 우선순위를 부여합니다.</p>
+
+<p>스위치의 주요 기능에는 다음이 있습니다:</p>
+<ul>
+  <li><strong>VLAN 및 트렁킹</strong> – VLAN을 통해 네트워크를 논리적으로 분할하고, 트렁크 포트를 통해 여러 VLAN을 연결합니다.</li>
+  <li><strong>포트 채널(EtherChannel)</strong> – 여러 물리 링크를 하나의 논리 링크로 묶어 대역폭을 증가시키고 장애 시 자동으로 우회합니다.</li>
+  <li><strong>스패닝 트리 프로토콜(STP)</strong> – L2 루프를 방지하기 위해 트리 구조를 형성하고, RSTP/MSTP를 통해 빠른 수렴을 제공합니다.</li>
+  <li><strong>전력 공급(PoE)</strong> – IP 전화나 무선 AP 등 장치에 이더넷 케이블을 통해 전원을 공급합니다.</li>
+  <li><strong>스태킹(Stacking)</strong> – 여러 스위치를 하나의 논리적 장치처럼 묶어 관리와 확장성을 단순화합니다.</li>
+</ul>
+<h3 id="이더넷-프레임-mac-주소-arp-심층-설명">4.1 이더넷 프레임, MAC
+주소, ARP 심층 설명</h3>
+<p><strong>MAC 주소(Medium Access Control Address)</strong>는 IEEE가
+관리하는 48비트(또는 64비트) 식별자로, 상위 24비트는
+<strong>OUI(Organizationally Unique Identifier)</strong>, 하위 24비트는
+장치 고유 번호입니다. MAC 주소는 유니캐스트, 멀티캐스트, 브로드캐스트
+주소로 구분할 수 있습니다. <strong>이더넷 브로드캐스트 주소</strong>는
+<code>FF:FF:FF:FF:FF:FF</code>이며, <strong>멀티캐스트 주소</strong>는
+첫 비트가 1인 주소로 <code>(01:00:5E:...)</code>부터 시작합니다.</p>
+<p><strong>이더넷 프레임 구조</strong>는 앞서 설명했지만, CRC 기반
+<strong>FCS(Frame Check Sequence)</strong>로 오류를 검출하고, 수신
+장치가 프레임 오류를 발견하면 프레임을 폐기합니다. 이더넷의 동작 방식은
+초기 <strong>CSMA/CD(Carrier Sense Multiple Access with Collision
+Detection)</strong> 기술에서 발전하여, 현대 스위치는 충돌 도메인을 포트
+단위로 분리하고 <strong>Full Duplex</strong> 모드에서 CSMA/CD를 사용하지
+않습니다. <strong>오토 네고시에이션</strong>은 양단 장비가 속도와
+듀플렉스를 협상하여 설정 불일치를 방지합니다.</p>
+<p><strong>ARP(Address Resolution Protocol)</strong>는 IPv4 주소에
+대응하는 MAC 주소를 찾는 프로토콜입니다. ARP 요청은 브로드캐스트로
+전송되고, 해당 IP를 가진 장치가 ARP 응답을 보냅니다. ARP 결과는 ARP
+캐시(테이블)에 저장되며 일정 시간 후 만료됩니다. ARP 캐시는 수동으로
+조회(<code>arp -a</code>), 수정(Windows
+<code>netsh interface ip delete arpcache</code>),
+추가(<code>arp -s</code>)할 수 있습니다. ARP는 <strong>ARP
+스푸핑</strong> 공격에 취약하여, 공격자가 유효한 IP에 대해 자신의 MAC을
+응답하여 트래픽을 가로챌 수 있습니다. 이를 방지하기 위해 스위치에서는
+<strong>Dynamic ARP Inspection(DAI)</strong>을 사용하여 DHCP Snooping
+바인딩 테이블과 일치하지 않는 ARP 응답을 차단합니다.</p>
+<p>또한, L2에는 PPP(Point‑to‑Point Protocol)와 HDLC(High-Level Data Link
+Control), MPLS, Frame Relay 등 다양한 프로토콜이 존재하며,
+<strong>L2TPv3</strong>는 L2 프레임을 L3 캡슐화하여 전송합니다. 이더넷
+외에도 파이버 채널(스토리지), InfiniBand(고성능 컴퓨팅) 같은 L2 기술이
+사용됩니다.</p>
+<h3 id="vlan과-트렁킹-심층">4.2 VLAN과 트렁킹: 심층</h3>
+<p>VLAN은 하나의 스위치 또는 스위치 집합에서 논리적으로 다른
+네트워크처럼 동작하도록 하는 기술입니다. VLAN은 <strong>브로드캐스트
+도메인</strong>을 분할해 브로드캐스트 폭풍과 보안 문제를 줄이고,
+네트워크 세그먼트를 논리적으로 나눌 수 있도록 합니다. VLAN 구현 세부
+사항:</p>
+<ul>
+<li><strong>태깅 방식</strong>: IEEE 802.1Q는 프레임 헤더에 4바이트 VLAN
+Tag를 삽입하며, Tag 안의 PCP(3비트)는 CoS(Class of Service)를,
+DEI(1비트)는 패킷을 Drop할지 표시하는 우선순위를 나타냅니다.
+<strong>ISL(Inter‑Switch Link)</strong>은 Cisco 전용으로, 프레임을 전체
+캡슐화하는 방식이며 현재는 사용이 감소했습니다.</li>
+<li><strong>Native VLAN</strong>: 트렁크 링크에서 태그가 없는 프레임이
+할당되는 VLAN입니다. Native VLAN 불일치는 보안 위험과 통신 장애를 일으킬
+수 있으므로 양쪽 장비에서 일치해야 합니다.</li>
+<li><strong>PVLAN(Private VLAN)</strong>: 하나의 VLAN 안을
+<strong>Promiscuous</strong>, <strong>Community</strong>,
+<strong>Isolated</strong> 포트로 더 세분화합니다. 예를 들어 공유 호스팅
+환경에서 서버 간 통신을 차단하고, 라우터/게이트웨이만 통신할 수 있게
+합니다.</li>
+<li><strong>Voice VLAN</strong>: IP 전화 트래픽을 별도의 VLAN으로
+분리하며, 스위치는 LLDP‑MED 또는 CDP를 통해 전화에게 Voice VLAN ID를
+전달하고, QoS 신뢰 경계를 설정합니다.</li>
+<li><strong>Q‑in‑Q (802.1ad)</strong>: 하나의 802.1Q 프레임 안에 두 개의
+VLAN Tag를 삽입하여, 서비스 제공자 네트워크를 통과하는 고객 VLAN(Inner
+Tag)을 외부 Provider Tag로 다시 태그합니다. 이는 Layer 2 VPN이나 대규모
+VLAN을 위해 사용됩니다.</li>
+<li><strong>Dynamic Trunking Protocol(DTP)</strong>: Cisco 스위치가
+자동으로 트렁크 모드를 협상하는 프로토콜입니다. 보안상 트렁크를 수동으로
+설정하고 DTP를 비활성화하는 것이 좋습니다.</li>
+</ul>
+<h3 id="stp-rstp-mst-심층">4.3 STP, RSTP, MST 심층</h3>
+<p><strong>Spanning Tree Protocol</strong>은 루프를 방지하기 위해 논리적
+트리 구조를 형성합니다. 주요 요소는 다음과 같습니다.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>요소</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Root Bridge</strong></td>
+<td>스위치 중 하나가 선출되어 모든 트리의 중심이 됩니다. Bridge
+ID(Bridge Priority + MAC)를 기준으로 가장 낮은 값이 Root가 됩니다.</td>
+</tr>
+<tr class="even">
+<td><strong>Root Port</strong></td>
+<td>각 스위치에서 Root로 가는 최단 비용 경로에 해당하는 포트.</td>
+</tr>
+<tr class="odd">
+<td><strong>Designated Port</strong></td>
+<td>각 세그먼트(스위치 간 링크)에서 Root로 향하는 가장 낮은 비용을 가진
+포트. 이 포트만 포워딩 상태가 됩니다.</td>
+</tr>
+<tr class="even">
+<td><strong>Blocking/Listening/Learning/Forwarding</strong></td>
+<td>STP 포트 상태로, Blocking은 프레임 전달을 하지 않고 BPDU만
+수신합니다. Listening은 루프 검사, Learning은 MAC 주소 학습,
+Forwarding은 정상 전달 상태입니다.</td>
+</tr>
+</tbody>
+</table>
+<p>STP는 <strong>Hello Time(2s)</strong>, <strong>Forward
+Delay(15s)</strong>, <strong>Max Age(20s)</strong> 타이머로 수렴 시간이
+느릴 수 있습니다. 이를 개선한 <strong>RSTP(802.1w)</strong>는 포트
+상태를 <strong>Discarding, Learning, Forwarding</strong>으로 단순화하고
+<strong>Alternate Port</strong>와 <strong>Backup Port</strong> 개념을
+도입해 루프를 빠르게 복구합니다. <strong>PVST+</strong>와 <strong>Rapid
+PVST</strong>는 VLAN마다 별도 STP 인스턴스를 실행하고,
+<strong>MST(Multiple Spanning Tree)</strong>는 여러 VLAN을 하나의 MST
+인스턴스에 묶어 자원 소모를 줄입니다.</p>
+<p>STP 보안을 강화하기 위해 다음과 같은 기능이 있습니다.</p>
+<ul>
+<li><strong>BPDU Guard</strong>: 엣지 포트에서 BPDU를 수신하면 포트를
+차단하여 스위치가 루트 역할을 하도록 막습니다.</li>
+<li><strong>Root Guard</strong>: Root Bridge가 되어선 안 되는 포트에서
+더 나은 Root ID를 수신하면 포트를 Root‑inconsistent 상태로 하여 루트
+변경을 방지합니다.</li>
+<li><strong>Loop Guard</strong>: 포트가 Block 상태로 전환되어야 하는
+경우 자동으로 차단하여 유령 포트가 포워딩하지 못하도록 합니다.</li>
+</ul>
+<h3 id="l2-보안-기능-심층">4.4 L2 보안 기능 심층</h3>
+<p>보안 공격은 종종 L2에서 발생하므로, 스위치에는 다음과 같은 보호
+기능이 필요합니다.</p>
+<ol type="1">
+<li><strong>Port Security</strong>: 포트에 허용할 수 있는 MAC 주소 수를
+설정하고, 위반 시 포트를 Shutdown/Restrict/Protect 모드로 설정합니다.
+Sticky 옵션으로 동적으로 학습한 MAC을 런닝‑컨피그에 저장할 수 있습니다.
+포트 보안 위반이 발생하면 SNMP 트랩이나 SYSLOG를 통해 알림합니다.</li>
+<li><strong>DHCP Snooping</strong>: 스위치가 DHCP 서버 응답을 검사하여
+허용된 포트에서만 전달합니다. 또한, DHCP Snooping 바인딩 테이블에
+MAC/IP/VLAN/포트를 저장하고, 다른 기능(DAI, IP Source Guard)이 이를
+참조합니다.</li>
+<li><strong>Dynamic ARP Inspection(DAI)</strong>: DHCP Snooping 테이블과
+ARP 메시지를 비교하여 인증된 IP/MAC 쌍만 허용합니다. 스푸핑 공격을
+차단하고, ACL을 통해 특정 장치를 신뢰할 수 있습니다.</li>
+<li><strong>IP Source Guard</strong>: DHCP Snooping 바인딩과 ACL을
+결합하여, 허용되지 않은 IP를 사용하는 트래픽을 차단합니다. 포트별 또는
+VLAN별로 활성화할 수 있습니다.</li>
+<li><strong>Storm Control</strong>: 포트에서 특정 트래픽
+유형(브로드캐스트, 멀티캐스트, 유니캐스트)에 대한 PPS 또는 비율을 설정해
+트래픽 폭주를 제한합니다.</li>
+<li><strong>802.1X Port‑Based Authentication</strong>: 포트에 접속한
+장치가 인증을 통과해야만 네트워크 접근을 허용합니다. EAP 패킷은 스위치를
+통해 RADIUS 서버로 전달됩니다.</li>
+</ol>
+<h3 id="etherchannel-lacp-vpc-vtp-심층">4.5 EtherChannel, LACP, vPC, VTP
+심층</h3>
+<p><strong>EtherChannel</strong>은 여러 물리 링크를 하나의 논리 링크로
+묶어 L2 또는 L3 계층에서 볼 수 있도록 합니다. 이때 <strong>LACP(IEEE
+802.3ad)</strong>와 Cisco 전용 <strong>PAgP</strong> 두 가지 협상
+프로토콜을 사용할 수 있습니다. Static 모드에서는 협상 없이 설정합니다.
+다중 링크의 부하 분산은 다음 해시 알고리즘을 기반으로 합니다:</p>
+<ul>
+<li>Src MAC / Dst MAC</li>
+<li>Src IP / Dst IP</li>
+<li>Src Port / Dst Port</li>
+<li>조합(Src&amp;Dst)</li>
+</ul>
+<p>물리 포트 속도와 듀플렉스가 동일해야 하며, L2 포트는 포트 VLAN과
+트렁크 설정이 일치해야 합니다. <strong>MLAG(Multi‑Chassis LAG)</strong>
+또는 <strong>vPC</strong>에서는 두 스위치를 하나의 논리 LACP 파트너처럼
+보이게 하여 업스트림 장치가 다중 연결을 사용할 수 있게 합니다. 이는
+스파닝 트리 루프 없이 이중화를 제공합니다.</p>
+<p><strong>VTP(VLAN Trunking Protocol)</strong>는 VLAN 정보를 서버에서
+클라이언트로 배포하지만, 버전 불일치나 비밀번호 누락으로 VLAN 정보가
+삭제될 수 있습니다. VTP 모드를 <strong>Transparent</strong>로 설정하면
+로컬 스위치에서만 VLAN을 유지합니다. <strong>VTP Pruning</strong>은
+불필요한 VLAN 트래픽이 트렁크를 통해 흐르는 것을 방지합니다. ### 4.6
+스위칭 실습: 명령어와 출력 예시</p>
+<p>실제 장비에서 스위치 기능을 구성하고 확인하는 명령어를 예제와 함께
+정리합니다. 예시는 Cisco IOS를 기준으로 하지만, 다른 벤더의 명령어도
+유사한 개념을 사용합니다. 주석(<code>#</code>)은 각 명령어의 목적과 예상
+출력에 대한 설명을 나타냅니다.</p>
+<!-- 명령어 블록을 분리하여 가독성을 높였습니다. -->
+<p><strong>VLAN 생성과 액세스 포트 설정</strong></p>
+<pre><code>conf t
+ vlan 10
+  name USERS
+ exit</code></pre>
+<p><em>설명:</em> VLAN&nbsp;10을 생성하고 이름을 설정합니다. VLAN은 독립된 브로드캐스트 도메인을 형성합니다.</p>
+<pre><code>interface gi0/1
+ switchport mode access
+ switchport access vlan 10
+ spanning-tree portfast
+ exit</code></pre>
+<p><em>설명:</em> Gi0/1 포트를 VLAN&nbsp;10에 할당하고 포트패스트를 설정하여 사용자가 빠르게 네트워크에 접속할 수 있도록 합니다.</p>
+
+<p><strong>트렁크 포트 설정</strong></p>
+<pre><code>interface gi0/24
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 10,20,99
+ spanning-tree portfast trunk
+ exit</code></pre>
+<p><em>설명:</em> Gi0/24 포트를 트렁크 모드로 설정하고 네이티브 VLAN을 99로 지정합니다. 허용하는 VLAN을 제한하여 불필요한 트래픽을 줄이고, 트렁크 포트에서도 포트패스트를 사용하여 서버나 가상화 호스트에 빠르게 링크를 제공합니다.</p>
+
+<p><strong>포트 보안 설정</strong></p>
+<pre><code>interface gi0/2
+ switchport mode access
+ switchport access vlan 20
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security violation restrict
+ switchport port-security mac-address sticky
+ exit</code></pre>
+<p><em>설명:</em> 포트 보안을 통해 허용된 MAC 주소 수를 제한하고, 위반 시 동작을 설정합니다. Sticky 옵션을 사용하면 학습한 MAC을 설정에 저장하여 재부팅 후에도 유지됩니다.</p>
+
+<p><strong>EtherChannel(LACP) 구성</strong></p>
+<pre><code>interface range gi0/5 - 6
+ switchport mode trunk
+ channel-group 1 mode active
+ exit
+interface port-channel 1
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,99
+ exit</code></pre>
+<p><em>설명:</em> 두 포트를 LACP 그룹으로 묶어 논리적 포트채널을 생성합니다. 포트채널에서도 트렁크 모드와 VLAN 허용 범위를 지정합니다.</p>
+
+<p><strong>구성 확인 명령어</strong></p>
+<pre><code>show vlan brief</code></pre>
+<p><em>설명:</em> 현재 VLAN과 포트 매핑 상태를 요약해 보여줍니다.</p>
+<pre><code>show interfaces trunk</code></pre>
+<p><em>설명:</em> 트렁크 포트의 네이티브 VLAN, 인캡슐레이션, 상태를 확인합니다.</p>
+<pre><code>show port-security interface gi0/2</code></pre>
+<p><em>설명:</em> 특정 포트의 포트 보안 설정과 위반 정보를 확인합니다.</p>
+<pre><code>show etherchannel summary</code></pre>
+<p><em>설명:</em> 포트채널 그룹과 멤버 포트의 상태를 요약해 보여줍니다.</p>
+<pre><code>show spanning-tree vlan 10</code></pre>
+<p><em>설명:</em> 특정 VLAN에 대한 STP 역할과 비용, 루트 포트를 확인합니다.</p>
+<h3 id="스위치-대표-명령어">4.7 스위치 대표 명령어</h3>
+<p>스위치에서 자주 사용하는 명령어들과 기능을 간략히 요약했습니다.</p>
+<ul>
+  <li><strong>switchport mode access</strong> – 포트를 액세스 모드로 설정하여 하나의 VLAN만 전달합니다.</li>
+  <li><strong>switchport access vlan N</strong> – 액세스 포트에 VLAN 번호 <em>N</em>을 할당합니다.</li>
+  <li><strong>switchport mode trunk</strong> – 포트를 트렁크 모드로 설정하여 여러 VLAN 태그를 전송할 수 있습니다.</li>
+  <li><strong>spanning-tree portfast</strong> – 엔드 디바이스에 연결된 포트에서 STP 상태를 건너뛰고 빠르게 활성화합니다.</li>
+  <li><strong>switchport port-security</strong> – MAC 주소 제한과 위반 동작 설정을 통해 포트를 보호합니다.</li>
+  <li><strong>show vlan brief</strong> – 스위치의 VLAN 목록과 포트 매핑을 확인합니다.</li>
+  <li><strong>show interfaces trunk</strong> – 트렁크 포트의 상태, 네이티브 VLAN, 허용 VLAN 목록을 확인합니다.</li>
+  <li><strong>show running-config</strong> – 현재 실행 중인 구성 전체를 출력하여 설정을 검토합니다.</li>
+  <li><strong>show mac address-table</strong> – MAC 주소 학습 테이블을 확인하여 각 MAC이 어느 포트에 연결돼 있는지 파악합니다.</li>
+  <li><strong>show interfaces status</strong> – 모든 포트의 속도, 듀플렉스, VLAN, 상태를 한눈에 확인합니다.</li>
+  <li><strong>spanning-tree vlan <em>N</em> root primary</strong> – VLAN <em>N</em>에서 이 스위치를 STP 루트로 선출하여 네트워크 루프를 제어합니다.</li>
+  <li><strong>vtp mode {server | client | transparent}</strong> – VTP 모드를 서버/클라이언트/투명으로 설정해 VLAN 정보의 배포 방식을 제어합니다.</li>
+  <li><strong>switchport trunk allowed vlan add <em>N</em></strong> – 트렁크 포트에서 VLAN <em>N</em>을 추가하거나 제거해 허용 VLAN 목록을 조정합니다.</li>
+</ul>
+''',
+                    'order': 5,
+                },
+                {
+                    'title': '라우터',
+                    'slug': '라우터',
+                    'content': '''<h2 id="라우터">5. 라우터</h2>
+<p><strong>요약:</strong> 라우터는 서로 다른 네트워크 간에 패킷을 전달하는 OSI 3계층 장비로, 라우팅 테이블과 프로토콜을 이용해 최적 경로를 선택합니다. 정적 라우팅과 RIP, OSPF, EIGRP, BGP와 같은 동적 라우팅 프로토콜을 지원하며, NAT, VPN, ACL 등 다양한 네트워크 서비스와 연계됩니다. 라우터는 ACL과 NAT를 통해 보안과 주소 변환을 제공하며, 정적 경로는 단순하지만 네트워크 변경 시 수동 업데이트가 필요합니다. 반대로 동적 라우팅은 프로토콜 간 경로 교환과 자동 수렴을 통해 복원성과 확장성을 향상합니다.</p>
+
+<p>주요 기능과 요소는 다음과 같습니다:</p>
+<ul>
+  <li><strong>NAT(Network Address Translation)</strong> – 사설 IP를 공인 IP로 변환하여 주소 공간을 절약하며, Static NAT, Dynamic NAT, PAT(Port Address Translation) 방식이 있습니다.</li>
+  <li><strong>ACL(Access Control Lists)</strong> – 트래픽을 허용하거나 차단하여 보안 정책을 적용합니다.</li>
+  <li><strong>정적 및 동적 라우팅</strong> – 정적 경로는 관리자가 명시적으로 지정하는 반면, 동적 라우팅 프로토콜(RIP, OSPF, EIGRP, BGP)은 자동으로 경로를 학습하고 업데이트합니다.</li>
+  <li><strong>멀티프로토콜 지원</strong> – IPv4와 IPv6, MPLS, VPN, QoS 등을 동시에 처리하여 다양한 서비스 품질 요구를 충족합니다.</li>
+  <li><strong>고가용성 및 이중화</strong> – HSRP, VRRP, GLBP와 같은 가상 라우터 프로토콜로 게이트웨이를 이중화하고, 인터페이스 트래픽을 분산합니다.</li>
+</ul>
+<h3 id="기본-라우팅-및-경로-제어-심층">5.1 기본 라우팅 및 경로 제어
+심층</h3>
+<p>라우팅은 패킷을 네트워크 간에 전달하는 과정이며, <strong>경로 선택
+기준</strong>과 <strong>정책 제어</strong>가 중요합니다. 라우터는 라우팅
+테이블(RIB)에 여러 경로가 있을 때 다음 조건을 고려합니다.</p>
+<ol type="1">
+<li><strong>Longest Prefix Match</strong>: 가장 길게 일치하는 프리픽스
+우선. 예: 192.168.0.0/16보다 192.168.1.0/24가 우선.</li>
+<li><strong>Administrative Distance(AD)</strong>: 프로토콜 신뢰도.
+Static Route는 1, eBGP 20, EIGRP 90, OSPF 110, RIP 120. AD가 낮을수록
+신뢰도가 높습니다.</li>
+<li><strong>Metric</strong>: 프로토콜 내부의 비용. OSPF는 대역폭의 역수,
+EIGRP는 대역폭·지연 등을 이용합니다.</li>
+<li><strong>Equal‑Cost Multi‑Path(ECMP)</strong>: 동일한 메트릭의 경로가
+여러 개일 때, 로드밸런싱을 수행합니다.</li>
+</ol>
+<p><strong>경로 요약(Route Summarization)</strong>은 여러 네트워크를
+하나의 프리픽스로 묶어 라우팅 테이블 크기를 줄입니다. 예:
+192.168.0.0/24, 192.168.1.0/24를 192.168.0.0/23으로 요약. 요약 시 비어
+있는 범위가 포함되지 않도록 주의해야 합니다. <strong>Floating Static
+Route</strong>는 AD를 높여 기본 경로 실패 시 백업 역할을 합니다.</p>
+<p><strong>라우트 리디스트리뷰션(Route Redistribution)</strong>는 서로
+다른 라우팅 프로토콜 간에 경로를 교환합니다. 예: OSPF와 EIGRP 네트워크를
+연결할 때, Redistribute 명령으로 경로를 서로의 도메인에 주입합니다. 이때
+<strong>Seed Metric</strong>을 정의하지 않으면 디폴트 메트릭 값이
+적용되거나 경로가 가용하지 않을 수 있습니다.</p>
+<h3 id="동적-라우팅-프로토콜-심층">5.2 동적 라우팅 프로토콜 심층</h3>
+<h4 id="거리-벡터-vs-링크-상태">거리 벡터 vs 링크 상태</h4>
+<p><strong>거리 벡터(Distance Vector)</strong> 프로토콜(RIP, EIGRP)은
+라우터가 알고 있는 목적지까지의 거리(메트릭)와 방향(다음 홉)을 이웃에게
+주기적으로 광고합니다. 변화 감지가 느리면 루프가 발생할 수 있어
+<strong>Split Horizon</strong>, <strong>Route Poisoning</strong>,
+<strong>Hold‑Down Timer</strong> 등을 사용해 루핑과
+카운트‑투‑인피니티(count-to-infinity)를 방지합니다. RIP v2는
+클래스리스(CIDR) 주소와 인증을 지원합니다. EIGRP는 DUAL 알고리즘을 통해
+빠른 수렴을 제공하며, 토폴로지 테이블에 <strong>Successor</strong>(최적
+경로)와 <strong>Feasible Successor</strong>(백업 경로)를
+유지합니다.</p>
+<p><strong>링크 상태(Link State)</strong> 프로토콜(OSPF, IS‑IS)은 전체
+네트워크의 토폴로지를 인식하기 위해, 각 라우터가 네트워크 상태를 담은
+LSA를 플러딩합니다. 모든 라우터는 동일한 링크 상태 데이터베이스를
+가지고, SPF(Dijkstra) 알고리즘으로 최단 경로를
+계산합니다. 링크 상태 프로토콜은 초기
+플러딩 시 자원 사용량이 많지만, 네트워크 변동 시 빠르게 수렴합니다.</p>
+<p><strong>경로 벡터(Path Vector)</strong> 프로토콜(BGP)은 AS 간 경로
+정보(AS Path)를 주고받고, 경로 속성(Path Attributes)을 토대로 정책에
+따라 경로를 선택합니다. BGP는 거대한 인터넷
+라우팅 테이블을 처리할 수 있도록 설계되었으며, 루프 방지를 위해 AS
+Path에 자신의 AS가 있으면 경로를 무시합니다. BGP는 내부(iBGP)와
+외부(eBGP)로 나뉘며, iBGP에서는 Full Mesh 연결 또는 Route
+Reflector/Confederation을 통해 경로를 공유합니다.</p>
+<h4 id="rip-세부-내용">RIP 세부 내용</h4>
+<p>RIP는 가장 오래된 라우팅 프로토콜 중 하나로, <strong>Hop
+Count</strong>(최대 15)만을 메트릭으로 사용합니다. 16은 무한(Infinite)로
+간주해 15 Hops를 초과하는 경로는 도달 불가능으로 처리합니다. RIP은
+30초마다 전체 라우팅 테이블을 브로드캐스트하여 대역폭을 소모합니다. RIP
+v1은 클래스풀(Classful)로 서브넷 정보를 포함하지 않고, RIP v2는
+클래스리스이며 인증, 멀티캐스트(224.0.0.9)를 지원합니다. 작은
+네트워크에는 간단하지만, 대규모 환경에는 적합하지 않습니다.</p>
+<h4 id="ospf-심층">OSPF 심층</h4>
+<p>OSPF는 Autonomous System 내부를 라우팅하는 <strong>IGP(Interior
+Gateway Protocol)</strong>입니다. 라우터는 <strong>Router
+ID</strong>(32비트)를 사용해 자신을 식별하며, <code>router-id</code>
+명령이나 Loopback IP가 사용됩니다. OSPF는 각 링크에
+<strong>Cost</strong> 메트릭을 부여하며, 기본적으로 100 Mbps를 Cost=1로
+환산해 대역폭이 높을수록 비용이 낮습니다. <strong>Area</strong>는
+토폴로지를 분할해 SPF 계산을 제한하고, Area 0은 Backbone Area로 모든
+다른 영역은 Backbone과 연결되어야 합니다. OSPF는 여러 <strong>LSA
+종류</strong>를 정의합니다:</p>
+<ul>
+<li><strong>LSA 1 (Router LSA)</strong>: 라우터 자신과 직결된 링크,
+비용, 상태를 광고합니다.</li>
+<li><strong>LSA 2 (Network LSA)</strong>: DR(Designated Router)이
+네트워크의 존재를 알립니다.</li>
+<li><strong>LSA 3 (Summary LSA)</strong>: ABR(Area Border Router)가 영역
+간 라우팅 정보를 요약합니다.</li>
+<li><strong>LSA 4 (ASBR Summary)</strong>: ASBR을 광고합니다.</li>
+<li><strong>LSA 5 (External LSA)</strong>: OSPF 외부(예: BGP)에서
+리디스트리뷰트된 경로를 광고합니다.</li>
+<li><strong>LSA 7 (NSSA External)</strong>: NSSA 영역에서 외부 경로를
+광고합니다.</li>
+</ul>
+<p>OSPF 영역은 <strong>Stub</strong>, <strong>Totally Stubby</strong>,
+<strong>NSSA(Not‑So‑Stubby Area)</strong> 등으로 구분되며, External
+LSA를 차단하거나 제한합니다. OSPFv3는 IPv6를 지원하며, 프로토콜 번호가
+89인 것은 같지만 LSA 포맷과 주소 지정이 IPv6에 맞게 변경되었습니다.
+OSPF는 <strong>MD5 인증</strong>, <strong>Key‑chain</strong>,
+<strong>SHA</strong> 등을 지원해 OSPF 세션을 보호합니다.</p>
+<h4 id="eigrp-세부-내용">EIGRP 세부 내용</h4>
+<p>EIGRP는 <strong>DUAL</strong>을 통해 신속하게 실패를 감지하고 백업
+경로로 전환합니다. 메트릭 계산은 다음 요소를 사용합니다: 대역폭, 지연,
+신뢰도, 부하, MTU. 기본적으로 K1=1(K대역폭), K3=1(K지연)이며 다른 K값은
+0입니다. 따라서 메트릭은 대역폭과 지연을 결합한 값으로 계산됩니다.
+EIGRP는 <strong>Hello 패킷</strong>으로 이웃을 탐색하고, 토폴로지
+테이블에 미사용 경로까지 저장해 네트워크 상태를 빠르게 업데이트합니다.
+EIGRP는 <strong>Autonomous System(AS) 번호</strong>를 사용하며, 동일한
+AS 내부에서만 인접 관계를 형성합니다. EIGRP for IPv6는 IPv6 주소를
+사용하며 구성은 유사하지만 <code>ipv6 router eigrp AS</code>와 같이 별도
+명령어가 있습니다.</p>
+<h4 id="bgp-세부-내용">BGP 세부 내용</h4>
+<p>BGP의 경로 선택 과정은 다음과 같이 진행됩니다:</p>
+<ol type="1">
+<li><strong>Next‑Hop Reachability</strong>: 다음 홉이 라우팅 가능한지
+확인합니다.</li>
+<li><strong>Weight (Cisco 전용)</strong>: 가장 높은 Weight 값을 선택.
+기본값 0이며, 로컬 라우터에서 정책으로 설정할 수 있습니다.</li>
+<li><strong>Local Preference</strong>: AS 내부에서 경로 선호도를
+나타내며, 더 큰 값을 선호합니다. 디폴트는 100.</li>
+<li><strong>Locally Originated</strong>: 네트워크 명령이나 aggregate
+명령으로 생성된 경로를 선호합니다.</li>
+<li><strong>AS Path Length</strong>: 더 짧은 AS Path를 선호합니다.</li>
+<li><strong>Origin Type</strong>: IGP &lt; EGP &lt; Incomplete 순으로
+선호합니다. IGP는 network 명령, Incomplete는 Redistribute된
+경로입니다.</li>
+<li><strong>MED(Multi‑Exit Discriminator)</strong>: 낮은 값을 선호하며,
+다른 AS가 자신에게 어떤 링크로 접속하길 원하는지 표시합니다.</li>
+<li><strong>eBGP vs iBGP</strong>: eBGP를 선호하고, 다음으로 IGP
+메트릭을 비교합니다.</li>
+<li><strong>Router ID</strong>: 가장 작은 Router ID(또는 IP)를 가진
+라우터를 선택합니다.</li>
+</ol>
+<p>BGP에서 <strong>Route Reflector</strong>는 iBGP의 Full Mesh 요구
+사항을 완화하고, <strong>Confederation</strong>은 AS를 여러 Sub‑AS로
+나누어 관리적 간소화를 제공합니다. BGP는 트랜잭션량이 많고 공격 표면이
+넓어, <strong>TCP MD5 시그니처</strong>, <strong>TTL Security
+Hack</strong>, <strong>BGP Flowspec</strong>, <strong>RPKI</strong>와
+같은 보안 조치가 필요합니다.</p>
+<h3 id="멀티캐스트-라우팅-심층">5.3 멀티캐스트 라우팅 심층</h3>
+<p>멀티캐스트는 224.0.0.0/4(IPv4)와 FF00::/8(IPv6) 주소 범위를
+사용합니다. 멀티캐스트 통신의 구성 요소는 다음과 같습니다.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>요소</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>IGMP(Internet Group Management Protocol)</strong></td>
+<td>호스트가 라우터에게 멀티캐스트 그룹 가입/탈퇴를 알려 줍니다.
+IGMPv1은 Join만, IGMPv2는 Leave 메시지를 지원하며, IGMPv3는 소스별
+멀티캐스트(SSM)를 구현합니다. IPv6에서는 MLD가 동일 역할을 합니다.</td>
+</tr>
+<tr class="even">
+<td><strong>PIM(Protocol Independent Multicast)</strong></td>
+<td>라우터 간에 멀티캐스트 경로를 구축. Dense 모드(PIM‑DM)는 플러딩 후
+프루닝 방식이며 소규모 환경에 적합, Sparse 모드(PIM‑SM)는 필요할 때만
+분포, <strong>RP(Rendezvous Point)</strong>가 중개자 역할을 합니다.
+PIM‑SSM은 RP 없이 소스별 멀티캐스트를 제공합니다.</td>
+</tr>
+<tr class="odd">
+<td><strong>MSDP/BSR</strong></td>
+<td>여러 RP를 연동하고 RP를 자동으로 배포합니다. BSR(부트스트랩
+라우터)은 RP를 자동으로 선정합니다.</td>
+</tr>
+</tbody>
+</table>
+<p>멀티캐스트 라우팅은 효율적이지만, 구성 복잡성과 네트워크 장비 지원
+여부 때문에 신중한 설계가 필요합니다. 멀티캐스트는 IPTV, 시장 데이터
+전송, 실시간 스트리밍, 소프트웨어 업데이트 등에서 사용됩니다.</p>
+<h3 id="ipv6-라우팅-및-전환-심층">5.4 IPv6 라우팅 및 전환 심층</h3>
+<p>IPv6 라우팅 프로토콜은 IPv4와 유사하지만, 다음과 같은 차이가
+있습니다:</p>
+<ul>
+<li><strong>OSPFv3</strong>는 모든 LSA가 Link‑Local 주소를 사용하고, LSA
+타입이 변경되었습니다. 인증이 OSPFv2에서 LSA 헤더에 포함된 것과 달리,
+OSPFv3는 IPsec AH/ESP를 통해 인증과 암호화를 제공합니다. OSPFv3는 한
+프로세스에서 여러 주소 패밀리를 동시에 지원합니다.</li>
+<li><strong>EIGRP for IPv6</strong>는 인터페이스별로 활성화되며, IPv4와
+동일한 DUAL 알고리즘을 사용하지만, <code>ipv6 router eigrp</code> 명령을
+사용합니다. EIGRP 주소 패밀리를 구성할 때 Router ID를 반드시 지정해야
+합니다.</li>
+<li><strong>BGP4+</strong>는 IPv6 경로를 광고하며, 주소 패밀리를
+명시해야 합니다. iBGP/eBGP의 동작 원리는 동일합니다.</li>
+<li><strong>IS‑IS for IPv6</strong>는 TLV 기반으로 IPv4와 IPv6 정보를
+함께 운반할 수 있어 멀티 프로토콜 환경에서 유리합니다.</li>
+</ul>
+<p>IPv6 전환 기술에는 다음이 있습니다.</p>
+<ol type="1">
+<li><strong>Dual Stack</strong>: 장비가 IPv4와 IPv6를 모두 지원합니다.
+트래픽은 상황에 따라 IPv6 우선 정책을 사용할 수 있습니다.</li>
+<li><strong>Tunneling</strong>: IPv6 패킷을 IPv4로 캡슐화해 전달합니다.
+GRE, 6to4, ISATAP, Teredo, 6rd 등이 있습니다. 6rd는 ISP가 고객에게
+터널을 제공해 IPv6 접속을 가능하게 합니다.</li>
+<li><strong>Translation</strong>: NAT64, NAT46, SIIT(Stateless IP/ICMP
+Translation) 등으로 IPv4와 IPv6 간 변환을 수행합니다. DNS64는 DNS 질의시
+AAAA 레코드가 없으면 A 레코드를 IPv6 주소로 변환합니다.</li>
+</ol>
+<p>IPv6는 <strong>Neighbor Unreachability Detection(NUD)</strong>으로
+링크 상태를 주기적으로 확인하여, 스테일(stale) 이웃을 재검사합니다. 이는
+ARP와 달리 동적이며 안정적인 주소 관리가 가능합니다.</p>
+<h3 id="intervlan-라우팅-세부-설명">5.5 Inter‑VLAN 라우팅 세부 설명</h3>
+<p>스위치에서 VLAN끼리 통신하려면 L3 라우팅이 필요합니다.
+<strong>Router-on-a-Stick(RoAS)</strong> 구성:</p>
+<pre><code>interface gig0/0
+ no shutdown
+!
+interface gig0/0.10
+ encapsulation dot1Q 10
+ ip address 192.168.10.1 255.255.255.0
+!
+interface gig0/0.20
+ encapsulation dot1Q 20
+ ip address 192.168.20.1 255.255.255.0</code></pre>
+<p>RoAS는 라우터가 한 물리 인터페이스에 여러 서브인터페이스를 생성해 각
+VLAN과 통신합니다. 이 방식은 소규모에 적합하지만, 트래픽이 늘어나면 한
+포트가 병목이 됩니다. <strong>SVI</strong>는 L3 스위치에서 VLAN
+인터페이스를 생성하여 하드웨어 기반 라우팅을 제공합니다.</p>
+<p>SVI 예시:</p>
+<pre><code>interface vlan 10
+ ip address 192.168.10.1 255.255.255.0
+ no shutdown
+!
+interface vlan 20
+ ip address 192.168.20.1 255.255.255.0
+ no shutdown</code></pre>
+<p>SVI의 장점은 규모 확장과 성능이며, L2와 L3 기능이 하나의 장비에서
+제공됩니다. 특히 <strong>Layer 3 EtherChannel</strong>과
+<strong>PBR(Policy-Based Routing)</strong>를 사용하면 보다 정교한 트래픽
+제어가 가능합니다. 단, SVI는 VLAN이 활성화되어 있어야 상태가 up이 되며,
+STP가 해당 VLAN에 영향을 줍니다.</p>
+<h3 id="nat-vpn-세부-설명">5.6 NAT &amp; VPN 세부 설명</h3>
+<p><strong>NAT Order of Operation</strong>: Cisco IOS에서 패킷이
+들어오는 순서대로 ACL, Policy Routing, NAT, Encryption 등이 적용됩니다.
+NAT를 배치할 때 ACL과 라우팅에 미칠 영향을 고려해야 합니다.
+<strong>Hairpin NAT</strong>는 내부 호스트가 내부 서버의 공인 IP로
+접속할 때, NAT 라우터가 요청을 다시 내부로 돌려보내도록 하는
+기능입니다.</p>
+<p><strong>VPN 세부 사항</strong>:</p>
+<ul>
+<li><strong>IPsec</strong>: 두 단계로 나뉩니다. IKE Phase 1은 피어
+인증과 ISAKMP SA(Security Association)를 설정하며, 모드에는 Main
+Mode(6패킷)와 Aggressive Mode(3패킷)가 있습니다. Phase 2에서는 ESP/AH를
+통한 데이터 채널 SA를 생성합니다. AH(Authentication Header)는 무결성과
+인증만 제공하고, ESP(Encapsulating Security Payload)는 암호화와 무결성을
+제공합니다. 암호화 알고리즘(AES, 3DES)과
+인증 알고리즘(SHA‑256, SHA‑1)을 선택할 수 있습니다.</li>
+<li><strong>SSL/TLS VPN</strong>: SSL 포털 모드는 웹 기반 액세스를
+제공하고, SSL 터널 모드는 전용 소프트웨어를 통해 L3 터널을 형성합니다.
+TLS는 버전 1.2 이상을 권장하며, 서버와 클라이언트 인증서를 통해 인증할
+수 있습니다. TLS는 애플리케이션 계층에 가까워 특정 애플리케이션만
+노출하는 데
+적합합니다.</li>
+<li><strong>GRE</strong>: IP 패킷에 GRE 헤더를 추가해 전송하며, 암호화는
+제공하지 않습니다. 흔히 IPsec과 결합해 암호화 터널을 생성합니다.</li>
+<li><strong>L2TP</strong>: PPP 프레임을 캡슐화하고, IPsec을 사용해
+암호화를 추가합니다. Windows에서 흔히 사용됩니다.</li>
+<li><strong>DMVPN</strong>: Hub‑Spoke 모델에서 NHRP를 통해 Spoke 간 직접
+터널을 형성하고, IPSec과 GRE를 활용합니다. mGRE(multi‑GRE) 인터페이스를
+사용하여 한 인터페이스에서 여러 터널을 지원합니다.</li>
+</ul>
+<p>VPN을 설계할 때는 암호화 알고리즘과 키 길이를 선택하고, 인증
+방법(Pre‑Shared Key, Certificates)을 결정하며, NAT Traversal 사용 여부를
+확인해야 합니다. 또한, 퍼포먼스를 위해 하드웨어 암호화 가속기를 사용하는
+것이 좋습니다.</p>
+<h3 id="라우팅-실습-명령어와-출력-예시">5.7 라우팅 실습: 명령어와 출력
+예시</h3>
+<p>라우터나 L3 스위치에서 경로를 설정하고 확인하는 명령어를 예제와 함께
+정리합니다. Cisco IOS를 기준으로 하지만, 원리는 대부분의 장비에 동일하게
+적용됩니다. 주석(<code>#</code>)은 명령어의 기능과 예시 출력에 대한
+설명을 나타냅니다.</p>
+<p><strong>정적 라우트 설정</strong></p>
+<pre><code>conf t
+ ip route 0.0.0.0 0.0.0.0 192.168.1.254
+ ip route 10.0.0.0 255.255.255.0 192.168.1.2
+ exit</code></pre>
+<p><em>설명:</em> 기본 경로는 모든 미확인 트래픽을 지정된 다음 홉(여기서는 192.168.1.254)으로 보내고, 특정 네트워크(10.0.0.0/24)는 별도의 다음 홉으로 라우팅합니다.</p>
+
+<p><strong>OSPF 설정(링크 상태 라우팅 프로토콜)</strong></p>
+<pre><code>conf t
+ router ospf 1
+  router-id 1.1.1.1
+  network 10.0.0.0 0.0.0.255 area 0
+  network 192.168.1.0 0.0.0.255 area 0
+ exit</code></pre>
+<p><em>설명:</em> OSPF 프로세스 1을 시작하고 라우터 ID를 지정합니다. 네트워크 명령으로 각 서브넷을 Area&nbsp;0에 광고하여 인접 라우터와 경로 정보를 교환합니다.</p>
+
+<p><strong>EIGRP 설정(하이브리드 라우팅 프로토콜)</strong></p>
+<pre><code>conf t
+ router eigrp 100
+  network 10.0.0.0 0.0.0.255
+  network 192.168.1.0 0.0.0.255
+  no auto-summary
+ exit</code></pre>
+<p><em>설명:</em> EIGRP AS&nbsp;100을 구성하고 두 서브넷을 광고합니다. <code>no auto-summary</code>는 클래스풀 경로를 자동으로 요약하는 기능을 비활성화하여 정확한 CIDR 경로를 배포합니다.</p>
+
+<p><strong>BGP 설정(eBGP 예시)</strong></p>
+<pre><code>conf t
+ router bgp 65010
+  bgp log-neighbor-changes
+  neighbor 198.51.100.2 remote-as 65020
+  neighbor 198.51.100.2 update-source Loopback0
+  network 203.0.113.0 mask 255.255.255.0
+ exit</code></pre>
+<p><em>설명:</em> BGP AS&nbsp;65010을 구성하고 원격 AS&nbsp;65020과 세션을 설정합니다. 루프백 인터페이스를 세션 소스로 사용하고 내부 프리픽스를 광고합니다.</p>
+
+<p><strong>NAT(PAT) 설정과 ACL</strong></p>
+<pre><code>conf t
+ interface gi0/0
+  ip address 192.0.2.1 255.255.255.0
+  ip nat outside
+ exit
+ interface gi0/1
+  ip address 10.0.0.1 255.255.255.0
+  ip nat inside
+ exit
+ access-list 100 permit ip 10.0.0.0 0.0.0.255 any
+ ip nat inside source list 100 interface gi0/0 overload
+ exit</code></pre>
+<p><em>설명:</em> 외부 인터페이스(gi0/0)와 내부 인터페이스(gi0/1)를 지정하고, ACL&nbsp;100으로 내부에서 외부로 나가는 트래픽을 허용합니다. <code>overload</code> 옵션으로 하나의 공인 IP(gi0/0)로 다수의 내부 호스트를 동시 NAT(PAT)합니다.</p>
+
+<p><strong>구성 확인 명령어</strong></p>
+<pre><code>show ip route</code></pre>
+<p><em>설명:</em> 라우팅 테이블을 요약하여 정적 경로, 직접 연결된 경로, 동적 프로토콜(OSPF/EIGRP/BGP)에서 학습한 경로와 각 게이트웨이를 확인합니다.</p>
+<pre><code>show ip ospf neighbor</code></pre>
+<p><em>설명:</em> 현재 OSPF 이웃의 Router ID, 상태(FULL/BDR 등), Dead Timer, IP 주소 및 인터페이스를 표시합니다.</p>
+<pre><code>show ip eigrp neighbors</code></pre>
+<p><em>설명:</em> EIGRP 이웃의 IP, 홀드 타임, 패킷 교환 횟수를 표시합니다.</p>
+<pre><code>show ip bgp summary</code></pre>
+<p><em>설명:</em> BGP 세션의 상태, 메시지 수, 업다운 타임, 수신한 프리픽스 수를 요약합니다.</p>
+<pre><code>show ip nat translations</code></pre>
+<p><em>설명:</em> NAT 변환 테이블에서 내부/외부 주소, 프로토콜, 포트 매핑을 확인합니다.</p>
+
+<p>위 명령어들은 기본적인 라우팅 프로토콜 설정과 NAT 구성을 단위별로 보여 줍니다. <code>show</code> 명령어를 통해 각 프로토콜의 상태와 경로 학습, NAT 변환 현황을 확인하고 문제를 진단할 수 있습니다.</p>
+<h3 id="라우터-대표-명령어">5.8 라우터 대표 명령어</h3>
+<p>라우터 설정과 진단에 자주 사용되는 명령어를 간략히 설명합니다.</p>
+<ul>
+  <li><strong>ip route PREFIX MASK NEXT-HOP</strong> – 정적 라우트를 추가하여 특정 네트워크를 지정된 다음 홉으로 전달합니다.</li>
+  <li><strong>router ospf PROCESS-ID</strong> – OSPF 프로세스를 시작하고 <code>network</code> 명령으로 서브넷을 영역에 등록합니다.</li>
+  <li><strong>router eigrp AS</strong> – EIGRP 프로세스를 구성하고 AS 번호에 속한 네트워크를 광고합니다.</li>
+  <li><strong>router bgp AS</strong> – BGP 세션을 설정하고 이웃과 경로를 교환합니다.</li>
+  <li><strong>ip nat inside source list ACL interface IFACE overload</strong> – PAT 오버로드를 설정하여 여러 사설 주소를 하나의 공인 주소로 매핑합니다.</li>
+  <li><strong>show ip route</strong> – 라우팅 테이블에 학습된 경로와 메트릭을 확인합니다.</li>
+  <li><strong>show ip ospf neighbor</strong> – OSPF 이웃의 상태와 Dead Timer를 확인합니다.</li>
+  <li><strong>show ip eigrp neighbors</strong> – EIGRP 이웃의 IP와 홀드타임, 패킷 교환 횟수를 확인합니다.</li>
+  <li><strong>show ip bgp summary</strong> – BGP 피어의 세션 상태와 수신 경로 수를 요약합니다.</li>
+  <li><strong>show ip nat translations</strong> – NAT 테이블에서 사설 IP와 공인 IP/포트 매핑을 조회합니다.</li>
+  <li><strong>ip route 0.0.0.0 0.0.0.0 NEXT-HOP</strong> – 기본 경로를 지정하여 모든 미상세 목적지를 지정된 다음 홉으로 전송합니다.</li>
+  <li><strong>router rip</strong> – RIP 프로세스를 시작하고 <code>network</code> 명령으로 라우팅할 네트워크를 광고합니다.</li>
+  <li><strong>access-list NUMBER permit|deny ...</strong> – 트래픽을 허용하거나 차단하기 위한 ACL 규칙을 정의합니다.</li>
+  <li><strong>show ip interface brief</strong> – 인터페이스의 IP 주소와 상태를 간략히 확인합니다.</li>
+  <li><strong>ping DESTINATION</strong> – ICMP 에코 요청을 보내 원격 호스트와의 연결 여부를 테스트합니다.</li>
+  <li><strong>traceroute DESTINATION</strong> – 패킷이 목적지까지 경유하는 라우터 경로를 추적합니다.</li>
+  <li><strong>debug ip routing</strong> – 라우팅 테이블 변화를 실시간으로 모니터링하여 문제 해결에 활용합니다.</li>
+  <li><strong>show ip protocols</strong> – 현재 실행 중인 라우팅 프로토콜과 구성 상태를 확인합니다.</li>
+</ul>
+''',
+                    'order': 6,
+                },
+                {
+                    'title': '클라우드',
+                    'slug': '클라우드',
+                    'content': '''<h2 id="클라우드">클라우드</h2>
+<p><strong>요약:</strong> 클라우드는 물리적 서버와 네트워크 장비를 추상화해 온디맨드로 제공하는 IT 모델로, 사용자는 가상 사설망(VPC/VNet) 내에서 서브넷, 라우팅, NAT, 보안 그룹을 구성하고 필요 자원을 빠르게 확장·축소할 수 있습니다. 퍼블릭 클라우드는 AWS, Azure, GCP 등 공급자가 관리하며, 프라이빗 클라우드는 기업 내부 인프라를 가상화합니다. 하이브리드 및 멀티클라우드 환경에서는 온프레미스 데이터센터와 클라우드 간의 전용 회선, VPN, SD‑WAN을 통해 연동하며, 자원 배치와 보안 정책을 통합 관리해야 합니다. 이 섹션에서는 클라우드 네트워크의 기본 구조와 핵심 요소를 요약합니다.</p>
+  <p><strong>주요 구성 요소:</strong></p>
+  <ul>
+    <li><strong>가상 네트워크(VPC/VNet)</strong> – 각 클라우드마다 격리된 가상 네트워크를 제공하며, 서브넷과 라우팅 테이블을 통해 트래픽 흐름을 제어합니다.</li>
+    <li><strong>라우팅과 NAT</strong> – 라우팅 테이블로 경로를 지정하고, NAT 게이트웨이/공인 IP로 내부 네트워크를 외부와 연결합니다.</li>
+    <li><strong>보안 경계</strong> – AWS Security Group과 Network ACL, Azure NSG, GCP Firewall Rules 등으로 인바운드/아웃바운드 트래픽을 제어합니다.</li>
+    <li><strong>연결 옵션</strong> – VPN Gateway, Direct Connect/ExpressRoute/Interconnect 등을 통해 온프레미스와 클라우드를 안전하게 연결합니다.</li>
+    <li><strong>하이브리드·멀티 클라우드</strong> – 여러 클라우드와 데이터센터 간에 SD‑WAN과 Transit Gateway로 복잡한 네트워크를 통합하고, 재해 복구와 규정 준수를 고려합니다.</li>
+  </ul>
+
+  <p><strong>서비스 모델:</strong></p>
+  <ul>
+    <li><strong>IaaS(Infrastructure as a Service)</strong> – 가상 서버, 스토리지, 네트워크를 제공하여 사용자가 운영체제와 애플리케이션을 자유롭게 구축합니다.</li>
+    <li><strong>PaaS(Platform as a Service)</strong> – 애플리케이션 개발과 배포를 위한 런타임 환경, 데이터베이스, 미들웨어를 제공합니다.</li>
+    <li><strong>SaaS(Software as a Service)</strong> – 이메일, 협업 도구, CRM 등 완전한 애플리케이션을 인터넷을 통해 제공하며, 사용자는 설치와 관리 없이 서비스를 이용합니다.</li>
+  </ul>
+
+  <p><strong>네트워크 설계 고려사항:</strong></p>
+  <ul>
+    <li><strong>가용 영역(Availability Zone)</strong> – 장애 도메인을 분리하여 고가용성을 확보하고, 멀티 AZ 구성으로 서비스 연속성을 높입니다.</li>
+    <li><strong>보안 정책</strong> – 최소 권한 원칙을 적용하여 Security Group, NACL, IAM 정책을 구성하고, 로깅 및 모니터링을 통해 이상 징후를 조기에 탐지합니다.</li>
+    <li><strong>비용 최적화</strong> – 적절한 인스턴스 크기, 예약 인스턴스, 스팟 인스턴스를 활용하고, 사용하지 않는 리소스를 정리하여 운영 비용을 관리합니다.</li>
+  </ul>
+<h2 id="계층별-프로토콜-세부">6. 계층별 프로토콜 (세부)</h2>
+<h3 id="전송-계층-상세-tcpudp-심층-분석">6.1 전송 계층 상세: TCP/UDP
+심층 분석</h3>
+<p>TCP의 <strong>혼잡 제어</strong> 알고리즘은 네트워크 혼잡에 대응하기
+위해 전송 속도를 조절합니다. <strong>Slow Start</strong>는
+cwnd(Congestion Window)를 1 MSS에서 시작해 ACK마다 두 배로 증가시키며,
+<strong>ssthresh</strong> 임계값까지는 지수적으로 성장하고 그 이후에는
+선형 증가(Congestion Avoidance)를 합니다. 패킷 손실을 감지하면
+ssthresh를 절반으로 줄이고 cwnd를 1 MSS로 재설정합니다. <strong>Fast
+Retransmit</strong>은 세 개의 중복 ACK를 받으면 손실을 가정하고 빠르게
+재전송합니다. <strong>Fast Recovery</strong>는 손실 이후에도 cwnd를
+ssthresh로 유지하여 성능을 향상합니다. 최근에는 <strong>CUBIC</strong>,
+<strong>BBR</strong> 등 새로운 알고리즘이 도입되어 고속·장거리
+네트워크에서 성능을 개선합니다.</p>
+<p>TCP의 <strong>옵션 필드</strong>에는 MSS(Maximum Segment Size),
+Window Scaling, Selective Acknowledgment, Timestamps, TCP Fast Open 등이
+포함됩니다. <strong>Timestamps</strong>는 RTT 측정과 순서 재정렬을
+개선하며, <strong>TCP Fast Open</strong>은 초기 SYN 패킷에 데이터를
+포함시켜 RTT를 절약합니다.</p>
+<p>UDP에 기반한 프로토콜들은 신뢰성 요구에 따라 자체적인 재전송 및 정렬
+로직을 구현합니다. 예: <strong>TFTP</strong>는 단순 파일 전송을 위해
+ACK를 사용하지만, 재전송 로직은 애플리케이션이 구현합니다.
+<strong>RTP</strong>는 시퀀스 넘버와 타임스탬프를 포함해 지터 버퍼에서
+재생 순서를 유지합니다.</p>
+<h3 id="애플리케이션-프로토콜-심층">6.2 애플리케이션 프로토콜 심층</h3>
+<p>네트워크 애플리케이션은 다양한 기능과 요구 사항을 가진 프로토콜을
+사용합니다. 아래 표는 주요 애플리케이션 프로토콜과 특징을 추가로
+설명합니다.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>프로토콜</th>
+<th>상세 설명</th>
+<th>기본 포트</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>SMTP(Simple Mail Transfer Protocol)</strong></td>
+<td>이메일 전송; 서버 간 릴레이; TLS를 사용한 암호화(STARTTLS)</td>
+<td>25/587(Submission)</td>
+</tr>
+<tr class="even">
+<td><strong>IMAP/POP3</strong></td>
+<td>이메일 수신·동기화; IMAP은 서버와 동기화된 상태 유지, POP3는 로컬
+다운로드</td>
+<td>143/110; SSL은 993/995</td>
+</tr>
+<tr class="odd">
+<td><strong>SFTP(SSH File Transfer Protocol)</strong></td>
+<td>SSH를 통한 보안 파일 전송; FTP와 달리 단일 포트(22) 사용, 방화벽
+친화적</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>FTPS(FTP over SSL/TLS)</strong></td>
+<td>기존 FTP에 TLS 추가; 제어 연결(990)과 데이터 연결이 분리, 방화벽
+설정 복잡</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><strong>SNMP(Simple Network Management Protocol)</strong></td>
+<td>네트워크 장비 모니터링; <strong>v1/v2c</strong>는 community 문자열로 인증하고, <strong>v3</strong>는 사용자 기반 보안 모델(USM)을 도입하여 메시지를 암호화와 무결성을 보장합니다. Get/Set/Trap/Inform 명령을 통해 장비 상태를 조회·제어합니다.</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>LDAP(Lightweight Directory Access Protocol)</strong></td>
+<td>디렉터리 서비스 접근; 조직의 사용자/그룹 정보 관리; Active
+Directory에서 사용. 기본 포트 389, 암호화는 636(LDAPS)</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><strong>RADIUS</strong></td>
+<td>AAA 서비스 제공; UDP 기반(1812/1813)으로 인증·권한·회계를 처리합니다. 사용자 인증과 함께 VLAN 할당이나 ACL 적용이 가능합니다.</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>TACACS+</strong></td>
+<td>Cisco 중심의 AAA 프로토콜; TCP 49 포트를 사용하고, 인증·권한·회계를 분리하며 패킷 전체를 암호화합니다. 보다 세밀한 명령 권한 제어가 가능합니다.</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><strong>NTP(Network Time Protocol)</strong></td>
+<td>64비트 타임스탬프를 사용해 시간을 동기화; Stratum 계층 구조;
+지연·지터 계산으로 시간 오류를 보정합니다.</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>MQTT(Message Queuing Telemetry Transport)</strong></td>
+<td>IoT 메시징 프로토콜; Pub/Sub 모델; 경량·저전력; TCP 기반, TLS
+지원.</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><strong>AMQP/ZeroMQ</strong></td>
+<td>메시지 큐 프로토콜; 신뢰성, 큐잉, 라우팅 기능 제공; RabbitMQ에서
+사용.</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>gRPC</strong></td>
+<td>HTTP/2와 Protocol Buffers 기반의 RPC 프레임워크; 바이너리 직렬화로
+효율적; TLS 암호화 내장.</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><strong>Telnet vs SSH</strong></td>
+<td>Telnet은 평문 전송으로 보안 취약, SSH는 RSA/ECDSA 키를 사용해
+암호화된 통신을 제공하고, 포트 22에서 동작합니다.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>정적 포트 할당</strong> 외에도 <strong>ephemeral
+port</strong>를 사용하는 프로토콜들이 많습니다. 예를 들어 RPC 기반
+애플리케이션은 포트 매퍼(Portmapper)를 통해 동적으로 포트를 할당합니다.
+방화벽에서 이러한 트래픽을 허용하려면 Deep Packet Inspection이 필요할 수
+있습니다.</p>
+<h3 id="vpn-프로토콜-심층">6.3 VPN 프로토콜 심층</h3>
+<p>VPN의 종류와 프로토콜을 자세히 비교하면 다음과 같습니다.</p>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>프로토콜</th>
+<th>계층</th>
+<th>암호화/인증</th>
+<th>모드</th>
+<th>특징</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>IPsec</strong></td>
+<td>L3</td>
+<td>ESP(암호화·무결성), AH(무결성)</td>
+<td>터널/전송</td>
+<td>IP 전체를 보호하므로 모든 애플리케이션을 투명하게 보호. IKEv1/v2
+사용. NAT 통과 시 UDP 4500 포트 사용.</td>
+</tr>
+<tr class="even">
+<td><strong>SSL/TLS VPN</strong></td>
+<td>L4/L7</td>
+<td>TLS (암호화·무결성), RSA/ECDSA 인증서</td>
+<td>포털/터널</td>
+<td>웹 브라우저 기반 포털은 VPN 클라이언트 없이 사용 가능. 터널 모드는
+특정 애플리케이션이나 전체 트래픽을 암호화. 푸시 업데이트로 인증서를
+배포하고 CRL/OCSP로 폐기 가능.</td>
+</tr>
+<tr class="odd">
+<td><strong>GRE</strong></td>
+<td>L3</td>
+<td>암호화 없음</td>
+<td>터널</td>
+<td>라우팅 프로토콜과 멀티캐스트를 터널링. 대부분 IPsec과 함께
+사용.</td>
+</tr>
+<tr class="even">
+<td><strong>L2TP</strong></td>
+<td>L2</td>
+<td>암호화 없음(L2TP) / IPsec 결합(L2TP/IPsec)</td>
+<td>터널</td>
+<td>PPP 프레임을 encapsulate; Windows 환경 호환성.</td>
+</tr>
+<tr class="odd">
+<td><strong>PPTP</strong></td>
+<td>L2</td>
+<td>MPPE(약한 암호화)</td>
+<td>터널</td>
+<td>구식; MS‑CHAPv2 취약성으로 폐기 권고.</td>
+</tr>
+<tr class="even">
+<td><strong>SSTP</strong></td>
+<td>L4</td>
+<td>TLS 기반</td>
+<td>터널</td>
+<td>Windows 환경에서 사용; 443 포트를 사용해 방화벽 통과 용이.</td>
+</tr>
+<tr class="odd">
+<td><strong>DMVPN</strong></td>
+<td>L3</td>
+<td>IPsec과 GRE</td>
+<td>mGRE</td>
+<td>Hub‑Spoke에서 스포크 간 직접 터널로 확장. 라우팅 프로토콜과
+호환.</td>
+</tr>
+</tbody>
+</table>
+<p>VPN 설계 시 고려할 요소는 <strong>암호화 수준</strong>(키 길이,
+알고리즘), <strong>인증 방법</strong>(PSK, 인증서, EAP), <strong>QoS
+지원</strong>, <strong>경로 MTU</strong>, <strong>NAT
+Traversal</strong>, <strong>하드웨어 오프로드</strong> 등입니다. 또한,
+VPN 터널을 여러 개 구축하는 경우 라우팅 정책(Policy-based vs
+Route-based)을 신중히 설정해야 합니다.</p>
+<h3 id="암호화와-pki-심층">6.4 암호화와 PKI 심층</h3>
+<p>암호화는 정보 보안의 핵심입니다. 암호 알고리즘은 대칭과 비대칭으로
+나뉘며, 각 알고리즘의 특징은 다음과 같습니다.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>유형</th>
+<th>알고리즘</th>
+<th>특징</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>대칭 암호</strong></td>
+<td>AES, DES, 3DES, ChaCha20</td>
+<td>암호화·복호화 키가 동일. 연산 속도가 빠르며 대량 데이터에 적합. 키
+길이 128/192/256비트. 키 분배가 문제.</td>
+</tr>
+<tr class="even">
+<td><strong>비대칭 암호</strong></td>
+<td>RSA, DSA, Diffie-Hellman, Elliptic Curve(ECDSA, ECDH)</td>
+<td>공개키/비밀키 쌍을 사용하여 키 분배 문제 해결. RSA는 큰
+키(2048+비트)가 필요하고 연산량이 많으나, ECC는 더 작은 키로 동일 보안
+수준.</td>
+</tr>
+<tr class="odd">
+<td><strong>해시 함수</strong></td>
+<td>SHA‑1, SHA‑2, SHA‑3, MD5</td>
+<td>임의 길이 입력을 고정 길이 출력으로 변환. 무결성 검증에 사용되며,
+단방향성과 충돌 저항성이 중요. MD5와 SHA‑1은 취약.</td>
+</tr>
+<tr class="even">
+<td><strong>MAC(Message Authentication Code)</strong></td>
+<td>HMAC, CMAC</td>
+<td>키와 메시지 해시를 결합하여 무결성과 인증을 보장. HMAC‑SHA256 등이
+널리 사용.</td>
+</tr>
+<tr class="odd">
+<td><strong>키 교환</strong></td>
+<td>Diffie‑Hellman(DH), Elliptic Curve DH</td>
+<td>안전한 채널 없이도 공유 비밀을 생성. ECDH는 DH보다 짧은 키로 동일
+수준의 보안을 제공.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>PKI(Public Key Infrastructure)</strong>는 공개키 인증서를
+발급, 관리, 폐기하는 체계를 의미합니다. 루트 CA → 중간 CA → 발급 CA로
+신뢰 체인을 형성하며, 클라이언트와 서버는 CA 서명 인증서를 통해 상호
+신뢰를 확보합니다. 인증서는 X.509 형식을 따르며, CRL과 OCSP를 통해
+폐기된 인증서를 확인합니다. SSL/TLS 핸드쉐이크에서 서버는 자신의
+인증서를 전송하고, 클라이언트는 루트/중간 CA를 신뢰할 수 있는지
+확인합니다. PFS(Perfect Forward Secrecy)를 위해 ECDHE와 같은 임시 키
+교환 알고리즘을 사용해야 하며, RSA 키 교환을 사용하면 서버 비밀키가
+유출될 경우 과거 세션이 모두 해독됩니다.</p>
+<p>암호화는 저장 데이터(Data‑at‑Rest)에도 적용되어야 합니다. 디스크
+암호화(BitLocker, LUKS), 데이터베이스 암호화, S3 Server‑Side Encryption,
+Transparent Data Encryption(TDE) 등으로 구성됩니다. 키 관리
+솔루션(KMS/HSM)이 키의 안전한 저장·사용을 담당합니다.</p>
+<h3 id="qos-분류와-마킹-심층">6.5 QoS 분류와 마킹 심층</h3>
+<p>네트워크 QoS 구현은 <strong>패킷 분류(Classification)</strong> →
+<strong>마킹(Marking)</strong> → <strong>정책
+결합(Queuing/Shaping/Policing)</strong>으로 이루어집니다. 다음은 주요
+기술과 개념입니다.</p>
+<ul>
+<li><strong>DSCP (Differentiated Services Code Point)</strong>: IP
+헤더의 6비트 필드로 최대 64개 클래스를 정의합니다. DSCP 46(EF)는 음성,
+34(AF41)와 같은 AF 클래스는 중요한 트래픽, 0(BE)은 베스트 effort로
+지정합니다. <strong>PHB(Per‑Hop Behaviour)</strong>는 각 DSCP 클래스가
+라우터에서 어떻게 처리되는지 정의합니다.</li>
+<li><strong>CoS (Class of Service)</strong>: 802.1Q VLAN Tag의 PCP
+3비트로 L2에서 우선순위를 지정합니다. 0~7까지 값이 있으며, 0은 기본, 7은
+네트워크 제어 트래픽입니다.</li>
+<li><strong>Policing vs Shaping</strong>: <strong>Policing</strong>은
+트래픽이 지정된 속도를 초과하면 패킷을 버리거나 DSCP를 낮춥니다.
+<strong>Shaping</strong>은 큐에 저장했다가 일정 속도로 내보내 지터를
+줄입니다.</li>
+<li><strong>Queueing</strong>: <strong>FIFO</strong>(First In First Out)
+큐는 우선순위가 없으며, <strong>Priority Queuing(PQ)</strong>는 높은
+우선순위 큐가 비어 있을 때 낮은 큐를 서비스합니다. <strong>Weighted Fair
+Queueing(WFQ)</strong>는 트래픽 클래스별로 비율을 지정하여 공정하게
+대역폭을 나눕니다. <strong>Low Latency Queueing(LLQ)</strong>는 PQ와
+CBWFQ(Class Based WFQ)를 결합해 음성·영상 트래픽을 최우선 처리하고, 다른
+트래픽은 클래스별 가중치로 처리합니다. <strong>WRED(Weighted Random
+Early Detection)</strong>는 큐가 가득 차기 전에 일부 패킷을 임의로
+드롭해 TCP 혼잡을 완화합니다.</li>
+<li><strong>Trust Boundary</strong>: 신뢰할 수 있는 장비(라우터,
+스위치)에서 QoS 마킹을 적용하고, 신뢰할 수 없는 장비(PC, IP Phone)에서
+들어오는 DSCP 값은 재마킹합니다. IP Phone과 스위치 사이에서는 CDP/LLDP를
+이용해 Voice VLAN과 CoS를 전달하므로 신뢰 범위를 넓힐 수 있습니다.</li>
+</ul>
+<p>QoS는 네트워크 전반에 걸쳐 일관성 있게 적용되어야 하며, 서비스 수준
+계약(SLA)을 충족하기 위해 대역폭 모니터링과 실시간 조정을 수행해야
+합니다.</p>
+<h2 id="네트워크-보안">7. 네트워크 보안</h2>
+<h3 id="aaa-프레임워크-및-확장">7.1 AAA 프레임워크 및 확장</h3>
+<p><strong>AAA</strong>는 <strong>인증(Authentication)</strong>,
+<strong>권한(Authorization)</strong>,
+<strong>회계(Accounting)</strong>의 세 요소로 구성됩니다. 인증은
+사용자가 누구인지 증명하며, 비밀번호, OTP, 스마트 카드, 인증서 등을
+사용합니다. <strong>다중 요소 인증(MFA)</strong>는 두 가지 이상의 인증
+수단을 요구하여 보안을 강화합니다. 권한은 인증된 사용자가 수행할 수 있는
+작업을 정의하며, <strong>Role‑Based Access Control(RBAC)</strong>,
+<strong>Attribute‑Based Access Control(ABAC)</strong> 등이 있습니다.
+회계는 모든 이벤트와 리소스 사용을 기록하여, 불법 행위 추적과 청구에 활용됩니다.</p>
+<p><strong>AAA 프로토콜 비교</strong>:</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>프로토콜</th>
+<th>전송</th>
+<th>암호화</th>
+<th>특징</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>RADIUS</strong></td>
+<td>UDP (1812, 1813)</td>
+<td>패킷 전체가 암호화되지 않고 암호만 MD5로 보호</td>
+<td>인증과 권한을 함께 처리; 네트워크 접속과 장치 관리에 사용;
+CoA(Change of Authorization) 메시지로 세션 속성 변경 가능</td>
+</tr>
+<tr class="even">
+<td><strong>TACACS+</strong></td>
+<td>TCP 49</td>
+<td>전체 패킷을 암호화</td>
+<td>인증, 권한, 회계를 분리; 명령 단위 권한 부여 가능; Cisco 장비
+환경에서 많이 사용</td>
+</tr>
+<tr class="odd">
+<td><strong>Diameter</strong></td>
+<td>TCP/ SCTP</td>
+<td>IPSec/ TLS와 결합해 보안</td>
+<td>RADIUS의 후속; 확장성; SIP 및 LTE 네트워크에서 사용</td>
+</tr>
+</tbody>
+</table>
+<p>AAA는 VPN, Wi‑Fi 인증, SSH 접근 제어, NAC와 연계되어 사용됩니다. 예를
+들어 <strong>Cisco ISE</strong>와 <strong>Aruba ClearPass</strong>는
+RADIUS/TACACS+ 서버로 동작하며, 802.1X 인증, 게스트 포털, BYOD 등록,
+Posture 평가, SAML/OAuth 통합을 제공합니다.</p>
+<h3 id="nac-및-802.1x-심층">7.2 NAC 및 802.1X 심층</h3>
+<p><strong>Network Access Control(NAC)</strong>는 네트워크 접속을
+제어하고, 접속 장치의 보안 상태를 평가하여 적절한 VLAN 또는 제한
+네트워크로 분리하는 솔루션입니다. NAC는 다음과 같은 구성 요소로 이뤄져
+있습니다.</p>
+<ol type="1">
+<li><strong>Supplicant</strong>: 802.1X 지원 클라이언트 소프트웨어를
+실행하는 장치. 사용자 이름/비밀번호, 인증서, EAP 크리덴셜을 제공하며,
+Windows 802.1X client, AnyConnect NAM 등이 있습니다.</li>
+<li><strong>Authenticator</strong>: 스위치나 무선 컨트롤러가 802.1X
+포트를 제공합니다. EAPOL 패킷을 RADIUS 서버로 전달하며, 인증 성공 시
+포트를 인증 상태로 전환합니다.</li>
+<li><strong>Authentication Server</strong>: RADIUS/TACACS+ 서버로,
+사용자의 자격 증명을 검증하고, VLAN 할당, ACL, 다운로드 가능한 ACL(dACL)
+등을 반환합니다.</li>
+</ol>
+<p><strong>EAP(EAPOL)</strong> 방식은 여러 가지가 있습니다.</p>
+<ul>
+<li><strong>EAP-TLS</strong>: 클라이언트와 서버가 상호 인증서를 사용.
+매우 안전하지만 클라이언트 인증서 배포가 필요.</li>
+<li><strong>EAP-PEAP/MSCHAPv2</strong>: 서버 인증서와 클라이언트
+비밀번호를 사용하는 보호된 EAP. Windows 환경에서 널리 사용됨.</li>
+<li><strong>EAP-TTLS</strong>: TLS 터널 내부에서 PAP/CHAP/MSCHAP 등
+다양한 인증 방식을 사용할 수 있으며, 구성이 유연.</li>
+<li><strong>EAP-FAST</strong>: Cisco 프로토콜로, PAC(Protected Access
+Credential)을 사용해 인증서 배포 없이도 빠른 TLS 터널을 구축.</li>
+</ul>
+<p>NAC는 인증뿐 아니라 <strong>Posture Assessment</strong>를 수행하여
+안티바이러스 업데이트, 패치 수준, 암호 정책 준수 여부를 확인합니다.
+조건을 만족하지 않으면 <strong>Quarantine VLAN</strong>이나
+<strong>Remediation VLAN</strong>으로 이동시켜 업데이트 및 수정 후
+네트워크에 접속할 수 있습니다.</p>
+<h3 id="zero-trust-마이크로세그멘테이션-심층">7.3 Zero Trust &amp;
+마이크로세그멘테이션 심층</h3>
+<p><strong>Zero Trust</strong>는 과거의 경계 기반(security perimeter) 모델을 버리고, 내부·외부를 모두 불신하는 모델입니다. 핵심 구성 요소는 다음과 같습니다.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>요소</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>신원 기반 보안</strong></td>
+<td>사용자, 장치, 애플리케이션에 대한 강력한 인증. SSO 및 MFA, IDaaS를
+사용하여 중앙 집중식으로 관리.</td>
+</tr>
+<tr class="even">
+<td><strong>마이크로세그멘테이션</strong></td>
+<td>네트워크를 더 작은 단위로 나누어, 세그먼트 간 통신을 엄격히 제한.
+NSX DFW, ACI Contract, Cloud Security Group 등으로 구현.</td>
+</tr>
+<tr class="odd">
+<td><strong>적응형 정책</strong></td>
+<td>장치 상태, 사용 위치, 시간, 동작 패턴 등 맥락(Context)에 따라 접근
+권한을 부여하거나 거부.</td>
+</tr>
+<tr class="even">
+<td><strong>지속적 모니터링</strong></td>
+<td>로그, 트래픽 패턴, 사용자 행동 분석(UEBA)을 통해 이상 징후를
+실시간으로 감지.</td>
+</tr>
+<tr class="odd">
+<td><strong>암호화</strong></td>
+<td>모든 통신 경로를 TLS, IPSec으로 암호화.</td>
+</tr>
+</tbody>
+</table>
+<p>Zero Trust 구현을 위해 <strong>ZTNA(Zero Trust Network
+Access)</strong> 솔루션을 사용하며, 애플리케이션 단위로 접속 권한을
+부여하고 모든 트래픽을 프록시/게이트웨이로 통제합니다. NIST SP 800‑207은
+Zero Trust 아키텍처 구현 지침을 제공합니다.</p>
+<h3 id="방화벽-idsips-waf-edr-심층">7.4 방화벽, IDS/IPS, WAF, EDR
+심층</h3>
+<p><strong>방화벽(Firewall)</strong>는 네트워크 경계에서 트래픽을
+허용하거나 차단합니다. 유형과 기능:</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>종류</th>
+<th>특징</th>
+<th>예시</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Stateless 방화벽</strong></td>
+<td>패킷 헤더 기반 규칙에 따라 단순 필터링. 세션 상태를 추적하지
+않으므로 응답 패킷은 별도 규칙 필요.</td>
+<td>IPv4/IPv6 ACL, NACL</td>
+</tr>
+<tr class="even">
+<td><strong>Stateful 방화벽</strong></td>
+<td>세션 테이블을 유지하고, SYN→SYN/ACK→ACK 과정을 인식해 응답 트래픽을
+자동 허용. TCP Flags 검사.</td>
+<td>Cisco ASA, iptables state module</td>
+</tr>
+<tr class="odd">
+<td><strong>Next‑Generation Firewall(NGFW)</strong></td>
+<td>L7 애플리케이션 인식, 사용자 ID, URL 필터링, TLS/SSL 검사, IPS/IDS
+통합, 대역폭 제어.</td>
+<td>Palo Alto, Check Point, Fortinet</td>
+</tr>
+<tr class="even">
+<td><strong>Web Application Firewall(WAF)</strong></td>
+<td>HTTP 요청/응답을 검사해 SQL Injection, XSS, CSRF, OWASP Top 10
+공격을 방지. Signature 기반과 학습 기반 모델을 사용.</td>
+<td>AWS WAF, F5 Big‑IP ASM</td>
+</tr>
+<tr class="odd">
+<td><strong>Web Proxies</strong></td>
+<td>요청을 캐싱하고, 웹 필터링/안티바이러스 기능 제공. SSL Offloading과
+TLS Inspection 가능.</td>
+<td>Squid, Bluecoat</td>
+</tr>
+</tbody>
+</table>
+<p><strong>IDS(침입 감지 시스템)</strong>는 비인가 또는 악의적 트래픽을
+탐지하고 경고합니다. <strong>IPS(침입 차단 시스템)</strong>는 탐지 후
+즉시 차단합니다. 운영 방식:</p>
+<ul>
+<li><strong>Signature-based</strong>: 알려진 공격 패턴을 매칭.
+정확하지만 제로데이 공격은 탐지하지 못함.</li>
+<li><strong>Anomaly-based</strong>: 정상 트래픽 베이스라인과 비교.
+새로운 공격 탐지 가능하지만 오탐(False Positive)이 발생할 수 있음.</li>
+<li><strong>Heuristic/Behavior-based</strong>: 머신 러닝과 행동 분석으로
+공격을 탐지. 데이터 학습과 튜닝이 필요.</li>
+</ul>
+<p><strong>HIDS vs NIDS</strong>: HIDS는 서버나 호스트 내부에서 로그
+파일, 시스템 호출을 감시합니다. NIDS는 네트워크 트래픽을 스니핑하고
+분석하여 네트워크 수준 공격을 탐지합니다. 최근에는 <strong>EDR(Endpoint
+Detection &amp; Response)</strong>와 <strong>XDR(eXtended Detection
+&amp; Response)</strong>가 클라우드 기반으로 통합되어, 엔드포인트,
+이메일, 네트워크, 애플리케이션을 포괄적으로 감시합니다.</p>
+<h3 id="암호화-pki-심층-확장">7.5 암호화 &amp; PKI 심층 확장</h3>
+<p>암호화가 실제 시스템에서 어떻게 구현되는지 조금 더 세부적으로
+살펴봅니다.</p>
+<ul>
+<li><strong>TLS Cipher Suites</strong>: TLS 연결 시 클라이언트와 서버는
+암호 스위트를 협상합니다. 스위트는 암호화 알고리즘, MAC 알고리즘, 키
+교환 알고리즘을 조합한 것으로 표시됩니다(예:
+TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384). ECDHE는 임시 키 교환으로 PFS를
+제공, RSA는 서버 인증서 서명에 사용, AES_256_GCM은 데이터 암호화,
+SHA384는 해시 기반 MAC를 의미합니다.</li>
+<li><strong>OCSP 및 CRL</strong>: 인증서 폐기 여부를 확인하는 방법.
+CRL(Certificate Revocation List)은 폐기된 인증서 목록을 다운로드하여
+확인하며, OCSP는 실시간으로 CA 서버에게 폐기 상태를 질의합니다. OCSP
+Stapling은 서버가 자신의 상태를 캡슐화하여 클라이언트에게 전달해 성능과
+프라이버시를 개선합니다.</li>
+<li><strong>Key Management</strong>: 키 생성, 저장, 교환, 폐기를
+안전하게 처리하는 과정입니다. <strong>HSM(Hardware Security
+Module)</strong>는 민감한 키를 물리적으로 보호하고 암호 연산을
+수행합니다. KMS(Key Management Service)는 클라우드 환경에서 키
+수명주기를 관리합니다.</li>
+<li><strong>암호화 표준 적용</strong>: 조직은 NIST, ISO 27001, PCI‑DSS,
+HIPAA 등 규정에 맞춰 암호화 정책을 수립해야 합니다. 예를 들어 PCI‑DSS는
+결제 카드 데이터 보관 시 AES‑128 이상과 SHA‑2를 요구합니다. HIPAA는 의료
+정보의 암호화를 권장합니다.</li>
+</ul>
+<h3 id="acl-nat-vpn-보안-심층">7.6 ACL, NAT &amp; VPN 보안 심층</h3>
+<p><strong>ACL 설계</strong> 시 다음을 고려합니다.</p>
+<ul>
+<li><strong>번호와 이름</strong>: Cisco IOS에서 표준 ACL은 1–99,
+1300–1999; 확장 ACL은 100–199, 2000–2699. 이름이 있는 ACL도 사용할 수
+있으며 가독성이 높습니다.</li>
+<li><strong>위치와 방향</strong>: 트래픽 출발지에 가까운 곳(초기
+필터링)에서 Inbound ACL을 적용하여 불필요한 트래픽을 차단합니다.
+Standard ACL은 가능한 한 목적지 가까이 적용해야 부적절한 차단을
+방지합니다.</li>
+<li><strong>wildcard mask</strong>: 서브넷 마스크의 반대이며, 0은 정확히
+일치, 255는 무시. 예: <code>192.168.1.0 0.0.0.255</code>는
+<code>/24</code>. <strong>any</strong>는
+<code>0.0.0.0 255.255.255.255</code>, <strong>host</strong>는
+<code>0.0.0.0</code>입니다.</li>
+<li><strong>Implicit Deny</strong>: ACL 마지막에는 암시적으로 모든
+트래픽을 거부하는 규칙이 있으므로, 명시적으로 허용할 트래픽을 정의해야
+합니다.</li>
+<li><strong>IPv6 ACL</strong>: IPv6는 wildcard mask가 없고 CIDR 표기.
+IPv6 ACL은 번호 대신 이름이 필수이며, ICMPv6 메시지를 명시적으로
+허용해야 Neighbor Discovery가 동작합니다.</li>
+</ul>
+<p><strong>VPN 보안 향상</strong>:</p>
+<ul>
+<li><strong>IKEv2</strong>: IKEv1보다 강력하고 빠른 키 교환 프로토콜로,
+EAP 통합과 모빌리티(MOBIKE)를 지원합니다. NAT Traversal을 자동 지원하며,
+인증서 인증과 EAP 기반 인증을 손쉽게 사용 가능합니다.</li>
+<li><strong>Perfect Forward Secrecy</strong>: 키 교환 시 ECDHE를
+사용하여, 세션 키가 장기 키로부터 독립적입니다. 키 유출에 대비해 모든
+VPN에서 PFS를 활성화해야 합니다.</li>
+<li><strong>Dead Peer Detection(DPD)</strong>: VPN 피어의 가용성을
+주기적으로 확인해 끊어진 터널을 신속하게 재설정합니다.</li>
+<li><strong>Split Tunneling</strong>: VPN 연결 시 일부 트래픽만 VPN을
+통과하도록 하여, 로컬 네트워크와 인터넷을 동시에 사용할 수 있습니다.
+보안 위험이 있으므로 필요 시만 활성화합니다.</li>
+</ul>
+''',
+                    'order': 7,
+                },
+                {
+                    'title': 'WIFI & 이동통신',
+                    'slug': 'wifi-이동통신',
+                    'content': '''<h2 id="wifi-이동통신">8. WIFI &amp; 이동통신</h2>
+<p><strong>요약:</strong> Wi‑Fi는 IEEE 802.11 표준을 기반으로 한 무선 LAN 기술로, 액세스 포인트(AP)와 클라이언트 사이의 단거리 통신을 제공하며, 보안을 위해 WPA2/WPA3 등을 사용합니다. 이동통신은 셀룰러 네트워크를 통해 광범위한 지역에서 음성·데이터 서비스를 제공하며, 3G/4G/5G로 발전하면서 속도와 대역폭이 향상되었습니다.</p>
+
+<p>Wi‑Fi와 이동통신의 주요 차이점은 다음과 같습니다:</p>
+<ul>
+  <li><strong>커버리지</strong> – Wi‑Fi는 수십 미터 내의 실내 환경에 적합하며, 이동통신은 셀(Cell) 기반으로 수 km 이상의 광역을 커버합니다.</li>
+  <li><strong>주파수 및 대역폭</strong> – Wi‑Fi는 2.4/5/6 GHz와 같은 비면허 대역을 사용하고, 이동통신은 라이선스 대역을 사용해 간섭을 줄이고 품질을 보장합니다.</li>
+  <li><strong>접속 방식</strong> – Wi‑Fi는 AP에 연결하는 스타 토폴로지이며, 이동통신은 기지국을 통해 네트워크 코어에 접속하는 셀룰러 구조입니다.</li>
+  <li><strong>이동성(Handover)</strong> – 이동통신은 핸드오버를 통해 이동 중에도 연결을 유지하며, Wi‑Fi는 AP 간 로밍 기능을 제공합니다.</li>
+  <li><strong>보안 프로토콜</strong> – Wi‑Fi는 WPA2/WPA3를 사용해 개인 네트워크를 보호하고, 이동통신은 SIM 기반 인증과 LTE/5G 암호화를 통해 사용자와 네트워크를 인증합니다.</li>
+</ul>
+<h3 id="wifi-표준과-phymac-세부-사항">8.1 Wi‑Fi 표준과 PHY/MAC 세부
+사항</h3>
+<p><strong>IEEE 802.11 표준</strong>은 무선 LAN의 PHY(물리 계층)와
+MAC(매체 접근 제어) 규칙을 정의합니다. 각 세대는 속도와 효율을 높이기
+위해 다양한 기술을 도입했습니다. 다음 표는 이전보다 더 상세히 비교한
+것입니다.</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>표준</th>
+<th>주파수</th>
+<th>변조/채널폭</th>
+<th>MIMO/기술</th>
+<th>최대 이론 속도</th>
+<th>특징</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>802.11b (Wi‑Fi 1)</strong></td>
+<td>2.4 GHz</td>
+<td>DSSS, 22 MHz 채널</td>
+<td>MIMO 없음</td>
+<td>11 Mbps</td>
+<td>채널 1,6,11 이용, 간섭 영향 큼</td>
+</tr>
+<tr class="even">
+<td><strong>802.11a (Wi‑Fi 2)</strong></td>
+<td>5 GHz</td>
+<td>OFDM, 20 MHz</td>
+<td>MIMO 없음</td>
+<td>54 Mbps</td>
+<td>2.4 GHz 혼잡을 피하지만 범위 짧음</td>
+</tr>
+<tr class="odd">
+<td><strong>802.11g (Wi‑Fi 3)</strong></td>
+<td>2.4 GHz</td>
+<td>OFDM, 20 MHz</td>
+<td>MIMO 없음</td>
+<td>54 Mbps</td>
+<td>802.11a 성능을 2.4 GHz에 적용</td>
+</tr>
+<tr class="even">
+<td><strong>802.11n (Wi‑Fi 4)</strong></td>
+<td>2.4/5 GHz</td>
+<td>OFDM, 20/40 MHz</td>
+<td>4x4 MIMO, Channel Bonding</td>
+<td>600 Mbps</td>
+<td>스페이셜 스트림 당 150 Mbps, GI(Guard Interval) 400 ns</td>
+</tr>
+<tr class="odd">
+<td><strong>802.11ac (Wi‑Fi 5)</strong></td>
+<td>5 GHz</td>
+<td>OFDM, 80/160 MHz</td>
+<td>8x8 MU‑MIMO, 256‑QAM</td>
+<td>6.9 Gbps</td>
+<td>Downlink MU‑MIMO, Beamforming</td>
+</tr>
+<tr class="even">
+<td><strong>802.11ax (Wi‑Fi 6/6E)</strong></td>
+<td>2.4/5/6 GHz</td>
+<td>OFDMA, 20~160 MHz</td>
+<td>UL/DL MU‑MIMO(8x8), 1024‑QAM</td>
+<td>9.6 Gbps</td>
+<td>BSS Coloring, Target Wake Time(TWT), 6 GHz 확장</td>
+</tr>
+<tr class="odd">
+<td><strong>802.11be (Wi‑Fi 7)</strong></td>
+<td>2.4/5/6 GHz</td>
+<td>OFDMA, 320 MHz, Multi‑RU</td>
+<td>16x16 MLO, 4096‑QAM</td>
+<td>46 Gbps</td>
+<td>Multi‑Link Operation, puncturing, Coordinated Multi‑Point</td>
+</tr>
+<tr class="even">
+<td><strong>802.11ad/ay (WiGig)</strong></td>
+<td>60 GHz</td>
+<td>SC/OFDM, 2 GHz</td>
+<td>Beamforming</td>
+<td>7~100 Gbps</td>
+<td>짧은 거리, 무선 도킹, VR</td>
+</tr>
+</tbody>
+</table>
+<p><strong>802.11n</strong>에서는 Spatial Stream(공간 스트림)의 개수에
+따라 속도가 결정되며, 4개의 스트림에 40 MHz 채널을 묶으면 600 Mbps에
+도달합니다. <strong>Guard Interval</strong>는 심볼 간 간섭을 줄이는
+시간으로, <strong>Short GI</strong>(400 ns)를 사용하면 속도가 10%
+향상합니다. <strong>MU‑MIMO(Multi‑User MIMO)</strong>는 여러
+클라이언트를 동시에 서비스하며, 802.11ac에서 Downlink만, 802.11ax에서는
+Uplink도 지원합니다. <strong>BSS Coloring</strong>은 인접 AP 간 간섭을
+구분하여 효율을 높이고, <strong>Target Wake Time(TWT)</strong>은 IoT
+기기의 배터리를 절약합니다.</p>
+<p><strong>채널 계획</strong>: 2.4 GHz는 20 MHz 채널 14개 중 1, 6, 11이
+비중첩 채널입니다. 5 GHz는 24개의 20 MHz 채널이 있고, DFS(Dynamic
+Frequency Selection)가 필요한 채널도 있습니다. 6 GHz는 신규 59개 채널을
+제공하며, 160/320 MHz의 넓은 대역폭을 가능하게 합니다. 채널 폭이
+넓어질수록 속도는 증가하지만 간섭과 DFS 요구가 증가합니다.</p>
+<h3 id="무선-보안-심층">8.2 무선 보안 심층</h3>
+<p><strong>WEP(Wired Equivalent Privacy)</strong>는 RC4 스트림 암호를
+사용하고 24비트 IV(Initialization Vector)를 반복 사용하여 취약합니다.
+<strong>WPA(Wi‑Fi Protected Access)</strong>는 TKIP(Temporal Key
+Integrity Protocol)과 MIC(Message Integrity Check)로 개선했지만 IV
+길이가 여전히 짧고, Michael MIC 취약점으로 보안이 완전하지 않습니다.
+<strong>WPA2</strong>는 CCMP(AES 128‑bit CTR)가 구현된 Robust Security
+Network 프로토콜을 사용해 강력한 보안을 제공합니다.
+<strong>WPA3</strong>은 <strong>SAE(Simultaneous Authentication of
+Equals)</strong>를 사용하여 오프라인 딕셔너리 공격을 방지하고,
+<strong>Forward Secrecy</strong>를 제공하며, <strong>Opportunistic
+Wireless Encryption</strong>으로 open 네트워크도 암호화합니다.</p>
+<p><strong>802.1X/EAP</strong>는 무선 보안에서 중요합니다. EAP‑TLS는
+클라이언트 인증서가 필요하지만 가장 안전하고, EAP‑TTLS/PEAP는 서버
+인증서로 TLS 터널을 구축한 후 내부 인증(MSCHAPv2)으로 사용자 비밀번호를
+전달합니다. 802.1X는 RADIUS 서버가 인증을 수행하고, 성공 시 스위치나
+AP가 포트에 VLAN이나 ACL을 동적으로 적용합니다.</p>
+<p><strong>WIDS/WIPS</strong>: 무선 침입 탐지·방지 시스템은 Rogue AP,
+Evil Twin, Deauthentication Flood 등의 공격을 탐지하고 차단합니다.
+<strong>RF Fingerprinting</strong>과 <strong>Beacon Analysis</strong>를
+통해 악성 AP를 식별합니다.</p>
+<h3 id="셀룰러-5g-세부-사항">8.3 셀룰러 &amp; 5G 세부 사항</h3>
+<p>셀룰러 기술은 세대별로 전송 방식과 네트워크 구조가 달라집니다.</p>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>세대</th>
+<th>주요 기술</th>
+<th>주파수/대역폭</th>
+<th>네트워크 구조</th>
+<th>최대 속도</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>2G</strong></td>
+<td>GSM(CDMA), TDMA, FDMA; 64 kbps 음성·SMS</td>
+<td>800/900/1800 MHz</td>
+<td>Circuit-switched Core</td>
+<td>0.1 Mbps</td>
+</tr>
+<tr class="even">
+<td><strong>3G</strong></td>
+<td>UMTS/WCDMA, CDMA2000; HSPA</td>
+<td>2 GHz</td>
+<td>Packet-switched Core 도입</td>
+<td>42 Mbps(HSPA+)</td>
+</tr>
+<tr class="odd">
+<td><strong>4G (LTE)</strong></td>
+<td>OFDMA downlink, SC‑FDMA uplink, MIMO, OFDM</td>
+<td>700/1800/2100/2600 MHz</td>
+<td>Evolved Packet Core(EPC)</td>
+<td>1 Gbps(그룹 기준)</td>
+</tr>
+<tr class="even">
+<td><strong>5G</strong></td>
+<td>NR, Sub‑6 GHz(mid band), mmWave(high band), Massive MIMO,
+Beamforming, Network Slicing</td>
+<td>600 MHz–6 GHz, 24–39 GHz</td>
+<td>Service-based architecture, Control &amp; User Plane
+Separation(CUPS)</td>
+<td>10 Gbps 이상</td>
+</tr>
+</tbody>
+</table>
+<p><strong>5G NR(New Radio)</strong>는 <strong>Standalone(5G
+Core)</strong>와 <strong>Non‑Standalone(LTE EPC + NR)</strong> 두 모드가
+있습니다. 5G SA는 완전히 새로운 코어 네트워크를 도입해,
+<strong>Service-Based Architecture(SBA)</strong>로 모든 기능이 네트워크
+함수(NF)로 구현되어 HTTP/2 기반 API로 통신합니다. <strong>Network
+Slicing</strong>은 하나의 물리 인프라를 여러 가상 네트워크로 나누어,
+eMBB, URLLC, mMTC 등 각각에 맞춤 QoS와 보안 정책을
+제공합니다. 5G는 또한 <strong>Multi‑access
+Edge Computing(MEC)</strong>을 통해 지연을 줄이고, <strong>UPF(User
+Plane Function)</strong>를 엣지에 배치해 로컬 처리를 가능하게
+합니다.</p>
+<h3 id="iot-프로토콜-심층">8.4 IoT 프로토콜 심층</h3>
+<p>IoT 장치는 수억 개가 될 것으로 예상되며, 통신 기술 선택은 배터리
+수명, 커버리지, 데이터 속도, 비용 등을 고려해야 합니다. 앞에서 소개한
+LoRaWAN과 NB‑IoT 외에도 다음 프로토콜이 있습니다:</p>
+<ul>
+<li><strong>Sigfox</strong>: 초저속(100 bps), 비면허 868/915 MHz 대역,
+장거리(수십 km) 통신. 메시지 당 12바이트로 하루 140회 전송 제한. 매우
+낮은 전력과 단순 구조로 센서 데이터를 모니터링합니다. 단점은 데이터
+속도와 업링크 제한입니다.</li>
+<li><strong>ZigBee</strong>: 802.15.4 기반, 2.4 GHz 및 900 MHz 대역.
+250 kbps 데이터 속도, 메쉬 네트워크 지원. 스마트 홈, 산업 자동화에
+사용되며, ZigBee 프로파일이 상호 운용성을 정의합니다.</li>
+<li><strong>Thread</strong>: Google/Nest, NXP 등이 지원하는 IPv6 기반
+메쉬 네트워크. 802.15.4 PHY를 사용하며, 6LoWPAN으로 통합. OpenThread는
+오픈 소스로 제공됩니다.</li>
+<li><strong>6LoWPAN</strong>: IPv6 패킷을 저전력 무선에 적합하도록
+압축·분할하는 프로토콜입니다. IoT 기기에서 표준 IP 스택을 지원할 수 있어 인터넷과의 통합이 용이합니다.</li>
+<li><strong>MQTT</strong>: Pub/Sub 모델로 경량 메시지 전달. QoS 0/1/2를
+정의하며, TLS를 통해 보안을 제공합니다. IoT 플랫폼과 게이트웨이 사이에서
+널리 사용됩니다.</li>
+<li><strong>CoAP(Constrained Application Protocol)</strong>: UDP 기반
+RESTful 프로토콜. 리소스 접근을 GET/POST/PUT/DELETE로 표현. DTLS로
+보안을 제공하며, 자원 제약 환경에 적합.</li>
+<li><strong>6TiSCH</strong>: IEEE 802.15.4e TSCH(Time Slotted Channel
+Hopping)과 RPL 루팅을 결합. 산업 IoT의 실시간 요구를 만족합니다.</li>
+</ul>
+<p><strong>NB‑IoT</strong>는 LTE 네트워크를 사용하며, 카운터‑로터(MCG)를
+통해 대역폭 180 kHz에 LTE 리소스를 재사용합니다. CAT‑NB1과 CAT‑NB2가
+있으며, CAT‑NB2는 상향링크 전송 속도를 120 kbps까지 높입니다. NB‑IoT는
+라이선스 대역을 사용해 품질과 보안을 보장하지만, 종량제 요금이
+발생합니다. LoRaWAN은 게이트웨이를 구축하면 자체망 운영이 가능해 농업, 스마트 시티에 많이 쓰입니다.</p>
+<h3 id="무선-설계와-관리-심층">8.5 무선 설계와 관리 심층</h3>
+<p>무선 네트워크 설계는 무선 환경을 이해하는 것에서 시작합니다.
+<strong>전파는 직진하고, 반사, 회절, 산란</strong>하여 여러 경로로
+수신기에 도달하며, 이는 다중 경로 페이딩을 유발합니다. <strong>Fresnel
+Zone</strong>은 송수신기 사이 경로 주변의 타원체 영역으로, 이 영역에
+장애물이 있으면 감쇠가 발생합니다. 설계 시 이 영역을 60% 이상 확보해야
+합니다. <strong>프리 스페이스 경로 손실(FSPL)</strong>은 거리와 주파수에
+따라 증가하며, 높은 주파수일수록 감쇠가 큽니다.</p>
+<p><strong>사이트 서베이</strong>는 AP 배치 전에 건물의 구조, 재료,
+간섭원을 분석하고, 무선 스캐너를 이용해 신호 강도(MB RSSI), 신호 대
+잡음비(SNR), 채널 분포를 측정합니다. 설계자는 원하는
+<strong>커버리지</strong>와 <strong>용량</strong>에 따라 AP 수와 위치를
+결정합니다. 사람 밀집 공간에서는 AP를 많이 배치해도 채널 간섭 때문에
+용량이 제한될 수 있어 <strong>대역폭</strong>과 <strong>채널 재사용
+패턴</strong>을 최적화해야 합니다.</p>
+<p><strong>무선 컨트롤러</strong> 기반 WLAN에서는 AP가 Lightweight
+Access Point로 동작하며, 제어 평면은 컨트롤러에서 수행하고 데이터 평면은
+로컬 브리지 또는 터널 모드로 처리합니다. <strong>Radio Resource
+Management(RRM)</strong>는 컨트롤러가 AP들의 채널과 전력을 자동으로
+조정합니다. <strong>802.11k</strong>는 주변 AP 목록과 측정 정보를 제공해
+클라이언트가 다음 AP로 빠르게 로밍할 수 있게 하고,
+<strong>802.11r</strong>은 Fast BSS Transition으로 로밍 시 4‑Way
+Handshake를 사전에 수행합니다. <strong>802.11v</strong>는 네트워크
+관리용 프레임을 정의해 로밍을 유도합니다.</p>
+<p><strong>밴드 스티어링</strong>은 듀얼 밴드 클라이언트를 5 GHz 또는
+6 GHz로 유도하여 2.4 GHz 혼잡을 완화합니다. <strong>Load
+Balancing</strong>은 AP별 연결 클라이언트 수와 RSSI를 기준으로
+클라이언트를 분산시키고, <strong>Airtime Fairness</strong>는 느린
+클라이언트가 채널을 과도하게 점유하지 못하게 합니다.</p>
+<h3 id="g와-wifi-연동-심층">8.6 5G와 Wi‑Fi 연동 심층</h3>
+<p>Wi‑Fi와 셀룰러 네트워크는 상호보완적입니다. <strong>3GPP Release
+16</strong>에서 <strong>ATSSS(Access Traffic Steering, Switching and
+Splitting)</strong>는 단말이 5G와 Wi‑Fi를 동시에 사용하도록 하며,
+<strong>Multi‑Path TCP(MPTCP)</strong>나 <strong>QUIC</strong>를 통해
+세션 레벨에서 트래픽을 동적으로 분배합니다. <strong>N3IWF(NG Untrusted
+Non‑3GPP Interworking Function)</strong>과 <strong>TNAP(Trusted Non‑3GPP
+Access Point)</strong>는 5G Core와 Wi‑Fi 네트워크 사이의 보안 터널을
+제공해, Wi‑Fi가 5G 서비스로 통합될 수 있게 합니다. <strong>Hotspot
+2.0/Passpoint</strong>는 802.11u를 기반으로 자동 가입과 로밍을 지원하며,
+EAP‑SIM/AKA를 이용해 셀룰러 인증 정보를 활용합니다.</p>
+<!--
+<h2 id="클라우드-원본">클라우드</h2>
+<p><strong>요약:</strong> 클라우드는 물리적 자원을 추상화하여 사용자에게 온디맨드로 컴퓨팅, 저장소, 네트워크를 제공하는 서비스 모델입니다. 퍼블릭 클라우드에서는 가상 사설망(VPC/VNet)을 통해 서브넷, 라우팅, NAT, 보안 그룹을 구성하고, 하이브리드 환경에서는 온프레미스와의 연동이 중요합니다. AWS, Azure, GCP 각각은 VPC, VNet과 같은 가상 네트워크 서비스와 함께 로드 밸런서, VPN, 전용 회선 등의 네트워킹 옵션을 제공합니다. 이 섹션에서는 클라우드 네트워크의 기본 구조와 핵심 요소를 요약합니다.</p>
+<h2 id="클라우드-세부">9. 클라우드 (세부)</h2>
+<h3 id="퍼블릭-클라우드-네트워크-구조-세부-설명">9.1 퍼블릭 클라우드
+네트워크 구조 세부 설명</h3>
+<p>퍼블릭 클라우드는 고객에게 <strong>가상 네트워크</strong>와 다양한
+관리형 네트워킹 서비스를 제공합니다. 세 플랫폼 AWS, Azure, GCP의 상세
+비교를 확장합니다.</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>영역</th>
+<th>AWS VPC</th>
+<th>Azure VNet</th>
+<th>GCP VPC</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>네트워크 범위</strong></td>
+<td>리전 내격; 서브넷은 가용 영역(AZ) 단위로 범위 지정; 리전 간 VPC
+피어링 가능</td>
+<td>리전 내격; 서브넷은 리전 내 범위; VNet 피어링으로 다른 리전 연결
+가능</td>
+<td>VPC는 리전 범위를 넘는 글로벌 리소스; 서브넷은 리전별로 존재하며, 전
+리전에 걸쳐 단일 VPC 구성 가능</td>
+</tr>
+<tr class="even">
+<td><strong>Route Table</strong></td>
+<td>서브넷마다 라우팅 테이블을 지정; 기본 0.0.0.0/0은 IGW, 특정 CIDR은
+NAT GW나 TGW</td>
+<td>서브넷별로 UDR(User Defined Route) 테이블; 기본 경로는 인터넷 접속
+옵션에 따라 결정</td>
+<td>모든 서브넷에 자동 시스템 라우팅 테이블 제공, 필요 시 Custom Route
+추가</td>
+</tr>
+<tr class="odd">
+<td><strong>인터넷 접속</strong></td>
+<td>IGW(Internet Gateway)는 라우팅 테이블에 0.0.0.0/0 할당 시 인터넷
+접속 가능; Egress‑Only IGW는 IPv6만</td>
+<td>기본 Route로 인터넷 접속 가능; 공인 IP 할당 시 인터넷 연결; Outbound
+연결에는 Default Gateway</td>
+<td>기본 인터넷 게이트웨이; 공인 IP 또는 Private Service Connect로 외부
+접속</td>
+</tr>
+<tr class="even">
+<td><strong>NAT 서비스</strong></td>
+<td>NAT Gateway(구매형); NAT Instance(EC2 기반); HA 필요 시 AZ별
+배치</td>
+<td>NAT Gateway는 AZ별; 기본 라우팅으로 모든 인터넷 트래픽을
+NAT GW로</td>
+<td>Cloud NAT는 리전별 관리형 NAT; 단일에서 다수 서브넷 지원</td>
+</tr>
+<tr class="odd">
+<td><strong>보안 경계</strong></td>
+<td>Security Group(Stateful) – 인스턴스/ENI에 적용; Network
+ACL(Stateless) – 서브넷에 적용</td>
+<td>NSG(Network Security Group) – 서브넷/인터페이스; ASG(Application
+Security Group) – 애플리케이션 태그; NVD(Network Virtual Device) – Azure
+Firewall</td>
+<td>Firewall Rules – VPC 수준, Stateful; Hierarchical Firewall Policies
+– 조직/폴더/프로젝트 수준 적용</td>
+</tr>
+<tr class="even">
+<td><strong>로드 밸런서</strong></td>
+<td>ALB(L7), NLB(L4), GLB(Global), Gateway Load Balancer(L4
+Bump-in-the-wire)</td>
+<td>Application Gateway(L7), Load Balancer(L4/L7), Front Door(Global L7
+CDN)</td>
+<td>HTTP(S) Load Balancer(Global L7), TCP/SSL Proxy, Internal/External
+Load Balancer(L4)</td>
+</tr>
+<tr class="odd">
+<td><strong>Service Endpoint/Private Link</strong></td>
+<td>VPC Endpoint – S3, DynamoDB; Interface Endpoint – PrivateLink;
+Gateway Endpoint – S3, DynamoDB</td>
+<td>Service Endpoint – Azure PaaS 서비스 전용 연결; Private Link – 전용
+프라이빗 IP로 서비스 연결</td>
+<td>Private Service Connect – Google 서비스 및 파트너 서비스; VPC
+Service Controls – 데이터 삽입 제한</td>
+</tr>
+<tr class="even">
+<td><strong>Transit/Hub</strong></td>
+<td>Transit Gateway – 다수 VPC, VPN, Direct Connect를 연결; PrivateLink
+Endpoint Service 제공</td>
+<td>Virtual WAN – Hub-Spoke 모델; Azure Firewall과 Gateway 포함;
+ExpressRoute, VPN Gateway 연결</td>
+<td>Cloud Router + Cloud VPN/Interconnect; Network Connectivity Center;
+Shared VPC</td>
+</tr>
+</tbody>
+</table>
+<p><strong>IPv6 지원</strong>: AWS는 VPC와 서브넷에 IPv6 /56 또는 /64
+프리픽스를 할당할 수 있고, <strong>Egress-Only Internet
+Gateway</strong>로 IPv6 아웃바운드 트래픽을 NAT 없이 전달합니다. Azure와
+GCP도 IPv6를 지원하며, Private IPv6와 인터넷용 IPv6를 별도
+설정합니다.</p>
+<h3 id="하이브리드-멀티클라우드-연결-심층">9.2 하이브리드 &amp;
+멀티클라우드 연결 심층</h3>
+<p>하이브리드/멀티클라우드 연결은 신뢰성, 성능, 보안을 모두 고려해야
+합니다. 주요 구성 요소:</p>
+<ul>
+<li><strong>VPN Gateway</strong>: 클라우드와 온프레미스를 IPsec으로
+연결합니다. AWS는 <strong>Virtual Private Gateway</strong>(Site-to-Site
+VPN), Azure는 <strong>VPN Gateway</strong>, GCP는 <strong>Cloud
+VPN</strong>을 제공합니다. 각각은 두 개 이상의 터널로 고가용성을 구성할
+수 있습니다.</li>
+<li><strong>Direct Connect/ExpressRoute/Dedicated Interconnect</strong>:
+전용 회선으로 1 Gbps~100 Gbps의 안정적 연결을 제공하며, MPLS 또는 802.1Q
+VLAN을 통해 여러 VPC/VNet으로 분할할 수 있습니다.</li>
+<li><strong>Transit Gateway/Virtual WAN/Network Connectivity
+Center</strong>: 여러 VPC/VNet/VPN을 허브로 연결하고, 라우팅 정책을
+중앙집중식으로 제어합니다. AWS TGW는 Route Domain과 Route Table을 분리해
+멀티테넌시를 제공하며, Azure VWAN은 Hub and Spoke 구성과 P2S VPN,
+ExpressRoute를 통합합니다. GCP의 NCC는 SD-WAN 벤더 통합을
+지원합니다.</li>
+<li><strong>SD-WAN</strong>: Cisco, Palo Alto, VMware 등의 SD-WAN
+솔루션은 지사·클라우드 간 여러 링크를 최적화하며, 애플리케이션 기반
+라우팅과 통합 보안을 제공합니다. SD-WAN CPE 장비는 클라우드 게이트웨이와
+IPsec 터널을 형성하고, SaaS 트래픽을 지역 인터넷 브레이크아웃으로
+전달합니다.</li>
+</ul>
+<p><strong>재해 복구</strong>를 위해 여러 리전과 클라우드 간
+<strong>Geo-Redundancy</strong>가 필요하며, BGP를 통해 경로 우선순위와
+Failover를 제어합니다. 또한, 인증과 암호화를 위해 IPsec이나 TLS를
+사용하고, 레이어 7 기반의 보안 검사와 마이크로세그멘테이션 정책을
+적용해야 합니다.</p>
+<h3 id="관측observability과-모니터링-심층">9.3 관측(Observability)과
+모니터링 심층</h3>
+<p>클라우드 네트워크는 동적이고 분산되어 있어,
+<strong>관측가능성</strong> 확보가 중요합니다. 주요 구성 요소:</p>
+<ul>
+<li><strong>메트릭 수집</strong>: CloudWatch, Azure Monitor, GCP
+Monitoring을 통해 CPU, Memory, Network Throughput, Error Rate 등을
+수집합니다. 호스트 기반 Exporter(Node Exporter, StatsD)를 사용하여
+Prometheus에 메트릭을 노출하고 Grafana로 시각화합니다.</li>
+<li><strong>로그 수집</strong>: VPC/NSG Flow Logs는 흐름 정보를
+제공하고, CloudTrail/Azure Activity Logs/GCP Audit Logs는 API 호출과
+콘솔 작업을 기록합니다. 로그는 Elasticsearch, Splunk, SIEM(ArcSight,
+Qradar)로 전송되어 분석됩니다.</li>
+<li><strong>분산 추적</strong>: 마이크로서비스 환경에서는 Jaeger,
+Zipkin, AWS X-Ray를 사용해 각 호출을 추적합니다. Service Mesh는 Envoy
+Proxy를 통해 지연, 실패율, 회로 차단 현황을 수집합니다.</li>
+<li><strong>경고와 자동화</strong>: 메트릭 임계값 또는 로그 패턴에
+기반해 알림을 보내고, 자동 복구(Auto Healing), Auto Scaling, Circuit
+Breaker 동작을 트리거합니다.</li>
+</ul>
+<p>관측을 설계할 때, <strong>수집 비용과 보존 기간</strong>,
+<strong>GDPR과 HIPAA</strong>와 같은 규정 준수,
+<strong>보안</strong>(로그 암호화, 접근 제어)을 고려해야 합니다.</p>
+<h3 id="클라우드-네트워크-설계-사례-심층">9.4 클라우드 네트워크 설계
+사례 심층</h3>
+<p><strong>멀티 AZ 설계</strong>: AWS에서 3개의 AZ로 웹, 애플리케이션,
+데이터베이스 서브넷을 구분하고, ALB가 퍼블릭 서브넷에 배치되어 각 AZ의
+EC2 인스턴스로 라우팅합니다. DB는 각 AZ의 RDS Multi‑AZ로 복제하고,
+NAT Gateway는 AZ별로 배포해 프라이빗 서브넷의 인터넷 액세스를
+제공합니다. Route Table에는 0.0.0.0/0 → IGW(NAT GW)가 지정되어야
+합니다.</p>
+<p><strong>하이브리드 설계</strong>: 온프레미스 데이터센터와 VPC를
+Direct Connect로 연결하고, Transit Gateway를 통해 여러 VPC를
+허브‑스포크로 구성합니다. Direct Connect에 백업 VPN 터널을 구성해 장애
+시 자동으로 전환합니다. DNS는 Route 53 Resolver를 사용하여 온프레미스와
+클라우드 간 이름 해석을 통합합니다. IDS/IPS는 VPC Traffic Mirroring으로
+트래픽을 캡처하여 NIDS로 보내 분석합니다.</p>
+<p><strong>멀티클라우드 설계</strong>: AWS VPC, Azure VNet, GCP VPC를
+통합하려면 SD-WAN이나 클라우드 네이티브 연결 서비스를 사용합니다. 예:
+Azure Virtual WAN과 AWS TGW를 IPsec 터널로 연결하고, GCP Cloud Router로
+BGP를 교환하여 루트 전파를 구성합니다. 정책은 CSP의 네트워크
+방화벽(버추얼 어플라이언스)에서 중앙 관리합니다.</p>
+<h3 id="iac-및-자동화-심층">9.5 IaC 및 자동화 심층</h3>
+<p><strong>Infrastructure as Code</strong>는 네트워크를 구성하는 모든
+요소를 코드로 정의하여 반복 가능하고 버전 관리 가능한 방식을 제공합니다.
+도구별 특징:</p>
+<ul>
+<li><strong>Terraform</strong>: 프로바이더를 통해 다양한 클라우드,
+온프레미스 장비를 관리. HCL(HashiCorp Configuration Language)로 리소스를
+정의하며, State 파일을 사용해 리소스의 실제 상태를 추적합니다. 모듈로
+재사용성을 높이고, <code>terraform plan/apply</code>로 변경 사항을
+검토·적용합니다. <strong>Terraform Cloud</strong>와
+<strong>Backend</strong>를 사용하면 원격 상태와 협업이 가능합니다.</li>
+<li><strong>AWS CloudFormation</strong>: YAML/JSON 템플릿으로 리소스를
+선언하며, 드리프트 감지 및 스택 업데이트를 제공합니다. <strong>CDK(Cloud
+Development Kit)</strong>는 TypeScript, Python 등으로 템플릿을
+생성합니다.</li>
+<li><strong>Azure Bicep</strong>: ARM 템플릿을 더 단순한 구문으로 표현.
+모듈과 변수 지원, 리소스 의존성 자동 처리.</li>
+<li><strong>Ansible, SaltStack</strong>: 에이전트리스 자동화 도구로,
+YAML‑기반 Playbook/State를 통해 네트워크 장비, 서버의 구성과
+업그레이드를 관리합니다. <strong>Ansible Network Modules</strong>는
+Cisco, Juniper, Arista 등 다양한 스위치를 지원합니다.</li>
+</ul>
+<p>네트워크 자동화 시 고려 사항:</p>
+<ul>
+<li><strong>Idempotency</strong>: 같은 코드/명령을 반복 실행해도 상태가
+변하지 않도록 설계합니다.</li>
+<li><strong>모듈화</strong>: 네트워크 템플릿을 서브넷, 라우팅, 보안
+그룹, 로드 밸런서 등 논리적 단위로 분리하여 관리합니다.</li>
+<li><strong>테스트 환경</strong>: Staging 계정에서 네트워크 변경을
+테스트하고, 자동화 파이프라인에서 검증합니다.</li>
+<li><strong>Secret 관리</strong>: API 키, 인증서, 암호를 Vault나 Secrets
+Manager로 안전하게 저장·호출합니다.</li>
+<li><strong>컴플라이언스</strong>: IAM 정책, 네트워크 ACL이 조직의
+규정과 표준에 부합하는지 지속적으로 검토합니다.</li>
+</ul>
+-->
+<!--
+<h2 id="컨테이너-쿠버네티스">10. 컨테이너 &amp; 쿠버네티스</h2>
+<h3 id="컨테이너-네트워크-모드-심층">10.1 컨테이너 네트워크 모드
+심층</h3>
+<p>컨테이너는 호스트의 커널을 공유하면서 네임스페이스로 격리된
+프로세스입니다. 네트워크 네임스페이스는 각 컨테이너에 독립된 IP 스택을
+제공하며, <strong>veth</strong> 페어로 호스트와 연결됩니다. 주요
+네트워크 모드를 더 깊이 이해해 봅니다.</p>
+<ul>
+<li><strong>Bridge Network Driver</strong>: 도커 기본 네트워크로,
+<code>docker0</code> 브리지 인터페이스를 생성하고 컨테이너를 veth로
+연결합니다. 브리지에서는 Linux <code>iptables</code>로 NAT를 수행하고,
+내부 컨테이너는 RFC1918 대역을 사용합니다.
+<code>docker network create</code>로 사용자 정의 브리지를 생성할 수
+있으며, DNS 자동 등록, 서브넷 설정 등이 가능합니다.</li>
+<li><strong>Host Network Mode</strong>: 컨테이너가 호스트의
+네임스페이스를 공유하여 호스트의 IP 주소와 포트를 사용합니다. 성능이
+높고 포트 매핑이 불필요하지만, 포트 충돌과 보안 위험이 있습니다.
+Kubernetes에서는 <code>hostNetwork: true</code> 옵션으로
+사용합니다.</li>
+<li><strong>Overlay Network (Swarm, Kubernetes)</strong>: VXLAN, Geneve
+같은 캡슐화를 사용하여 여러 호스트에 분산된 컨테이너를 하나의 L2
+네트워크처럼 연결합니다. Docker Swarm의 <code>ingress</code> 네트워크는
+내부 로드 밸런싱을 지원합니다. Overlay 네트워크의 성능은 VTEP 구현과
+캡슐화 오버헤드에 따라 달라집니다.</li>
+<li><strong>Macvlan</strong>: 컨테이너에 고유 MAC 주소와 물리 네트워크
+직접 연결을 제공하여 브리지가 불필요합니다. VM과 동일하게 L2 네트워크에
+통합할 수 있어 DHCP나 PXE 부팅이 가능하지만, 스위치 포트 보안 설정에
+주의해야 합니다.</li>
+<li><strong>IPvlan</strong>: Macvlan과 유사하지만 MAC 주소를 호스트와
+공유하고, 서브 인터페이스로 세그먼트를 분리합니다. L2 하드웨어 제약을
+우회할 수 있습니다.</li>
+</ul>
+<p>네트워크 선택은 사용 사례에 따라 달라집니다. 예를 들어, 고성능 NFV
+워크로드는 Macvlan이나 SR‑IOV로 NIC를 패스스루하고, 애플리케이션 간
+격리와 오버레이가 필요한 경우 Overlay를 선택합니다. 컨테이너 네트워크의
+성능을 튜닝하려면 <strong>MTU 조정</strong>,
+<strong>veth queues</strong>, <strong>XDP/eBPF</strong>,
+<strong>DPDK</strong> 등을 활용할 수 있습니다.</p>
+<h3 id="kubernetes-네트워킹-심층">10.2 Kubernetes 네트워킹 심층</h3>
+<p>Kubernetes는 <strong>Pod</strong>라는 기본 실행 단위를 사용하고, 각
+Pod에는 고유 IP가 할당되므로 Pod 간 통신이 L3 네트워크를 통해
+이루어집니다. Kubernetes 네트워크 요구
+사항은 다음과 같습니다.</p>
+<ol type="1">
+<li>모든 Pod는 다른 Pod와 통신할 수 있어야 하며, NAT가 없어야
+합니다.</li>
+<li>모든 노드의 에이전트(kubelet, kube-proxy)는 모든 Pod와 통신할 수
+있어야 합니다.</li>
+<li>서비스 IP는 안정적인 가상 IP로서, 서비스 뒤의 Pod로 트래픽을
+로드밸런싱합니다.</li>
+</ol>
+<p>CNI 플러그인은 이러한 요구를 충족하기 위해 네트워크 네임스페이스를
+생성하고, 브리지/오버레이를 구성합니다. 각
+플러그인의 특징:</p>
+<ul>
+<li><strong>Calico</strong>: BGP를 사용해 Pod CIDR을 라우팅하고, eBPF를
+통해 커널을 우회해 성능을 높입니다. <code>calicoctl</code>로 정책을
+관리하고 NetworkPolicy와 GlobalNetworkPolicy를 제공합니다.</li>
+<li><strong>Flannel</strong>: 단순한 오버레이 구현으로, VXLAN,
+host-gw(라우팅), UDP 모드를 지원합니다. 설정이 쉽지만 고급 기능이
+부족합니다.</li>
+<li><strong>Weave Net</strong>: 메쉬 방식의 오버레이로 암호화(IPsec)와
+네임 디스커버리를 제공합니다.</li>
+<li><strong>Cilium</strong>: eBPF 기반으로 L3/L4/L7 정책을 처리하며,
+높은 성능과 투명한 서비스 메시 기능을 제공합니다. Envoy를 내장해 L7
+필터링과 가시성을 제공합니다.</li>
+<li><strong>Kube-Router</strong>: IPVS(Linux Virtual Server)와 BGP를
+활용해 네트워크 기능을 단일 바이너리로 제공합니다.</li>
+</ul>
+<p><strong>kube-proxy</strong>는 Service의 가상 IP와 실제 Endpoints를
+매핑합니다. 모드에는 <strong>iptables</strong>, <strong>ipvs</strong>,
+<strong>userspace</strong>가 있으며, ipvs 모드는 성능이 우수합니다.
+<strong>EndpointSlices</strong>는 확장성과 확률적 프로빙을 개선한 데이터
+구조입니다.</p>
+<p><strong>NetworkPolicy</strong>는 Pod Selector와 Ingress/Egress
+규칙으로 구성되며, 기본적으로 모든 트래픽을 허용하지만 네임스페이스,
+포트, IPBlock 등을 기준으로 트래픽을 제한할 수 있습니다. 예를 들어 다음
+YAML은 특정 네임스페이스에서 프런트엔드와 백엔드 간 80 포트만 허용하고,
+그 외는 거부합니다.</p>
+<pre><code>apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: frontend-to-backend
+  namespace: frontend
+spec:
+  podSelector:
+    matchLabels:
+      role: frontend
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: backend
+    ports:
+    - protocol: TCP
+      port: 80
+  policyTypes:
+  - Ingress
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: backend
+    ports:
+    - protocol: TCP
+      port: 80</code></pre>
+<p><strong>Service Mesh</strong>: Istio, Linkerd, Consul Connect는
+사이드카 프록시(Envoy)를 사용하여 트래픽을 가시화하고 보안을 적용합니다.
+기능에는 <strong>mTLS</strong>, <strong>라이트‑밸런싱</strong>,
+<strong>Circuit Breaking</strong>, <strong>리트라이</strong>,
+<strong>Rate Limiting</strong>,
+<strong>Observability</strong>(Telemetry)를 제공합니다. 최근에는 eBPF
+기반 서비스 메시가 등장하여 사이드카 오버헤드를 줄입니다.</p>
+<h3 id="컨테이너-보안-심층">10.3 컨테이너 보안 심층</h3>
+<p>컨테이너는 경량이지만, 격리와 권한 관리가 적절히 설정되지 않으면
+호스트 침해의 위험이 있습니다. 주요 보안 요소:</p>
+<ul>
+<li><strong>이미지 보안</strong>: Base 이미지 신뢰성 확인(official
+image, minimal image), 취약점 스캐닝(Anchore, Trivy, Clair),
+SBOM(Software Bill of Materials) 생성, 이미지 서명(Notary, Cosign)과
+검증.</li>
+<li><strong>런타임 보안</strong>: SELinux, AppArmor, seccomp 프로파일로
+시스템 호출 제한; rootless 컨테이너로 호스트 권한 분리; Falco, Sysdig
+Secure로 런타임 이벤트 분석.</li>
+<li><strong>네트워크 격리</strong>: NetworkPolicy,
+PodSecurityPolicy(Deprecated)/Pod Security Standards, RBAC를 구성하여 각
+팀의 네임스페이스를 분리. Cilium eBPF로 L7 정책을 적용하고, DNS 정책으로
+특정 도메인만 허용하는 등 세밀한 제어 가능.</li>
+<li><strong>비밀 관리</strong>: Kubernetes Secret, HashiCorp Vault, AWS
+Secrets Manager로 API 키와 암호를 저장하고 마운트 시 암호화합니다.
+Secrets은 etcd에 암호화되어 저장되어야 합니다.</li>
+<li><strong>롤 기반 접근 제어(RBAC)</strong>: API 리소스별 최소 권한을
+부여하여, 서비스 계정이 필요 이상의 권한을 갖지 않도록 합니다.
+OPA/Gatekeeper로 정책 시행.</li>
+<li><strong>이미지 취약점 대응</strong>: CVE 응급 패치, 재빌드, 재배포;
+이미지 취약점이 발견되면 자동 파이프라인에서 차단.</li>
+</ul>
+<h3 id="추가-예시-다양한-yaml-구성">10.4 추가 예시: 다양한 YAML
+구성</h3>
+<p>컨테이너 네트워크와 보안 정책을 이해하기 위해 몇 가지 예시를
+추가합니다.</p>
+<p><strong>예 1: 특정 IP 블록만 허용하는 NetworkPolicy</strong></p>
+<pre><code>apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-specific-cidr
+  namespace: app
+spec:
+  podSelector:
+    matchLabels:
+      app: web
+  ingress:
+  - from:
+    - ipBlock:
+        cidr: 10.0.0.0/8
+        except:
+        - 10.0.5.0/24
+    ports:
+    - protocol: TCP
+      port: 443
+  policyTypes:
+  - Ingress</code></pre>
+<p><strong>예 2: eBPF 기반 Cilium 정책 – DNS 및 L7 제한</strong></p>
+<pre><code>apiVersion: &quot;cilium.io/v2&quot;
+kind: CiliumNetworkPolicy
+metadata:
+  name: cilium-l7-example
+  namespace: finance
+spec:
+  endpointSelector:
+    matchLabels:
+      role: payments
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        role: frontend
+    toPorts:
+    - ports:
+      - port: &#39;80&#39;
+        protocol: TCP
+      rules:
+        http:
+        - method: &quot;POST&quot;
+          path: &quot;/api/v1/charge&quot;
+        - method: &quot;GET&quot;
+          path: &quot;/api/v1/status&quot;</code></pre>
+<p>위 정책은 <code>payments</code> 역할 파드가 <code>frontend</code>에서
+오는 HTTP 요청 중 POST /api/v1/charge와 GET /api/v1/status만
+허용합니다.</p>
+<h2 id="가상화">11. 가상화</h2>
+<h3 id="서버-가상화-및-하이퍼바이저-심층">11.1 서버 가상화 및
+하이퍼바이저 심층</h3>
+<p>서버 가상화는 단일 물理 서버 위에서 여러 VM을 실행하게 하여 자원의
+효율과 가용성을 높입니다. 하이퍼바이저는 두 가지 유형으로
+구분됩니다.</p>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>유형</th>
+<th>설명</th>
+<th>예시</th>
+<th>장점</th>
+<th>단점</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Type‑1(Bare Metal)</strong></td>
+<td>하드웨어 위에 직접 설치; VM 스케줄러, 가상 I/O, 메모리 매니저를
+제공</td>
+<td>VMware ESXi, Microsoft Hyper‑V, KVM, Xen</td>
+<td>높은 성능과 안정성; 직접 하드웨어 접근; 관리 도구(Center)</td>
+<td>라이선스 비용(ESXi), 하드웨어 호환성 확인 필요</td>
+</tr>
+<tr class="even">
+<td><strong>Type‑2(Hosted)</strong></td>
+<td>호스트 OS 위에서 실행; 가상화 엔진이 응용 프로그램 형태</td>
+<td>VMware Workstation, VirtualBox, Parallels</td>
+<td>설치와 사용이 간단; 데스크톱 테스트·개발에 적합</td>
+<td>성능 저하; 호스트 OS가 장애 시 VM 모두 영향</td>
+</tr>
+</tbody>
+</table>
+<p>가상화의 <strong>오버커밋(Overcommit)</strong> 기능을 통해 실제 물리
+자원보다 더 많은 가상 CPU, 메모리를 할당할 수 있습니다. 이는 평균
+사용률이 낮은 워크로드에 유용하지만, 리소스 경쟁이 발생하면 성능 저하와
+스와핑이 발생합니다. <strong>메모리 예약</strong>, <strong>CPU
+예약</strong>, <strong>리미트</strong>를 활용해 최악의 경우를 대비할 수
+있습니다.</p>
+<p><strong>vSphere 아키텍처</strong>에는 <strong>vCenter
+Server</strong>가 클러스터와 호스트 관리를 중앙화하고, <strong>ESXi
+호스트</strong>가 VM을 실행합니다. <strong>vMotion</strong>은 VM을
+다운타임 없이 호스트 간 이동하고, <strong>DRS</strong>는 호스트 간 자원
+사용량을 균등하게 합니다. <strong>HA</strong>는 호스트 장애 시 VM을 다른
+호스트에서 자동으로 재시작합니다. 네트워크 측면에서는
+<strong>vSwitch</strong>(Standard/Distributed), <strong>Port
+Group</strong>(VLAN/Traffic Shaping), <strong>NIC
+Teaming</strong>(Active/Standby/Load Balancing) 등으로 구성합니다.</p>
+<h3 id="네트워크-가상화-심층">11.2 네트워크 가상화 심층</h3>
+<p><strong>VXLAN</strong>과 <strong>EVPN</strong>에 대해 더 깊게
+살펴봅니다. VXLAN은 전통적인 VLAN보다 확장성(16 M VNI)과 다중 테넌트
+지원을 위해 설계되었습니다. VXLAN의 핵심 요소:</p>
+<ul>
+<li><strong>VNI</strong>: 24비트 ID로, 논리적 네트워크를 구분합니다.
+여러 논리적 L2 세그먼트를 L3 언더레이 위에 만들 수 있습니다.</li>
+<li><strong>VTEP</strong>: VXLAN Tunnel Endpoint는 캡슐화/디캡슐화를
+수행합니다. 가상 스위치의 uplink(버추얼) 또는 물리 스위치에
+구현됩니다.</li>
+<li><strong>BUM(Broadcast, Unknown Unicast, Multicast) 트래픽
+처리</strong>: VXLAN은 멀티캐스트를 사용하거나 <strong>Ingress
+Replication</strong>으로 각 VTEP에 복제합니다. EVPN을 사용하면 제어
+평면에서 MAC 학습을 수행해 BUM 트래픽을
+줄입니다.</li>
+</ul>
+<p><strong>EVPN</strong>은 BGP를 활용한 제어 평면 프로토콜로, MAC/IP
+정보와 VNI를 <strong>EVPN Route Type</strong>(1~5)으로
+전달합니다. 주요 Route Type:</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Type 1</strong></td>
+<td>Ethernet Auto‑Discovery; VTEP 식별과 디바이스 multihoming을 알리며,
+All‑Active vs Single‑Active 모드를 전달</td>
+</tr>
+<tr class="even">
+<td><strong>Type 2</strong></td>
+<td>MAC/IP Advertisement; MAC 주소와 VNI를 연동해 전달, MAC Mobility
+정보 포함</td>
+</tr>
+<tr class="odd">
+<td><strong>Type 3</strong></td>
+<td>Inclusive Multicast Ethernet Tag; BUM 트래픽 복사 그룹 정보
+전달</td>
+</tr>
+<tr class="even">
+<td><strong>Type 4</strong></td>
+<td>Ethernet Segment Route; ES 결합된 VTEPs 조율</td>
+</tr>
+<tr class="odd">
+<td><strong>Type 5</strong></td>
+<td>IP Prefix Route; L3 EVPN 트래픽을 전달하여 통합 Overlay 라우팅
+구현</td>
+</tr>
+</tbody>
+</table>
+<p>EVPN‑VXLAN의 장점은 오버레이의 MAC 학습을 제어 평면으로 분리해
+스케일과 수렴 속도를 개선하고, <strong>활성‑활성
+멀티홈</strong>(All‑Active Multihoming)과
+<strong>마이크로세그멘테이션</strong>을 지원하는
+것입니다.
+EVPN은 <strong>IRB(Integrated Routing &amp; Bridging)</strong> 기능을
+통해 L2와 L3를 통합 처리하고, <strong>EVPN Multi‑Site</strong>로
+데이터센터 간 연결을 확장합니다.</p>
+<p><strong>Geneve</strong>는 오픈 스탠다드 오버레이 프로토콜로, TLV 확장
+필드를 통해 미래 확장성을 제공하며, VMware NSX‑T는 Geneve를 기본
+캡슐화로 사용합니다. <strong>NVGRE</strong>는 GRE 기반,
+<strong>STT</strong>는 TCP 기반으로 대량 버스트를 지원하지만 표준화가
+제한되어 일반적으로 VXLAN/EVPN이 주류입니다.</p>
+<h3 id="nfv-sdn-심층">11.3 NFV &amp; SDN 심층</h3>
+<p><strong>NFV(Network Functions Virtualization)</strong>는 네트워크
+기능을 소프트웨어로 구현하여, 하드웨어 종속성을 줄이고
+<strong>OpEx</strong>와 <strong>CapEx</strong>를 절감합니다. NFV
+아키텍처:</p>
+<ul>
+<li><strong>NFVI(Network Functions Virtualization
+Infrastructure)</strong>: Compute, Storage, Network 하드웨어와
+가상화층(Hypervisor, Virtual Switch, Virtual Storage)을 포함합니다.</li>
+<li><strong>VNF(Virtual Network Function)</strong>: 방화벽, 라우터, IDS,
+DPI, WAN Optimizer 등 특정 기능을 수행하는 소프트웨어. VNFC(VNF
+Component)가 여러 개 모여 하나의 VNF를 구성.</li>
+<li><strong>MANO(Management &amp; Orchestration)</strong>:
+<strong>NFVO(Network Functions Virtualization Orchestrator)</strong>는
+서비스 수명 주기를 관리하고, <strong>VNFM(VNF Manager)</strong>는 VNF
+인스턴스를 관리하며, <strong>VIM(Virtualized Infrastructure
+Manager)</strong>은 인프라 리소스를 할당합니다. ETSI NFV MANO와 ONAP이
+대표 표준/플랫폼입니다.</li>
+</ul>
+<p>NFV는 <strong>서비스 체이닝(Service Function Chaining,
+SFC)</strong>으로 여러 VNF를 순차적으로 연결하여 방화벽 → IDS → 로드
+밸런서와 같이 트래픽을 처리합니다. SFC의 오케스트레이션은 SDN 컨트롤러나
+MANO가 담당하며, <strong>NSH(Network Service Header)</strong>를 사용해
+패킷에 서비스 경로를 표시합니다.</p>
+<p><strong>SDN</strong>은 앞서 설명한 바와 같이 제어 평면을 중앙
+집중화합니다. SDN과 NFV는 상호 보완적이며, SDN은 트래픽 경로를
+프로그래밍하고, NFV는 트래픽을 처리하는 기능을 가상 머신으로 제공합니다.
+<strong>Intent-Based Networking(IBN)</strong>은 사용자가 “VoIP 트래픽은
+50 ms 지연 이하로 전달”과 같이 의도를 정의하면 컨트롤러가 정책을 자동
+생성·배포합니다.</p>
+<h3 id="가상-스위치-nsx-심층">11.4 가상 스위치 &amp; NSX 심층</h3>
+<p>가상 스위치는 VM의 가상 NIC와 물리 NIC 사이에서 L2/L3 기능을
+제공합니다. vSphere의 <strong>vSwitch</strong>는 스탠다드와 분산(DVS) 두
+가지 유형이 있습니다. <strong>Distributed vSwitch</strong>는 중앙에서
+스위치 설정을 관리하고, 호스트 간 일관된 Port Group 구성을 제공합니다.
+<strong>Network I/O Control(NIOC)</strong>은 DVS에서 Traffic Class별
+대역폭 할당과 우선순위를 설정합니다. <strong>Port
+Mirroring(NetFlow)</strong> 기능을 통해 VM 트래픽을 분석 도구로 복제할
+수 있습니다. <strong>LACP</strong>를 지원하여 물리 스위치와 연결할 때
+링크 집성을 제공합니다.</p>
+<p><strong>NSX-T</strong>는 VMware의 네트워크 가상화 플랫폼으로, NSX
+Manager, NSX Controller, NSX Edge 등 컴포넌트로 구성됩니다. 주요
+기능:</p>
+<ul>
+<li><strong>Logical Switching</strong>: Segment를 생성하여 VXLAN 또는
+Geneve 기반 오버레이 네트워크를 형성합니다. Segment는 VLAN 또는
+Overlay로 구분됩니다.</li>
+<li><strong>Logical Routing</strong>: Tier‑0(북-남 트래픽)와
+Tier‑1(동-서 트래픽) 라우터를 구성합니다. Tier‑0는 게이트웨이 역할을
+하고, Tier‑1은 내부 논리 세그먼트 간 라우팅을 제공합니다.</li>
+<li><strong>Distributed Firewall(DFW)</strong>: 하이퍼바이저 커널에
+내장되어 VM 간 동‑서 트래픽을 필터링합니다. 5‑Tuple 규칙 외에도 ID 기반,
+App ID, L7 규칙을 지원하며, 마이크로세그멘테이션을 구현합니다.</li>
+<li><strong>Gateway Firewall</strong>: Tier‑0/1 경계에서 북‑남 트래픽을
+제어하며, NAT, VPN, IPSec/SSL VPN, L7 IPS 기능을 제공합니다.</li>
+<li><strong>Load Balancer</strong>: L4/L7 LB를 제공하며, Active‑Active
+및 Active‑Standby 모드를 지원합니다.</li>
+<li><strong>Service Insertion</strong>: 외부 서비스(IDS/IPS, WAF, AV)를
+SFC(Steering Policy)로 통합합니다.</li>
+</ul>
+<p>NSX와 Cisco ACI의 주요 차이는 ACI가 정책 기반 SDN 패브릭으로
+물리/가상 모두 관리하는 반면, NSX는 가상화/오버레이에 더 초점을 맞추고
+물리 네트워크는 표준 IP 패브릭으로 유지한다는 점입니다.</p>
+<h3 id="서비스-체이닝-오케스트레이션-심층">11.5 서비스 체이닝 &amp;
+오케스트레이션 심층</h3>
+<p>서비스 체이닝은 특정 트래픽이 여러 <strong>서비스 기능</strong>을
+통과하도록 경로를 정의하는 기술입니다. 예를 들어, 인바운드 트래픽을
+<strong>방화벽 → IDS → 웹 방화벽 → 애플리케이션</strong>으로 보내는 것이
+하나의 체인입니다. <strong>SFC (Service Function Chaining)</strong>은
+RFC 7665에서 정의되었으며, <strong>NSH (Network Service
+Header)</strong>를 사용해 패킷에 서비스 인덱스와 데이터 플레인을
+캡슐화합니다.</p>
+<p><strong>오케스트레이션</strong>은 서비스 체인의 생성, 확장, 장애 처리
+등을 자동화합니다. ETSI NFV MANO는 각 서비스 인스턴스를 VNF와
+PNFs(Physical Network Functions)로 구성하고, VNF Forwarding
+Graph(VNFFG)를 정의합니다. <strong>ONAP(Open Network Automation
+Platform)</strong>는 NFVO와 SDN 컨트롤러를 통합해 5G 슬라이싱, MEC, IoT
+서비스 체인을 관리합니다. Kubernetes 기반 CNF(Containerized Network
+Functions)에서는 Helm Charts와 Operators를 사용해 VNF를 자동 배포하고,
+Kustomize나 ArgoCD로 GitOps 방식을 적용합니다.</p>
+<p>서비스 체인 설계 시 고려 사항:</p>
+<ul>
+<li><strong>트래픽 유형 분류</strong>: HTTP, VoIP, DNS 등 별도 체인
+필요.</li>
+<li><strong>성능 요구 사항</strong>: 보안 장비는 인라인 처리 시 지연을
+증가시킬 수 있으므로, 하드웨어 가속과 스케일 아웃을 적용해야
+합니다.</li>
+<li><strong>가용성</strong>: 체인 내 각 기능에 대해 Active‑Standby 또는
+Scale Out 구성을 적용해 장애 시 신속히 전환합니다.</li>
+<li><strong>정책 관리</strong>: 서비스 체인 정책을 중앙에서 관리해 변경
+사항을 일관되게 배포합니다.</li>
+</ul>
+-->
+<!-- 결론 섹션은 삭제되었습니다 -->
+</main>
+</div>
+</body>
+</html>''',
+                    'order': 8,
+                },
+            ],
+            'linux': [
+                {
+                    'title': '리눅스 설치',
+                    'slug': 'linux-installation',
+                    'content': '''<h2>1. 리눅스 설치</h2>
+
+<p>
+1. <a href="https://ubuntu.com/download/desktop" target="_blank">
+  Ubuntu Desktop ISO 다운로드
+</a>
+</p>
+
+<img src="/static/img/설치-1.png" width="800" alt="Ubuntu ISO 다운로드 화면">
+<p>2. 설치 과정 </p>
+<p>기본적으로 계속 next하면 된다</p>
+<img src="/static/img/설치-2.png" width="800">
+<img src="/static/img/설치-3.png" width="800">
+<p>교육/실습은 1프로세서/2코어로 지정. 만약 서버용은 1프로세서/4코어 </p>
+<img src="/static/img/설치-4.png" width="800">
+<p>4096MB로 설정. 2048MB로 설정할 경우 우분투 설치 마지막에 프리징이 있을 수 있음. </p>
+<img src="/static/img/설치-5.png" width="800">
+<p>가상 머신 설치 후 해당 머신 마우스 우클릭 후 setting 클릭</p>
+<img src="/static/img/설치-6.png" width="800">
+<p>다운 받은 리눅스 ISO파일 설정 후 connect at power on 설정 클릭</p>
+<img src="/static/img/설치-7.png" width="800">
+<p>Enter 후 계속 next하면 된다</p>
+<img src="/static/img/설치-8.png" width="800">
+<p>원하는 언어 선택</p>
+<img src="/static/img/설치-9.png" width="800">
+<p>사용 계정 생성</p>
+<img src="/static/img/설치-10.png" width="800">
+<p>Enter 후 계속 next해가면 설치는 끝.</p>''',
+                    'order': 1,
+                },
+                {
+                    'title': '편의 및 필수 툴',
+                    'slug': 'linux-tools',
+                    'content': '''<h3>1) Hostname 수정</h3>
+<p>
+  기본 hostname이 길어 터미널 사용 시 가독성이 떨어지므로,
+  식별이 쉬운 이름으로 변경한다.
+</p>
+
+<img src="/static/img/편의-1.png" width="800">
+
+<pre><code>sudo hostnamectl set-hostname server1</code></pre>
+
+<img src="/static/img/편의-2.png" width="800">
+
+<hr>
+
+<h3>2) 한글 입력기 설치</h3>
+<p>
+  Ubuntu 기본 설치 환경에서는 한글 입력이 불가능하므로
+  IBus 기반 한글 입력기를 설치한다.
+</p>
+
+<h4>① 시스템 업데이트</h4>
+<pre><code>sudo apt update && sudo apt upgrade -y</code></pre>
+
+<h4>② IBus 및 한글 입력기 설치</h4>
+<pre><code>sudo apt install -y ibus ibus-hangul</code></pre>
+
+<h4>③ 입력기 프레임워크 설정</h4>
+<pre><code>im-config -n ibus</code></pre>
+
+<p>설정 후 재부팅</p>
+
+<h4>④ 한글 입력 소스 추가</h4>
+<p>
+Settings → Keyboard → Add Input Source에서  
+Korean(Hangul)을 추가한다.
+</p>
+
+<img src="/static/img/한글-4.png" width="800">
+
+<h4>⑤ 입력 전환 키 설정</h4>
+<p>
+터미널에서 <code>ibus-setup</code> 실행 후  
+Preferences → Hangul Toggle Key를 <strong>Right Alt (Alt_R)</strong>로 설정한다.
+</p>
+
+<img src="/static/img/한글-5.png" width="800">
+<img src="/static/img/한글-6.png" width="800">
+
+<p><strong>※ 위 설정을 통해 터미널 및 브라우저에서 한글 입력이 가능해진다.</strong></p>
+
+<h3>3) vim (기본 텍스트 에디터)</h3>
+<p>
+  vim은 리눅스 환경에서 널리 사용되는 텍스트 편집기
+</p>
+
+<pre><code>sudo apt install -y vim</code></pre>
+
+<hr>
+
+<h3>4) curl / wget (API 테스트 및 파일 다운로드)</h3>
+<p>
+  curl과 wget은 네트워크 통신 및 파일 다운로드에 사용되는 도구로,
+  클라우드 환경 및 API 테스트 시 필수적이다.
+</p>
+
+<pre><code>sudo apt install -y curl wget</code></pre>
+
+<ul>
+  <li><strong>curl</strong> : HTTP 요청, REST API 테스트</li>
+  <li><strong>wget</strong> : 파일 다운로드 전용</li>
+</ul>
+
+<hr>
+
+<h3>5) net-tools + iproute2 (네트워크 확인)</h3>
+<p>
+  네트워크 인터페이스 및 IP 정보를 확인하기 위한 도구를 설치한다.
+</p>
+
+<pre><code>sudo apt install -y net-tools iproute2</code></pre>
+
+<hr>
+
+<h3>6) tree (디렉토리 구조 확인)</h3>
+<p>
+  tree 명령어는 디렉토리 구조를 계층적으로 출력
+</p>
+
+<pre><code>sudo apt install -y tree</code></pre>
+
+<p><strong>※ 위 도구들은 실습 및 서버 운용을 위해 필수적으로 설치된다.</strong></p>''',
+                    'order': 2,
+                },
+                {
+                    'title': '기본 명령어',
+                    'slug': 'linux-commands',
+                    'content': '''<h3>1) 경로 </h3>
+<p>
+  리눅스를 운용하기 위해선 먼저 절대 경로와 상대 경로를 이해할 필요가 있다.
+<br>절대 경로는 /(루트 디렉토리)를 기준으로 하지만 상대 경로는 현재 위치를 기준으로 한다.
+<br>보통 절대 경로를 사용하지만 실행 파일을 실행하려고 할 때 반드시 상대 경로를 사용한다.
+
+</p>
+<h3>2) cd (디렉토리 이동)</h3>
+
+<p>
+cd 명령어는 현재 작업 중인 디렉토리에서 다른 디렉토리로 이동할 때 사용한다.
+</p>
+
+<pre><code>예)cd ~/a/b/c</code></pre>
+<img src="/static/img/cd-1.png" width="800">
+
+<pre><code>예)cd ../ 현재 위치에서 상위 디렉토리로 이동</code></pre>
+<img src="/static/img/cd-2.png" width="800">
+<pre><code>예)cd ~ 홈 디렉토리로 이동</code></pre>
+<pre><code>예)cd / 루트 디렉토리로 이동</code></pre>
+<h3>3) pwd (현재 위치 확인)</h3>
+<img src="/static/img/pwd.png" width="800">
+<hr>
+
+<h3>4) ls (디렉터리 목록 표시) </h3>
+<pre><code>ls (목록만 표시)</code></pre>
+<img src="/static/img/ls-1.png" width="800">
+<pre><code>ls -l (권한,소유자,크기 등 상세하게)</code></pre>
+<img src="/static/img/ls-2.png" width="800">
+<pre><code>ls -la (l 속성에 더해서 숨김 파일까지 표시)</code></pre>
+<img src="/static/img/ls-3.png" width="800">
+<hr>
+
+<h3>5) mkidr (디렉터리 생성) & rm (디렉터리 및 파일 삭제)</h3>
+<pre><code>mkdir </code></pre>
+<img src="/static/img/mkdir-1.png" width="800">
+<pre><code>mkdir -p (상위 디렉터리까지 한번에 생성)</code></pre>
+<img src="/static/img/mkdir-2.png" width="800">
+
+<pre><code>rm -r (r 옵션은 하위 디렉터리까지 한번에 삭제)</code></pre>
+<img src="/static/img/rm.png" width="800">
+<pre><code>rm -rf 무조건 삭제</code></pre>
+<pre><code>rm -ri 삭제 전 물어봄(추천)</code></pre>
+
+<h3>6) 파일 생성 & 복사 & 이동 </h3>
+<pre><code>touch (빈 파일 생성)</code></pre>
+<img src="/static/img/touch.png" width="800">
+<pre><code>cat & echo (파일 생성 및 내용 입력)</code></pre>
+<img src="/static/img/e&c.png" width="800">
+<pre><code>echo는 문자열을 출력하고, cat은 파일 내용을 출력하는 것이 기본 기능이다.</code></pre>
+<pre><code>파일 생성이나 내용 입력은 리다이렉션(>, >>)을 사용한 응용 방식이다.
+두 명령어 모두 '>' 사용 시 덮어쓰고, '>>' 사용 시 기존 내용 뒤에 추가한다.</code></pre>
+<pre><code>보통 한 줄 입력은 echo, 여러 줄 입력은 cat을 사용한다.</code></pre>
+
+<pre><code>cp (파일 및 디렉터리 복사)</code></pre>
+<img src="/static/img/cp.png" width="800">
+<pre><code>test.txt 파일을 a.txt로 복사한다.(원본은 유지된다.)
+test.txt 파일을 myp2 디렉터리로 복사한다.
+디렉터리 myp2를 myp3로 복사한다.(디렉터리 복사에는 -r 옵션 사용)</code></pre>
+
+<pre><code>mv (파일 이동 및 이름 변경)</code></pre>
+<img src="/static/img/mv.png" width="800">
+<pre><code>a.txt 파일을 b.txt라고 파일명을 변경한다.
+b.txt 파일을 myp2 디렉터리로 옮긴다.
+디렉터리 myp3를 myp3-3로 디렉터리명을 변경한다.</code></pre>
+
+<h3>7) 권한 </h3>
+<pre><code>리눅스에서는 파일과 디렉터리에 대해 읽기(r), 쓰기(w), 실행(x) 권한을 관리한다.</code></pre>
+<pre><code>권한의 대상은 소유자(user), 그룹(group), 기타 사용자(other)로 나뉜다.</code></pre>
+<img src="/static/img/chmod-1.png" width="800">
+<pre><code>chmod (권한 부여)</code></pre>
+<pre><code>권한 부여 방식은 숫자 방식과 심볼 방식 2가지로 나뉜다.</code></pre>
+<pre><code>숫자 방식이 자주 쓰이며 의미는 다음과 같다.</code></pre>
+<pre><code>chmod [유저][그룹][그외]. r=4 w=2 x=1.</code></pre>
+<img src="/static/img/chmod-2.png" width="800">
+<pre><code>소유자는 rwx(4+2+1=7)권한을 가지고 그룹과 다른 이용자들은 rx(4+1=5) 권한만 있다</code></pre>
+<pre><code>실행 파일이 아니어도 x권한을 부여할 수 있다.</code></pre>
+
+<hr>
+<pre><code>심볼 방식 의미는 다음과 같다.</code></pre>
+<pre><code>chmod [대상][연산기호][권한]. 대상 (u g o).연산 (+ - =).권한 (r w x)</code></pre>
+<img src="/static/img/chmod-3.png" width="800">
+<pre><code>소유자의 권한만 rwx로 바뀌었다</code></pre>
+<img src="/static/img/chmod-4.png" width="800">
+<pre><code>소유자의 권한에서 w을 뺏다</code></pre>
+<pre><code>"=" 연산은 기존의 권한을 빼고 지정 권한만 설정한다.</code></pre>
+<pre><code># 꼭 알아둬야 할 것 #</code></pre>
+<pre><code>디렉터리 권한에서 실행(x)은 해당 디렉터리에 접근할 수 있는 권한을 의미하며,
+읽기(r) 권한이 있어도 실행(x) 권한이 없으면 내부 파일에 접근할 수 없다.
+파일 삭제 권한은 파일 자체가 아니라 디렉터리의 쓰기(w)와 실행(x) 권한에 의해 결정된다.</code></pre>
+<hr>
+
+<h3>7) 프로세스 </h3>
+<pre><code>프로세스란 실행 중인 프로그램이다.(예) code, sshd, ptyhon, vim 등등</code></pre>
+<pre><code>ps</code></pre>
+<img src="/static/img/ps-1.png" width="800">
+<pre><code>현재 터미널에서 실행 중인 프로세스만 표시
+(시스템 전체 프로세스는 아님)</code></pre>
+<pre><code>ps aux</code></pre>
+<img src="/static/img/ps-2.png" width="800">
+<pre><code>시스템 전체 프로세스를 출력하므로 매우 많은 정보가 표시된다.
+  모든 내용 이해할 필요 없음.</code></pre>
+<pre><code>ps -eo pid,user,comm | grep 프로세스명 </code></pre>
+<img src="/static/img/ps-3.png" width="800">
+<pre><code>해당 프로세스의 pid,user,comm 만 출력</code></pre>
+<pre><code>top </code></pre>
+<img src="/static/img/top.png" width="800">
+<pre><code>실시간 실행중인 프로세스들 목록. PID번호가 중요함.</code></pre>
+<pre><code>kill PID번호</code></pre>
+<img src="/static/img/top.png" width="800">
+<pre><code>해당 프로세스 종료</code></pre>
+<pre><code>만약 파이어폭스를 종료하고 싶으면 kill 4256을 입력하면 된다.</code></pre>
+
+<pre><code>top의 정렬 순서는 실시간으로 cpu/메모리를 많이 사용하는 프로세스부터 나온다.
+프로세스는 ps로 확인하고, top으로 관찰한 뒤, kill로 종료한다.</code></pre>
+
+<h3>8) 서비스 관리 </h3>
+<pre><code>서비스는 ps가 아니라 systemctl로 관리한다.</code></pre>
+<pre><code>사용하는 systemctl의 명령어는 다음과 같다.</code></pre>
+<pre><code>systemctl status 서비스명
+systemctl start 서비스명
+systemctl stop 서비스명
+systemctl restart 서비스명
+systemctl enable 서비스명
+systemctl disable 서비스명
+systemctl is-enabled 서비스명
+</code></pre>
+<pre><code>새로운 서비스를 시작할 경우의 실행할 명령어 순서는 
+restart -> enable -> status로 상태 확인.</code></pre>
+<img src="/static/img/status.png" width="800">
+<pre><code>스크린샷 내용처럼 activate로 뜨면 정상 작동 중이다.</code></pre>
+<pre><code>enable 명령어를 써줘야 재시작했을 때 자동으로 서비스가 시작된다.</code></pre>
+<hr>
+
+<h3>9) crontab </h3>
+<pre><code>정해진 시간에 명령을 자동으로 실행하는 기능
+
+crontab -l  등록된 작업 확인
+crontab -e  작업 편집
+crontab -r  작업 삭제</code></pre>
+
+<pre><code>크론탭 설정은 * * * * * 이며, 왼쪽부터 분 시 일 월 요일을 뜻한다.
+월은 1~12로, 1월부터 12월을 의미한다.
+요일은 0 또는 7=일요일, 1=월요일 ~ 6=토요일이다.</code></pre>
+
+<pre><code>숫자는 고정값을 의미하며, */N 형태는 N 간격 실행을 의미한다.</code></pre>
+
+<pre><code>예를 들어 * * * * * 은 매분마다 실행된다.
+예를 들어 */2 * * * * 은 2분마다 실행된다.</code></pre>
+
+<img src="/static/img/crontab-1.png" width="800">
+<pre><code>crontab -e 명령을 실행하면 편집기를 고르는 메뉴. 1번을 선택</code></pre>
+<img src="/static/img/crontab-2.png" width="800">
+<pre><code>맨 아랫줄에 */2 * * * * touch /home/tester/contrabtest.txt 추가</code></pre>
+<pre><code>2분마다 contrabtest.txt 파일을 생성한다는 뜻</code></pre>
+<pre><code>Ctrl + o(저장)후 엔터 그 다음 Ctrl + x(종료)</code></pre>
+<img src="/static/img/crontab-3.png" width="800">
+<pre><code>13:48에 파일 생성</code></pre>
+<img src="/static/img/crontab-4.png" width="800">
+<pre><code>13:50에 파일이 수정된걸 볼 수 있다</code></pre>''',
+                    'order': 3,
+                },
+                {
+                    'title': '서버',
+                    'slug': 'linux-server',
+                    'content': '''<h3>Linux 서버</h3>
+<p>
+리눅스는 무료 오픈소스이며, 높은 보안성과 안정성, 뛰어난 성능과 유연성을 제공해
+서버 OS로 적합하다.
+또한 재부팅 없는 업데이트, 효율적인 자원 관리, 빠른 버그 수정,
+다양한 환경 지원, 클라우드·DevOps와의 높은 호환성이 큰 장점이다.
+
+<p>
+서버를 배우기 전에 포트의 개념을 알 필요가 있다.
+</p>
+
+<ul>
+  <li>IP 주소: 어느 서버인가</li>
+  <li>포트 번호: 그 서버 안에서 어떤 서비스인가</li>
+  <li>프로세스: 그 포트를 실제로 열고 있는 프로그램</li>
+</ul>
+
+<p><strong>즉, 서버 = IP + 포트 + 프로세스</strong></p>
+
+</p>
+
+<h3>1) 웹 사이트 서버</h3>
+<p>
+사용자가 브라우저에 주소를 입력하면 그 요청을 받아서 응답을 보내줄 서버가 필요하다.
+그 역할을 하는 것이 웹 서버다.
+네트워크가 연결되고 IP 주소를 알아도 웹사이트 서버가 없으면
+사용자는 요청을 보내도 응답을 받을 수 없다.
+</p>
+
+<p>Apache HTTP Server, Nginx, Lighttpd 등이 있다.</p>
+
+<h4>Nginx 설치</h4>
+<pre><code>sudo apt install -y nginx</code></pre>
+
+<img src="/static/img/nginx-1.png" width="800">
+
+<pre><code>systemctl enable nginx
+systemctl restart nginx
+systemctl status nginx</code></pre>
+
+<p>
+위 명령어를 차례대로 실행한 후
+<code>active (running)</code> 상태를 확인한다.
+</p>
+
+<p>리눅스 파이어폭스 접속 후 주소창에 <code>localhost</code>를 입력한다.</p>
+<img src="/static/img/nginx-2.png" width="800">
+
+<p><strong>welcome to nginx!</strong>가 뜨면 정상이다.</p>
+
+<h3>localhost</h3>
+<p>
+<code>localhost</code>는 현재 사용 중인 자기 자신의 컴퓨터를 가리키는 이름이다.
+실제로는 IP 주소 <code>127.0.0.1</code>을 의미하며,
+외부 네트워크를 거치지 않고 내 컴퓨터에서 실행 중인 서버를 확인할 때 사용한다.
+</p>
+
+<p>리눅스 터미널에서 <code>systemctl stop nginx</code>를 실행한다.</p>
+<img src="/static/img/nginx-3.png" width="800">
+
+<p>웹 서버를 꺼버리면 웹 페이지에 아무것도 표시되지 않는다.</p>
+
+<p><code>sudo ss -tulpn | grep nginx</code></p>
+<p>
+<code>ss</code> 명령어는 현재 열려 있는 포트와 해당 포트를 사용하는 프로세스를 확인할 수 있다.
+프로세스 정보는 관리자 권한이 필요하므로 <code>sudo</code>를 사용한다.
+</p>
+
+<img src="/static/img/nginx-4.png" width="800">
+<p>포트 번호가 80번인걸 확인할 수 있다.</p>
+
+<p>
+지금까지 nginx를 통해 웹 서버가
+<strong>프로세스로 실행되고, 포트를 열어 요청을 처리한다</strong>는 것을 확인했다.
+이 구조는 다른 모든 서버에서도 동일하게 적용된다.
+</p>
+
+<hr>
+
+<h3>2)DNS 서버</h3>
+<p>
+DNS는 이름을 IP 주소로 바꿔주는 서버다.
+
+사람은 숫자(IP 주소)보다 이름을 쓰기 때문에
+브라우저에서 도메인 이름을 입력하면,
+DNS 서버가 해당 이름에 대응하는 IP 주소를 알려준다.
+DNS가 없으면 IP 주소를 외워서 접속해야한다.
+
+기본 포트는 <strong>53번</strong>이다.
+</p>
+
+<p><code>sudo apt install -y bind9</code></p>
+<p><code>sudo systemctl status bind9</code></p>
+<img src="/static/img/dns-1.png" width="800">
+<p>active(running) 상태 확인.</p>
+<pre><code>sudo systemctl enable bind9
+sudo systemctl restart bind9
+sudo systemctl status bind9</code></pre>
+
+<p><code>sudo vim /etc/hosts</code></p>
+<img src="/static/img/dns-2.png" width="800">
+<p><code>127.0.0.1 linux-project.local 추가</code></p>
+<img src="/static/img/dns-3.png" width="800">
+<p><code>주소창을 보면 설정한 linux-project.local로 접속한걸 알 수 있다.</code></p>
+<hr>
+
+<h3>3) DHCP 서버</h3>
+
+<p>
+DHCP 서버는 클라이언트에게 IP 주소를 자동으로 할당해주는 서버이다.<br>
+기본 포트는 <strong>67번(서버) / 68번(클라이언트)</strong>을 사용한다.
+</p>
+
+<p><code>sudo apt install isc-dhcp-server</code></p>
+<p><code>sudo vim /etc/default/isc-dhcp-server</code></p>
+
+<img src="/static/img/dhcp-1.png" width="800">
+<p>
+INTERFACESv4="ens33"로 수정한다. (DHCP 서버가 동작할 네트워크 인터페이스 지정)
+</p>
+
+<img src="/static/img/dhcp-2.png" width="800">
+<p><code>ls /etc/netplan</code> 명령어로 설정 파일을 확인한다.</p>
+<p><code>sudo vim /etc/netplan/01-network-manager-all.yaml</code></p>
+
+<img src="/static/img/dhcp-3.png" width="800">
+<p>
+화면과 같이 수정하여 DHCP 서버에 고정 IP를 설정한다.
+</p>
+<p><code>sudo netplan apply</code> 명령어로 적용한다.</p>
+
+<p>DHCP 설정 파일을 작성한다.</p>
+<p><code>sudo vim /etc/dhcp/dhcpd.conf</code></p>
+
+<img src="/static/img/dhcp-4.png" width="800">
+
+<p>leases 파일을 생성한다.</p>
+<p>
+<code>
+sudo touch /var/lib/dhcp/dhcpd.leases<br>
+sudo chown root:root /var/lib/dhcp/dhcpd.leases<br>
+sudo chmod 644 /var/lib/dhcp/dhcpd.leases
+</code>
+</p>
+
+<p>설정 파일 문법을 최종 확인한다. (에러가 없어야 함)</p>
+<p><code>sudo dhcpd -t -cf /etc/dhcp/dhcpd.conf</code></p>
+
+<p>
+<code>
+sudo systemctl restart isc-dhcp-server<br>
+sudo systemctl status isc-dhcp-server
+</code>
+</p>
+
+<img src="/static/img/dhcp-5.png" width="800">
+
+<p>
+VMware 환경에서 DHCP 서버(server1)가 클라이언트(serverb)에 IP를 할당하는지 확인한다.
+</p>
+
+<p>server1(DHCP 서버)에서 로그 창을 실행한다.</p>
+<p><code>sudo journalctl -u isc-dhcp-server -f</code></p>
+
+<img src="/static/img/dhcp-6.png" width="800">
+<p>DHCPREQUEST 192.168.238.130 로그를 확인한다.</p>
+
+<p>serverb(클라이언트 서버)에서 최종 IP 할당 여부를 확인한다.</p>
+
+<img src="/static/img/dhcp-7.png" width="800">
+<p>IP 주소 192.168.238.130이 DHCP를 통해 할당된 것을 확인한다.</p>
+
+<hr>
+
+<h3>4) 데이터베이스(DB) 서버</h3>
+
+<p>
+데이터베이스 서버는 데이터를 체계적으로 저장하고 관리하기 위한 서버이다.
+본 실습에서는 리눅스 환경에서 MariaDB를 설치하여
+기본적인 데이터베이스 구성과 데이터 조작을 진행한다.
+</p>
+
+<p><code>sudo apt install -y mariadb-server</code></p>
+<p><code>sudo systemctl status mariadb</code></p>
+<img src="/static/img/db-1.png" width="800">
+
+<p>서비스 상태가 <strong>Active: active (running)</strong> 인지 확인한다.</p>
+<img src="/static/img/db-2.png" width="800">
+
+<p>보안 설정 실행</p>
+<p><code>sudo mysql_secure_installation</code></p>
+<img src="/static/img/db-3.png" width="800">
+
+<p>
+처음 나오는 비밀번호 입력 질문은 Enter를 입력하고,
+이후 질문은 모두 Y로 설정한다.
+중간에 root 비밀번호 설정 단계에서만 비밀번호를 주의하여 입력한다.
+</p>
+
+<hr>
+
+<p><strong>데이터베이스 생성</strong></p>
+<p>
+<pre><code>sudo mariadb
+CREATE DATABASE testdb;
+SHOW DATABASES;</code></pre>
+</p>
+<img src="/static/img/db-4.png" width="800">
+
+<p>
+SQL 명령어는 대문자로 작성하는 것이 관례이며,
+각 명령어의 끝에는 반드시 세미콜론(;)을 붙인다.
+</p>
+
+<hr>
+
+<p><strong>사용자 생성 및 권한 부여</strong></p>
+<p>
+<code>
+CREATE USER 'testuser'@'localhost' IDENTIFIED BY '1234';
+</code>
+</p>
+
+<p>
+<pre><code>GRANT ALL PRIVILEGES ON testdb.* TO 'testuser'@'localhost';
+FLUSH PRIVILEGES;</code></pre>
+</p>
+
+<p><code>mariadb -u testuser -p</code></p>
+<img src="/static/img/db-5.png" width="800">
+
+<p>
+testuser 계정으로 접속 후
+<code>USE testdb;</code> 명령 실행 시 에러가 발생하지 않으면
+정상적으로 권한이 부여된 것이다.
+</p>
+
+<hr>
+
+<p><strong>테이블 생성</strong></p>
+<p>
+contacts 테이블은 이름, 전화번호, 이메일 정보를 저장하기 위한 테이블이다.
+각 컬럼의 의미는 다음과 같다.
+</p>
+
+<p>
+<code>id</code> 컬럼은 각 데이터를 구분하기 위한 고유 식별자이며,
+<code>INT</code> 타입으로 설정하였다.
+<code>AUTO_INCREMENT</code> 옵션은 데이터가 추가될 때마다
+값이 자동으로 증가하도록 하였다.
+</p>
+
+<p>
+<code>PRIMARY KEY</code>는 테이블 내에서 중복될 수 없는 값이다.
+</p>
+
+<p>
+<code>name VARCHAR(50)</code>는 이름을 저장하는 컬럼으로,
+최대 50자의 문자열을 저장할 수 있다.
+<code>NOT NULL</code> 옵션을 사용하여 반드시 값이 입력되도록 설정하였다.
+</p>
+
+<p>
+<code>phone VARCHAR(20)</code>는 전화번호를 저장하는 컬럼이다.
+전화번호에는 하이픈(-)이 포함될 수 있으므로
+숫자형이 아닌 문자열 타입(VARCHAR)으로 설정하였다.
+</p>
+
+<p>
+<code>email VARCHAR(100)</code>는 이메일 주소를 저장하는 컬럼이다.
+</p>
+
+<p>
+VARCHAR는 가변 길이 문자열 타입으로,
+실제 입력된 문자열 길이에 따라 저장 공간을 사용한다.
+</p>
+
+<p>
+<pre><code>CREATE TABLE contacts (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL,
+  phone VARCHAR(20),
+  email VARCHAR(100)
+);</code></pre>
+</p>
+
+<img src="/static/img/db-6.png" width="800">
+
+<p><code>SHOW TABLES;</code></p>
+<img src="/static/img/db-7.png" width="800">
+<p>테이블 생성 확인</p>
+
+<hr>
+
+<p><strong>데이터 삽입</strong></p>
+<p>
+<pre><code>INSERT INTO contacts (name, phone, email) VALUES
+('홍길동', '010-1111-2222', 'hong@test.com'),
+('김철수', '010-3333-4444', 'kim@test.com'),
+('이영희', '010-5555-6666', 'lee@test.com');</code></pre>
+</p>
+
+<p><strong>데이터 조회 (SELECT)</strong></p>
+<p><code>SELECT * FROM contacts;</code></p>
+<img src="/static/img/db-8.png" width="800">
+
+<hr>
+
+<p><strong>특정 데이터 조회</strong></p>
+
+<p>이름으로 조회</p>
+<p><code>SELECT * FROM contacts WHERE name = '김철수';</code></p>
+
+<p>이메일로 조회</p>
+<p><code>SELECT * FROM contacts WHERE email = 'lee@test.com';</code></p>
+
+<p>전화번호 일부로 조회</p>
+<p><code>SELECT * FROM contacts WHERE phone LIKE '010-5555%';</code></p>
+
+<img src="/static/img/db-9.png" width="800">
+
+<hr>
+
+<p><strong>특정 데이터 삭제 (DELETE)</strong></p>
+
+<p>
+DELETE 명령어는 WHERE 조건 없이 실행할 경우
+테이블의 모든 데이터가 삭제되므로 주의해야 한다.
+</p>
+
+<p>삭제 전 테이블 상태 확인</p>
+<p><code>SELECT * FROM contacts;</code></p>
+
+<p>이름으로 데이터 삭제</p>
+<p><code>DELETE FROM contacts WHERE name = '김철수';</code></p>
+
+<p>전화번호 일부로 데이터 삭제</p>
+<p><code>DELETE FROM contacts WHERE phone LIKE '010-5555%';</code></p>
+
+<p>삭제 결과 확인</p>
+<p><code>SELECT * FROM contacts;</code></p>
+
+<img src="/static/img/db-10.png" width="800">
+''',
+                    'order': 4,
+                },
+            ],
+            'python': [
+                {
+                    'title': '표준입력',
+                    'slug': 'standard-input',
+                    'content': '''<h1>표준입력 (Standard Input)</h1>
+<p>Python에서 사용자로부터 데이터를 입력받는 방법을 알아봅시다.</p>
+
+<h2>input() 함수</h2>
+<p><code>input()</code> 함수는 사용자로부터 문자열을 입력받습니다. 항상 문자열(str) 타입으로 반환됩니다.</p>
+
+<pre><code># 기본 사용법
+name = input("이름을 입력하세요: ")
+print(f"안녕하세요, {name}님!")
+
+# 숫자 입력받기
+age = int(input("나이를 입력하세요: "))
+print(f"당신은 {age}세입니다.")
+</code></pre>
+
+<h2>주의사항</h2>
+<ul>
+    <li><code>input()</code>은 항상 문자열을 반환하므로, 숫자를 입력받으려면 <code>int()</code>나 <code>float()</code>로 변환해야 합니다.</li>
+    <li>입력이 완료될 때까지 프로그램이 대기합니다.</li>
+</ul>''',
+                    'order': 1,
+                },
+                {
+                    'title': '연산자',
+                    'slug': 'operators',
+                    'content': '''<h1>연산자 (Operators)</h1>
+<p>Python에서 사용하는 다양한 연산자에 대해 알아봅시다.</p>
+
+<h2>산술 연산자</h2>
+<pre><code>a = 10
+b = 3
+
+print(a + b)  # 덧셈: 13
+print(a - b)  # 뺄셈: 7
+print(a * b)  # 곱셈: 30
+print(a / b)  # 나눗셈: 3.333...
+print(a // b) # 몫: 3
+print(a % b)  # 나머지: 1
+print(a ** b) # 거듭제곱: 1000
+</code></pre>
+
+<h2>비교 연산자</h2>
+<pre><code>a = 10
+b = 20
+
+print(a == b)  # 같음: False
+print(a != b)  # 다름: True
+print(a < b)   # 작음: True
+print(a > b)   # 큼: False
+print(a <= b)  # 작거나 같음: True
+print(a >= b)  # 크거나 같음: False
+</code></pre>
+
+<h2>논리 연산자</h2>
+<pre><code>x = True
+y = False
+
+print(x and y)  # AND: False
+print(x or y)   # OR: True
+print(not x)    # NOT: False
+</code></pre>
+
+<h2>할당 연산자</h2>
+<pre><code>a = 10
+a += 5   # a = a + 5와 같음 (15)
+a -= 3   # a = a - 3과 같음 (12)
+a *= 2   # a = a * 2와 같음 (24)
+a /= 4   # a = a / 4와 같음 (6.0)
+</code></pre>''',
+                    'order': 2,
+                },
+                {
+                    'title': 'if',
+                    'slug': 'if-statement',
+                    'content': '''<h1>if 문 (조건문)</h1>
+<p>조건에 따라 코드를 실행하는 방법을 알아봅시다.</p>
+
+<h2>기본 if 문</h2>
+<pre><code>age = 20
+
+if age >= 18:
+    print("성인입니다.")
+</code></pre>
+
+<h2>if-else 문</h2>
+<pre><code>age = 15
+
+if age >= 18:
+    print("성인입니다.")
+else:
+    print("미성년자입니다.")
+</code></pre>
+
+<h2>if-elif-else 문</h2>
+<pre><code>score = 85
+
+if score >= 90:
+    print("A등급")
+elif score >= 80:
+    print("B등급")
+elif score >= 70:
+    print("C등급")
+else:
+    print("D등급")
+</code></pre>
+
+<h2>중첩 if 문</h2>
+<pre><code>age = 25
+has_license = True
+
+if age >= 18:
+    if has_license:
+        print("운전 가능합니다.")
+    else:
+        print("면허가 필요합니다.")
+else:
+    print("미성년자는 운전할 수 없습니다.")
+</code></pre>
+
+<h2>조건 표현식 (삼항 연산자)</h2>
+<pre><code>age = 20
+status = "성인" if age >= 18 else "미성년자"
+print(status)
+</code></pre>''',
+                    'order': 3,
+                },
+                {
+                    'title': 'for',
+                    'slug': 'for-loop',
+                    'content': '''<h1>for 루프 (반복문)</h1>
+<p>코드를 반복해서 실행하는 방법을 알아봅시다.</p>
+
+<h2>기본 for 루프</h2>
+<pre><code># 리스트 반복
+fruits = ["사과", "바나나", "오렌지"]
+for fruit in fruits:
+    print(fruit)
+</code></pre>
+
+<h2>range() 함수와 함께 사용</h2>
+<pre><code># 0부터 4까지
+for i in range(5):
+    print(i)  # 0, 1, 2, 3, 4
+
+# 1부터 10까지
+for i in range(1, 11):
+    print(i)
+
+# 0부터 10까지 2씩 증가
+for i in range(0, 11, 2):
+    print(i)  # 0, 2, 4, 6, 8, 10
+</code></pre>
+
+<h2>문자열 반복</h2>
+<pre><code>message = "안녕하세요"
+for char in message:
+    print(char)
+</code></pre>
+
+<h2>enumerate()로 인덱스와 값 함께 사용</h2>
+<pre><code>fruits = ["사과", "바나나", "오렌지"]
+for index, fruit in enumerate(fruits):
+    print(f"{index}: {fruit}")
+</code></pre>
+
+<h2>딕셔너리 반복</h2>
+<pre><code>person = {"이름": "홍길동", "나이": 30, "직업": "개발자"}
+
+# 키만 반복
+for key in person:
+    print(key)
+
+# 값만 반복
+for value in person.values():
+    print(value)
+
+# 키와 값 함께 반복
+for key, value in person.items():
+    print(f"{key}: {value}")
+</code></pre>
+
+<h2>중첩 for 루프</h2>
+<pre><code>for i in range(3):
+    for j in range(2):
+        print(f"({i}, {j})")
+</code></pre>
+
+<h2>break와 continue</h2>
+<pre><code># break: 루프 중단
+for i in range(10):
+    if i == 5:
+        break
+    print(i)  # 0, 1, 2, 3, 4
+
+# continue: 다음 반복으로 건너뛰기
+for i in range(10):
+    if i % 2 == 0:
+        continue
+    print(i)  # 1, 3, 5, 7, 9
+</code></pre>''',
+                    'order': 4,
+                },
+                {
+                    'title': 'while',
+                    'slug': 'while-loop',
+                    'content': '''<h1>while 루프 (반복문)</h1>
+<p>조건이 만족되는 동안 코드를 반복 실행하는 방법을 알아봅시다.</p>
+
+<h2>기본 while 루프</h2>
+<pre><code>count = 0
+while count < 5:
+    print(count)
+    count += 1
+</code></pre>
+
+<h2>무한 루프와 break</h2>
+<pre><code>while True:
+    user_input = input("종료하려면 'q'를 입력하세요: ")
+    if user_input == 'q':
+        break
+    print(f"입력한 값: {user_input}")
+</code></pre>
+
+<h2>continue 사용</h2>
+<pre><code>num = 0
+while num < 10:
+    num += 1
+    if num % 2 == 0:
+        continue
+    print(num)  # 1, 3, 5, 7, 9
+</code></pre>
+
+<h2>else 절 사용</h2>
+<p>while 루프에서 else 절은 break로 루프가 중단되지 않고 정상적으로 종료될 때 실행됩니다.</p>
+<pre><code>count = 0
+while count < 5:
+    print(count)
+    count += 1
+else:
+    print("루프가 정상적으로 종료되었습니다.")
+</code></pre>
+
+<h2>실용 예제</h2>
+<pre><code># 사용자 입력 검증
+password = ""
+while len(password) < 8:
+    password = input("비밀번호를 입력하세요 (최소 8자): ")
+    if len(password) < 8:
+        print("비밀번호는 최소 8자 이상이어야 합니다.")
+print("비밀번호가 설정되었습니다!")
+
+# 숫자 맞추기 게임
+import random
+target = random.randint(1, 100)
+guess = 0
+attempts = 0
+
+while guess != target:
+    guess = int(input("1부터 100까지 숫자를 맞춰보세요: "))
+    attempts += 1
+    if guess < target:
+        print("더 큰 수입니다.")
+    elif guess > target:
+        print("더 작은 수입니다.")
+    else:
+        print(f"정답입니다! {attempts}번 만에 맞췄습니다.")
+</code></pre>''',
+                    'order': 5,
+                },
+                {
+                    'title': '함수',
+                    'slug': 'functions',
+                    'content': '''<h1>함수 (Functions)</h1>
+<p>코드를 재사용할 수 있도록 함수로 만드는 방법을 알아봅시다.</p>
+
+<h2>기본 함수 정의</h2>
+<pre><code>def greet():
+    print("안녕하세요!")
+
+greet()  # 함수 호출
+</code></pre>
+
+<h2>매개변수가 있는 함수</h2>
+<pre><code>def greet(name):
+    print(f"안녕하세요, {name}님!")
+
+greet("홍길동")
+</code></pre>
+
+<h2>반환값이 있는 함수</h2>
+<pre><code>def add(a, b):
+    return a + b
+
+result = add(3, 5)
+print(result)  # 8
+</code></pre>
+
+<h2>기본값 매개변수</h2>
+<pre><code>def greet(name, greeting="안녕하세요"):
+    print(f"{greeting}, {name}님!")
+
+greet("홍길동")  # 안녕하세요, 홍길동님!
+greet("홍길동", "안녕")  # 안녕, 홍길동님!
+</code></pre>
+
+<h2>키워드 인수</h2>
+<pre><code>def introduce(name, age, city):
+    print(f"이름: {name}, 나이: {age}, 거주지: {city}")
+
+introduce(age=30, city="서울", name="홍길동")
+</code></pre>
+
+<h2>가변 인수</h2>
+<pre><code># *args: 여러 개의 위치 인수
+def sum_all(*args):
+    total = 0
+    for num in args:
+        total += num
+    return total
+
+print(sum_all(1, 2, 3, 4, 5))  # 15
+
+# **kwargs: 여러 개의 키워드 인수
+def print_info(**kwargs):
+    for key, value in kwargs.items():
+        print(f"{key}: {value}")
+
+print_info(name="홍길동", age=30, city="서울")
+</code></pre>
+
+<h2>람다 함수</h2>
+<pre><code># 간단한 함수를 한 줄로 표현
+add = lambda x, y: x + y
+print(add(3, 5))  # 8
+
+# map, filter 등과 함께 사용
+numbers = [1, 2, 3, 4, 5]
+squared = list(map(lambda x: x**2, numbers))
+print(squared)  # [1, 4, 9, 16, 25]
+</code></pre>
+
+<h2>함수 내 변수 스코프</h2>
+<pre><code># 전역 변수
+x = 10
+
+def my_function():
+    # 지역 변수
+    x = 20
+    print(f"함수 내부: {x}")  # 20
+
+my_function()
+print(f"함수 외부: {x}")  # 10
+
+# global 키워드로 전역 변수 수정
+def change_global():
+    global x
+    x = 30
+
+change_global()
+print(x)  # 30
+</code></pre>
+
+<h2>문서화 (docstring)</h2>
+<pre><code>def calculate_area(radius):
+    """
+    원의 넓이를 계산합니다.
+    
+    Args:
+        radius (float): 원의 반지름
+    
+    Returns:
+        float: 원의 넓이
+    """
+    return 3.14159 * radius ** 2
+</code></pre>''',
+                    'order': 6,
+                },
+                {
+                    'title': '리스트',
+                    'slug': 'lists',
+                    'content': '''<h1>리스트 (Lists)</h1>
+<p>여러 개의 값을 순서대로 저장하는 자료구조입니다.</p>
+
+<h2>리스트 생성</h2>
+<pre><code># 빈 리스트
+my_list = []
+
+# 값이 있는 리스트
+fruits = ["사과", "바나나", "오렌지"]
+numbers = [1, 2, 3, 4, 5]
+
+# 다양한 타입 혼합 가능
+mixed = [1, "문자열", 3.14, True]
+</code></pre>
+
+<h2>인덱싱과 슬라이싱</h2>
+<pre><code>fruits = ["사과", "바나나", "오렌지", "포도"]
+
+# 인덱싱
+print(fruits[0])    # 사과 (첫 번째 요소)
+print(fruits[-1])   # 포도 (마지막 요소)
+
+# 슬라이싱
+print(fruits[1:3])     # ["바나나", "오렌지"]
+print(fruits[:2])      # ["사과", "바나나"]
+print(fruits[2:])      # ["오렌지", "포도"]
+print(fruits[::2])     # ["사과", "오렌지"] (2칸씩)
+</code></pre>
+
+<h2>리스트 메서드</h2>
+<pre><code>fruits = ["사과", "바나나"]
+
+# 요소 추가
+fruits.append("오렌지")  # 맨 끝에 추가
+fruits.insert(1, "포도")  # 특정 위치에 삽입
+fruits.extend(["체리", "망고"])  # 여러 요소 추가
+
+# 요소 제거
+fruits.remove("바나나")  # 값으로 제거
+popped = fruits.pop()    # 마지막 요소 제거 및 반환
+popped = fruits.pop(0)   # 특정 인덱스 요소 제거
+
+# 검색
+index = fruits.index("사과")  # 인덱스 찾기
+count = fruits.count("사과")  # 개수 세기
+
+# 정렬
+numbers = [3, 1, 4, 1, 5]
+numbers.sort()           # 오름차순 정렬 (원본 수정)
+sorted_nums = sorted(numbers)  # 정렬된 새 리스트 반환
+numbers.reverse()        # 역순 정렬
+
+# 기타
+fruits.clear()           # 모든 요소 제거
+fruits.copy()            # 복사본 생성
+</code></pre>
+
+<h2>리스트 컴프리헨션</h2>
+<pre><code># 기본 문법
+squares = [x**2 for x in range(10)]
+# [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+
+# 조건문 포함
+evens = [x for x in range(20) if x % 2 == 0]
+# [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]
+
+# 중첩 루프
+matrix = [[i*j for j in range(3)] for i in range(3)]
+# [[0, 0, 0], [0, 1, 2], [0, 2, 4]]
+</code></pre>
+
+<h2>리스트 연산</h2>
+<pre><code>list1 = [1, 2, 3]
+list2 = [4, 5, 6]
+
+# 연결
+combined = list1 + list2  # [1, 2, 3, 4, 5, 6]
+
+# 반복
+repeated = list1 * 3  # [1, 2, 3, 1, 2, 3, 1, 2, 3]
+
+# 멤버십 테스트
+print(2 in list1)  # True
+print(5 in list1)  # False
+</code></pre>
+
+<h2>다차원 리스트</h2>
+<pre><code># 2차원 리스트 (행렬)
+matrix = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+]
+
+print(matrix[1][2])  # 6 (2행 3열)
+
+# 요소 접근
+for row in matrix:
+    for element in row:
+        print(element, end=" ")
+    print()
+</code></pre>''',
+                    'order': 7,
+                },
+                {
+                    'title': '튜플/딕셔너리/셋',
+                    'slug': 'tuple-dict-set',
+                    'content': '''<h1>튜플, 딕셔너리, 셋</h1>
+<p>Python의 다른 중요한 자료구조들을 알아봅시다.</p>
+
+<h2>튜플 (Tuple)</h2>
+<p>튜플은 불변(immutable) 순서가 있는 자료구조입니다.</p>
+<pre><code># 튜플 생성
+my_tuple = (1, 2, 3)
+my_tuple = 1, 2, 3  # 괄호 생략 가능
+
+# 단일 요소 튜플 (쉼표 필요)
+single = (1,)
+
+# 인덱싱
+print(my_tuple[0])   # 1
+print(my_tuple[-1])  # 3
+
+# 튜플 언패킹
+a, b, c = my_tuple
+print(a, b, c)  # 1 2 3
+
+# 튜플 메서드
+numbers = (1, 2, 2, 3)
+count = numbers.count(2)  # 2 (개수)
+index = numbers.index(3)  # 3 (인덱스)
+</code></pre>
+
+<h2>딕셔너리 (Dictionary)</h2>
+<p>키-값 쌍으로 데이터를 저장하는 자료구조입니다.</p>
+<pre><code># 딕셔너리 생성
+person = {
+    "name": "홍길동",
+    "age": 30,
+    "city": "서울"
+}
+
+# 또는
+person = dict(name="홍길동", age=30, city="서울")
+
+# 요소 접근
+print(person["name"])  # 홍길동
+print(person.get("age"))  # 30 (키가 없으면 None 반환)
+print(person.get("email", "없음"))  # 기본값 반환
+
+# 요소 추가/수정
+person["email"] = "hong@example.com"
+person["age"] = 31
+
+# 요소 제거
+del person["city"]
+email = person.pop("email")  # 제거 및 값 반환
+
+# 딕셔너리 메서드
+keys = person.keys()      # 키 목록
+values = person.values()  # 값 목록
+items = person.items()    # (키, 값) 쌍 목록
+
+# 딕셔너리 컴프리헨션
+squares = {x: x**2 for x in range(5)}
+# {0: 0, 1: 1, 2: 4, 3: 9, 4: 16}
+
+# 중첩 딕셔너리
+students = {
+    "student1": {"name": "홍길동", "age": 20},
+    "student2": {"name": "김철수", "age": 21}
+}
+</code></pre>
+
+<h2>셋 (Set)</h2>
+<p>셋은 중복되지 않는 고유한 요소들의 집합입니다.</p>
+<pre><code># 셋 생성
+my_set = {1, 2, 3, 3, 4}  # {1, 2, 3, 4} (중복 제거)
+my_set = set([1, 2, 3])
+
+# 빈 셋 (주의: {}는 딕셔너리)
+empty_set = set()
+
+# 요소 추가/제거
+my_set.add(5)
+my_set.remove(3)      # 요소가 없으면 에러
+my_set.discard(3)     # 요소가 없어도 에러 안남
+popped = my_set.pop() # 임의의 요소 제거 및 반환
+
+# 셋 연산
+set1 = {1, 2, 3, 4}
+set2 = {3, 4, 5, 6}
+
+union = set1 | set2           # 합집합: {1, 2, 3, 4, 5, 6}
+intersection = set1 & set2    # 교집합: {3, 4}
+difference = set1 - set2      # 차집합: {1, 2}
+symmetric_diff = set1 ^ set2  # 대칭 차집합: {1, 2, 5, 6}
+
+# 멤버십 테스트
+print(2 in set1)  # True
+
+# 셋 메서드
+set1.update(set2)      # 합집합으로 업데이트
+set1.intersection_update(set2)  # 교집합으로 업데이트
+
+# 부분집합 확인
+print(set1.issubset(set2))     # False
+print(set1.issuperset({1, 2})) # True
+</code></pre>
+
+<h2>자료구조 간 변환</h2>
+<pre><code># 리스트 → 셋 (중복 제거)
+my_list = [1, 2, 2, 3, 3]
+my_set = set(my_list)  # {1, 2, 3}
+
+# 셋 → 리스트
+unique_list = list(my_set)
+
+# 리스트 → 튜플
+my_tuple = tuple(my_list)
+
+# 딕셔너리 → 리스트
+person = {"name": "홍길동", "age": 30}
+keys_list = list(person.keys())
+values_list = list(person.values())
+</code></pre>''',
+                    'order': 8,
+                },
+                {
+                    'title': '컴프리헨션',
+                    'slug': 'comprehensions',
+                    'content': '''<h1>컴프리헨션 (Comprehensions)</h1>
+<p>리스트, 딕셔너리, 셋을 간결하게 생성하는 Python의 강력한 기능입니다.</p>
+
+<h2>리스트 컴프리헨션</h2>
+<pre><code># 기본 문법: [표현식 for 항목 in 반복가능객체]
+
+# 예제 1: 0부터 9까지 제곱
+squares = [x**2 for x in range(10)]
+# [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+
+# 예제 2: 문자열 리스트
+words = ["hello", "world", "python"]
+uppercase = [word.upper() for word in words]
+# ["HELLO", "WORLD", "PYTHON"]
+
+# 예제 3: 조건문 포함 (if)
+evens = [x for x in range(20) if x % 2 == 0]
+# [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]
+
+# 예제 4: 조건문 포함 (if-else)
+result = [x if x % 2 == 0 else -x for x in range(10)]
+# [0, -1, 2, -3, 4, -5, 6, -7, 8, -9]
+
+# 예제 5: 중첩 루프
+matrix = [[i*j for j in range(3)] for i in range(3)]
+# [[0, 0, 0], [0, 1, 2], [0, 2, 4]]
+
+# 예제 6: 평면화 (flatten)
+nested = [[1, 2, 3], [4, 5], [6, 7, 8, 9]]
+flat = [item for sublist in nested for item in sublist]
+# [1, 2, 3, 4, 5, 6, 7, 8, 9]
+</code></pre>
+
+<h2>딕셔너리 컴프리헨션</h2>
+<pre><code># 기본 문법: {키: 값 for 항목 in 반복가능객체}
+
+# 예제 1: 숫자와 제곱값
+squares = {x: x**2 for x in range(5)}
+# {0: 0, 1: 1, 2: 4, 3: 9, 4: 16}
+
+# 예제 2: 딕셔너리 변환
+original = {"a": 1, "b": 2, "c": 3}
+doubled = {k: v*2 for k, v in original.items()}
+# {"a": 2, "b": 4, "c": 6}
+
+# 예제 3: 조건문 포함
+filtered = {k: v for k, v in original.items() if v > 1}
+# {"b": 2, "c": 3}
+
+# 예제 4: 키와 값 교환
+reversed_dict = {v: k for k, v in original.items()}
+# {1: "a", 2: "b", 3: "c"}
+</code></pre>
+
+<h2>셋 컴프리헨션</h2>
+<pre><code># 기본 문법: {표현식 for 항목 in 반복가능객체}
+
+# 예제 1: 중복 제거
+numbers = [1, 2, 2, 3, 3, 4, 5]
+unique = {x for x in numbers}
+# {1, 2, 3, 4, 5}
+
+# 예제 2: 제곱값
+squares = {x**2 for x in range(10)}
+# {0, 1, 64, 4, 36, 9, 16, 49, 25, 81}
+
+# 예제 3: 조건문 포함
+evens = {x for x in range(20) if x % 2 == 0}
+# {0, 2, 4, 6, 8, 10, 12, 14, 16, 18}
+</code></pre>
+
+<h2>컴프리헨션의 장점</h2>
+<ul>
+    <li><strong>간결함</strong>: 여러 줄의 코드를 한 줄로 표현</li>
+    <li><strong>가독성</strong>: 의도가 명확하게 드러남</li>
+    <li><strong>성능</strong>: 일반적으로 for 루프보다 빠름</li>
+</ul>
+
+<h2>주의사항</h2>
+<ul>
+    <li>복잡한 로직에는 일반 for 루프가 더 읽기 쉬울 수 있습니다.</li>
+    <li>너무 중첩된 컴프리헨션은 가독성을 해칩니다.</li>
+    <li>부작용(side effect)이 필요한 경우에는 일반 루프를 사용하세요.</li>
+</ul>
+
+<h2>실용 예제</h2>
+<pre><code># 파일 목록에서 확장자 추출
+files = ["app.py", "config.txt", "readme.md"]
+extensions = {f.split(".")[-1] for f in files}
+# {"py", "txt", "md"}
+
+# 단어 길이별 그룹화
+words = ["apple", "banana", "cat", "dog", "elephant"]
+word_groups = {len(word): [w for w in words if len(w) == len(word)] 
+               for word in words}
+# {5: ["apple"], 6: ["banana"], 3: ["cat", "dog"], 8: ["elephant"]}
+</code></pre>''',
+                    'order': 9,
+                },
+                {
+                    'title': '파일입출력',
+                    'slug': 'file-io',
+                    'content': '''<h1>파일 입출력 (File I/O)</h1>
+<p>파일을 읽고 쓰는 방법을 알아봅시다.</p>
+
+<h2>파일 쓰기</h2>
+<pre><code># 기본 파일 쓰기
+with open("example.txt", "w", encoding="utf-8") as f:
+    f.write("안녕하세요!")
+    f.write("\\nPython 파일 입출력입니다.")
+
+# 여러 줄 쓰기
+with open("example.txt", "w", encoding="utf-8") as f:
+    f.writelines(["첫 번째 줄\\n", "두 번째 줄\\n", "세 번째 줄\\n"])
+
+# print 함수로 파일에 쓰기
+with open("example.txt", "w", encoding="utf-8") as f:
+    print("Hello, World!", file=f)
+    print("Python Programming", file=f)
+</code></pre>
+
+<h2>파일 읽기</h2>
+<pre><code># 전체 파일 읽기
+with open("example.txt", "r", encoding="utf-8") as f:
+    content = f.read()
+    print(content)
+
+# 한 줄씩 읽기
+with open("example.txt", "r", encoding="utf-8") as f:
+    line = f.readline()
+    while line:
+        print(line.strip())  # strip()으로 줄바꿈 제거
+        line = f.readline()
+
+# 모든 줄을 리스트로 읽기
+with open("example.txt", "r", encoding="utf-8") as f:
+    lines = f.readlines()
+    for line in lines:
+        print(line.strip())
+
+# 파일 객체를 직접 반복 (권장)
+with open("example.txt", "r", encoding="utf-8") as f:
+    for line in f:
+        print(line.strip())
+</code></pre>
+
+<h2>파일 모드</h2>
+<pre><code>"r"   # 읽기 모드 (기본값)
+"w"   # 쓰기 모드 (파일이 있으면 덮어씀)
+"x"   # 배타적 생성 모드 (파일이 있으면 에러)
+"a"   # 추가 모드 (파일 끝에 추가)
+"b"   # 바이너리 모드 (이미지, 비디오 등)
+"t"   # 텍스트 모드 (기본값)
+"+"   # 읽기/쓰기 모두 가능
+
+# 조합
+"r+"  # 읽기/쓰기
+"w+"  # 쓰기/읽기 (파일이 있으면 덮어씀)
+"a+"  # 추가/읽기
+</code></pre>
+
+<h2>파일 추가 모드</h2>
+<pre><code># 파일 끝에 내용 추가
+with open("example.txt", "a", encoding="utf-8") as f:
+    f.write("\\n추가된 내용입니다.")
+</code></pre>
+
+<h2>CSV 파일 처리</h2>
+<pre><code>import csv
+
+# CSV 파일 쓰기
+with open("data.csv", "w", newline="", encoding="utf-8") as f:
+    writer = csv.writer(f)
+    writer.writerow(["이름", "나이", "도시"])
+    writer.writerow(["홍길동", 30, "서울"])
+    writer.writerow(["김철수", 25, "부산"])
+
+# CSV 파일 읽기
+with open("data.csv", "r", encoding="utf-8") as f:
+    reader = csv.reader(f)
+    for row in reader:
+        print(row)
+
+# 딕셔너리 형태로 CSV 읽기
+with open("data.csv", "r", encoding="utf-8") as f:
+    reader = csv.DictReader(f)
+    for row in reader:
+        print(f"{row['이름']}: {row['나이']}세, {row['도시']}")
+</code></pre>
+
+<h2>JSON 파일 처리</h2>
+<pre><code>import json
+
+# JSON 파일 쓰기
+data = {
+    "name": "홍길동",
+    "age": 30,
+    "city": "서울",
+    "hobbies": ["독서", "영화감상"]
+}
+
+with open("data.json", "w", encoding="utf-8") as f:
+    json.dump(data, f, ensure_ascii=False, indent=2)
+
+# JSON 파일 읽기
+with open("data.json", "r", encoding="utf-8") as f:
+    data = json.load(f)
+    print(data)
+</code></pre>
+
+<h2>파일 및 디렉토리 관리</h2>
+<pre><code>import os
+
+# 파일 존재 확인
+if os.path.exists("example.txt"):
+    print("파일이 존재합니다.")
+
+# 파일 삭제
+os.remove("example.txt")
+
+# 파일 이름 변경
+os.rename("old.txt", "new.txt")
+
+# 현재 작업 디렉토리
+current_dir = os.getcwd()
+
+# 디렉토리 목록
+files = os.listdir(".")
+</code></pre>
+
+<h2>with 문 사용의 장점</h2>
+<ul>
+    <li>파일을 자동으로 닫아줌 (예외 발생 시에도)</li>
+    <li>코드가 더 간결하고 안전함</li>
+    <li>리소스 관리가 명확함</li>
+</ul>''',
+                    'order': 10,
+                },
+                {
+                    'title': '클래스(객체지향)',
+                    'slug': 'classes',
+                    'content': '''<h1>클래스와 객체지향 프로그래밍</h1>
+<p>객체지향 프로그래밍의 핵심인 클래스와 객체를 알아봅시다.</p>
+
+<h2>기본 클래스 정의</h2>
+<pre><code>class Person:
+    # 클래스 변수
+    species = "Homo sapiens"
+    
+    # 생성자 (__init__)
+    def __init__(self, name, age):
+        # 인스턴스 변수
+        self.name = name
+        self.age = age
+    
+    # 인스턴스 메서드
+    def introduce(self):
+        return f"안녕하세요, 저는 {self.name}이고 {self.age}세입니다."
+    
+    # 인스턴스 메서드
+    def have_birthday(self):
+        self.age += 1
+        return f"생일 축하합니다! {self.age}세가 되었습니다."
+
+# 객체 생성 및 사용
+person1 = Person("홍길동", 30)
+print(person1.introduce())
+print(person1.have_birthday())
+</code></pre>
+
+<h2>클래스 변수 vs 인스턴스 변수</h2>
+<pre><code>class Dog:
+    # 클래스 변수
+    species = "Canis familiaris"
+    count = 0
+    
+    def __init__(self, name, breed):
+        # 인스턴스 변수
+        self.name = name
+        self.breed = breed
+        Dog.count += 1  # 클래스 변수 수정
+    
+    @classmethod
+    def get_count(cls):
+        return cls.count
+
+dog1 = Dog("바둑이", "골든 리트리버")
+dog2 = Dog("흰둥이", "불독")
+
+print(Dog.species)  # 클래스 변수 접근
+print(Dog.get_count())  # 2
+</code></pre>
+
+<h2>클래스 메서드와 정적 메서드</h2>
+<pre><code>class Math:
+    PI = 3.14159
+    
+    @classmethod
+    def circle_area(cls, radius):
+        return cls.PI * radius ** 2
+    
+    @staticmethod
+    def add(a, b):
+        return a + b
+
+# 클래스 메서드 호출
+area = Math.circle_area(5)
+
+# 정적 메서드 호출
+result = Math.add(3, 5)
+</code></pre>
+
+<h2>상속 (Inheritance)</h2>
+<pre><code>class Animal:
+    def __init__(self, name):
+        self.name = name
+    
+    def speak(self):
+        return "동물이 소리를 냅니다."
+
+class Dog(Animal):
+    def speak(self):
+        return f"{self.name}가 멍멍 짖습니다."
+
+class Cat(Animal):
+    def speak(self):
+        return f"{self.name}가 야옹 웁니다."
+
+dog = Dog("바둑이")
+cat = Cat("나비")
+
+print(dog.speak())  # 바둑이가 멍멍 짖습니다.
+print(cat.speak())  # 나비가 야옹 웁니다.
+</code></pre>
+
+<h2>super() 사용</h2>
+<pre><code>class Animal:
+    def __init__(self, name, species):
+        self.name = name
+        self.species = species
+
+class Dog(Animal):
+    def __init__(self, name, breed):
+        super().__init__(name, "Dog")  # 부모 클래스 초기화
+        self.breed = breed
+</code></pre>
+
+<h2>캡슐화 (Encapsulation)</h2>
+<pre><code>class BankAccount:
+    def __init__(self, balance):
+        self.__balance = balance  # private 변수 (이름 앞에 __)
+    
+    def deposit(self, amount):
+        if amount > 0:
+            self.__balance += amount
+            return f"{amount}원 입금되었습니다."
+        return "입금 금액은 0보다 커야 합니다."
+    
+    def withdraw(self, amount):
+        if 0 < amount <= self.__balance:
+            self.__balance -= amount
+            return f"{amount}원 출금되었습니다."
+        return "잔액이 부족하거나 잘못된 금액입니다."
+    
+    def get_balance(self):
+        return self.__balance
+
+account = BankAccount(10000)
+print(account.deposit(5000))
+print(account.withdraw(3000))
+print(f"잔액: {account.get_balance()}원")
+</code></pre>
+
+<h2>특수 메서드 (Magic Methods)</h2>
+<pre><code>class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+    
+    def __str__(self):
+        return f"Point({self.x}, {self.y})"
+    
+    def __repr__(self):
+        return f"Point(x={self.x}, y={self.y})"
+    
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+    
+    def __add__(self, other):
+        return Point(self.x + other.x, self.y + other.y)
+
+p1 = Point(1, 2)
+p2 = Point(3, 4)
+print(p1)  # Point(1, 2)
+print(p1 == p2)  # False
+print(p1 + p2)  # Point(4, 6)
+</code></pre>
+
+<h2>프로퍼티 (Property)</h2>
+<pre><code>class Circle:
+    def __init__(self, radius):
+        self._radius = radius
+    
+    @property
+    def radius(self):
+        return self._radius
+    
+    @radius.setter
+    def radius(self, value):
+        if value < 0:
+            raise ValueError("반지름은 0 이상이어야 합니다.")
+        self._radius = value
+    
+    @property
+    def area(self):
+        return 3.14159 * self._radius ** 2
+
+circle = Circle(5)
+print(circle.radius)  # 5
+print(circle.area)    # 78.53975
+circle.radius = 10
+print(circle.area)    # 314.159
+</code></pre>''',
+                    'order': 11,
+                },
+                {
+                    'title': 'DB연동',
+                    'slug': 'db-connection',
+                    'content': '''<h1>데이터베이스 연동</h1>
+<p>Python에서 데이터베이스를 사용하는 방법을 알아봅시다.</p>
+
+<h2>SQLite 기본 사용</h2>
+<pre><code>import sqlite3
+
+# 데이터베이스 연결
+conn = sqlite3.connect("example.db")
+cursor = conn.cursor()
+
+# 테이블 생성
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        email TEXT UNIQUE,
+        age INTEGER
+    )
+""")
+
+# 데이터 삽입
+cursor.execute("""
+    INSERT INTO users (name, email, age)
+    VALUES (?, ?, ?)
+""", ("홍길동", "hong@example.com", 30))
+
+# 여러 데이터 삽입
+users_data = [
+    ("김철수", "kim@example.com", 25),
+    ("이영희", "lee@example.com", 28),
+    ("박민수", "park@example.com", 32)
+]
+cursor.executemany("""
+    INSERT INTO users (name, email, age)
+    VALUES (?, ?, ?)
+""", users_data)
+
+# 변경사항 저장
+conn.commit()
+
+# 데이터 조회
+cursor.execute("SELECT * FROM users")
+rows = cursor.fetchall()
+for row in rows:
+    print(row)
+
+# 조건 조회
+cursor.execute("SELECT * FROM users WHERE age > ?", (25,))
+results = cursor.fetchall()
+
+# 딕셔너리 형태로 조회
+conn.row_factory = sqlite3.Row
+cursor = conn.cursor()
+cursor.execute("SELECT * FROM users")
+for row in cursor:
+    print(dict(row))
+
+# 연결 종료
+conn.close()
+</code></pre>
+
+<h2>컨텍스트 매니저 사용</h2>
+<pre><code>import sqlite3
+
+with sqlite3.connect("example.db") as conn:
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users")
+    results = cursor.fetchall()
+    # 자동으로 commit 및 close
+</code></pre>
+
+<h2>MySQL/MariaDB 연동 (mysql-connector-python)</h2>
+<pre><code>import mysql.connector
+from mysql.connector import Error
+
+try:
+    # 데이터베이스 연결
+    connection = mysql.connector.connect(
+        host="localhost",
+        database="mydb",
+        user="username",
+        password="password"
+    )
+    
+    if connection.is_connected():
+        cursor = connection.cursor()
+        
+        # 데이터 조회
+        cursor.execute("SELECT * FROM users")
+        records = cursor.fetchall()
+        
+        for record in records:
+            print(record)
+        
+        # 데이터 삽입
+        cursor.execute("""
+            INSERT INTO users (name, email, age)
+            VALUES (%s, %s, %s)
+        """, ("홍길동", "hong@example.com", 30))
+        
+        connection.commit()
+
+except Error as e:
+    print(f"데이터베이스 오류: {e}")
+
+finally:
+    if connection.is_connected():
+        cursor.close()
+        connection.close()
+</code></pre>
+
+<h2>PostgreSQL 연동 (psycopg2)</h2>
+<pre><code>import psycopg2
+
+try:
+    connection = psycopg2.connect(
+        host="localhost",
+        database="mydb",
+        user="username",
+        password="password"
+    )
+    
+    cursor = connection.cursor()
+    
+    # 데이터 조회
+    cursor.execute("SELECT * FROM users")
+    records = cursor.fetchall()
+    
+    # 데이터 삽입 (PostgreSQL은 %s 사용)
+    cursor.execute("""
+        INSERT INTO users (name, email, age)
+        VALUES (%s, %s, %s)
+    """, ("홍길동", "hong@example.com", 30))
+    
+    connection.commit()
+
+except Exception as e:
+    print(f"오류 발생: {e}")
+    connection.rollback()
+
+finally:
+    cursor.close()
+    connection.close()
+</code></pre>
+
+<h2>SQLAlchemy ORM 사용</h2>
+<pre><code>from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
+Base = declarative_base()
+
+# 모델 정의
+class User(Base):
+    __tablename__ = "users"
+    
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), nullable=False)
+    email = Column(String(100), unique=True)
+    age = Column(Integer)
+    
+    def __repr__(self):
+        return f"<User(name={self.name}, email={self.email})>"
+
+# 데이터베이스 연결
+engine = create_engine("sqlite:///example.db")
+Base.metadata.create_all(engine)
+
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# 데이터 삽입
+new_user = User(name="홍길동", email="hong@example.com", age=30)
+session.add(new_user)
+session.commit()
+
+# 데이터 조회
+users = session.query(User).all()
+for user in users:
+    print(user)
+
+# 조건 조회
+user = session.query(User).filter(User.name == "홍길동").first()
+
+# 데이터 수정
+user.age = 31
+session.commit()
+
+# 데이터 삭제
+session.delete(user)
+session.commit()
+
+session.close()
+</code></pre>
+
+<h2>주요 데이터베이스 라이브러리</h2>
+<ul>
+    <li><strong>sqlite3</strong>: Python 표준 라이브러리 (SQLite 전용)</li>
+    <li><strong>mysql-connector-python</strong>: MySQL/MariaDB 공식 드라이버</li>
+    <li><strong>pymysql</strong>: 순수 Python MySQL 클라이언트</li>
+    <li><strong>psycopg2</strong>: PostgreSQL 드라이버</li>
+    <li><strong>SQLAlchemy</strong>: ORM 및 SQL 툴킷</li>
+</ul>
+
+<h2>주의사항</h2>
+<ul>
+    <li>SQL 인젝션을 방지하기 위해 항상 파라미터화된 쿼리를 사용하세요.</li>
+    <li>데이터베이스 연결은 사용 후 반드시 닫아주세요.</li>
+    <li>트랜잭션 관리에 주의하세요 (commit/rollback).</li>
+    <li>대량의 데이터 처리 시에는 배치 처리(batch)를 고려하세요.</li>
+</ul>''',
+                    'order': 12,
+                },
+            ],
+            'aws': [
+                {
+                    'title': '대시보드',
+                    'slug': 'aws-index',
+                    'content': '''<div class="container">
+        <h2>전체 학습 로드맵</h2>
+        <p>원하는 학습 단계를 선택하여 시작하세요.</p>
+        
+        <div class="dashboard">
+            <a href="/aws/aws-cloud-basic/" class="nav-card">
+                <div class="card-header">
+                    <div class="icon">☁️</div>
+                    <span class="card-title">1. 클라우드 기초</span>
+                </div>
+                <p>클라우드의 정의와 주요 특징, 그리고 서비스 모델(IaaS, PaaS, SaaS)을 심층 학습합니다.</p>
+                <span class="btn-go">시작하기 →</span>
+            </a>
+
+            <a href="/aws/aws-history/" class="nav-card">
+                <div class="card-header">
+                    <div class="icon">⏳</div>
+                    <span class="card-title">2. AWS 역사 & 인프라</span>
+                </div>
+                <p>아마존의 성장 배경과 전 세계 리전 및 가용 영역(AZ)의 설계를 알아봅니다.</p>
+                <span class="btn-go">학습하기 →</span>
+            </a>
+
+            <a href="/aws/aws-services/" class="nav-card">
+                <div class="card-header">
+                    <div class="icon">🛠</div>
+                    <span class="card-title">3. 핵심 서비스 가이드</span>
+                </div>
+                <p>EC2, S3, RDS 등 실무에서 반드시 알아야 할 AWS 핵심 서비스들을 분석합니다.</p>
+                <span class="btn-go">학습하기 →</span>
+            </a>
+
+            <a href="/aws/aws-cert/" class="nav-card">
+                <div class="card-header">
+                    <div class="icon">🎓</div>
+                    <span class="card-title">4. 자격증 준비</span>
+                </div>
+                <p>자격증 로드맵 확인과 수강생을 위한 합격 팁을 제공합니다.</p>
+                <span class="btn-go">확인하기 →</span>
+            </a>
+
+            <a href="/aws/aws-quiz/" class="nav-card full-width">
+                <div class="card-header">
+                    <div class="icon">🧠</div>
+                    <span class="card-title">5. 지식 확인 퀴즈</span>
+                </div>
+                <p>학습한 내용을 문제를 통해 복습하고 실력을 점검하세요.</p>
+                <span class="btn-go">도전하기 →</span>
+            </a>
+        </div>
+    </div>''',
+                    'order': 1,
+                },
+                {
+                    'title': '클라우드 기초',
+                    'slug': 'aws-cloud-basic',
+                    'content': '''<div class="container">
+        <h1>☁️ 클라우드 컴퓨팅의 이해</h1>
+        <p>클라우드는 컴퓨터 자원을 소유하는 대신, 인터넷을 통해 필요한 만큼 빌려 쓰는 기술적 패러다임입니다.</p>
+        
+        <h2>1. 클라우드의 핵심 6가지 장점</h2>
+        <div class="card highlight">
+            <ul>
+                <li><strong>자본 비용을 가변 비용으로 대체:</strong> 서버를 미리 살 필요가 없습니다.</li>
+                <li><strong>규모의 경제:</strong> 수많은 사용자가 이용하므로 단가가 저렴해집니다.</li>
+                <li><strong>추측성 용량 산정 불필요:</strong> 트래픽이 늘면 즉시 서버를 늘릴 수 있습니다.</li>
+                <li><strong>속도 및 민첩성 개선:</strong> 몇 분 만에 서버 배포가 가능합니다.</li>
+                <li><strong>비용 절감:</strong> 데이터 센터 운영 비용을 걱정할 필요가 없습니다.</li>
+                <li><strong>몇 분 만에 전 세계 배포:</strong> 클릭 몇 번으로 전 세계에 서비스를 출시합니다.</li>
+            </ul>
+        </div>
+
+        <h2>2. 클라우드 서비스 모델 비교</h2>
+        <table>
+            <tr>
+                <th>IaaS</th>
+                <th>PaaS</th>
+                <th>SaaS</th>
+            </tr>
+            <tr>
+                <td>인프라 수준 제공 (서버, 네트워크)</td>
+                <td>개발 환경까지 제공 (OS 포함)</td>
+                <td>완성된 소프트웨어 제공</td>
+            </tr>
+            <tr>
+                <td>예: AWS EC2, S3</td>
+                <td>예: AWS Elastic Beanstalk</td>
+                <td>예: Gmail, Dropbox</td>
+            </tr>
+        </table>
+        
+        <h2>3. 배포 모델</h2>
+        <ul>
+            <li><strong>퍼블릭 클라우드:</strong> 누구나 가입해서 이용 가능 (AWS, Azure)</li>
+            <li><strong>프라이빗 클라우드:</strong> 특정 기업 내에서만 운영</li>
+            <li><strong>하이브리드:</strong> 퍼블릭과 프라이빗을 혼합하여 사용</li>
+        </ul>
+    </div>''',
+                    'order': 2,
+                },
+                {
+                    'title': 'AWS 역사 & 인프라',
+                    'slug': 'aws-history',
+                    'content': '''<div class="container">
+        <h1>⏳ AWS의 역사: 서점 앱에서 클라우드 거인으로</h1>
+        <p>AWS는 단순히 새로운 사업을 위해 시작된 것이 아니라, Amazon.com이라는 거대 커머스 사이트를 운영하며 겪었던 <strong>인프라 고민</strong>을 해결하기 위해 탄생했습니다.</p>
+
+        <h2>주요 타임라인</h2>
+        <ul class="timeline">
+            <li class="timeline-item">
+                <span class="year">2003년</span>
+                <span class="milestone">인프라 표준화에 대한 비전 수립</span>
+                <p class="detail">앤디 제시(전 AWS CEO)와 제프 베이조스가 내부 인프라를 API화하여 확장 가능한 구조로 만들기로 결정했습니다.</p>
+            </li>
+            <li class="timeline-item">
+                <span class="year">2006년</span>
+                <span class="milestone">AWS 공식 런칭 (S3, EC2 출시)</span>
+                <p class="detail">세계 최초의 클라우드 서비스인 S3(스토리지)와 EC2(가상 서버)를 시장에 선보이며 클라우드 시대가 시작되었습니다.</p>
+            </li>
+            <li class="timeline-item">
+                <span class="year">2012년</span>
+                <span class="milestone">첫 번째 re:Invent 개최</span>
+                <p class="detail">클라우드 생태계가 커지면서 라스베이거스에서 첫 대규모 기술 컨퍼런스를 개최하기 시작했습니다.</p>
+            </li>
+            <li class="timeline-item">
+                <span class="year">2015년</span>
+                <span class="milestone">독립적인 매출 공시 시작</span>
+                <p class="detail">AWS가 아마존 전체 영업 이익의 상당 부분을 차지할 만큼 거대한 비즈니스로 성장했음을 증명했습니다.</p>
+            </li>
+            <li class="timeline-item">
+                <span class="year">현재</span>
+                <span class="milestone">AI 및 기계학습 혁신 (Amazon Bedrock)</span>
+                <p class="detail">단순한 서버 대여를 넘어 생성형 AI 모델 개발을 지원하는 플랫폼으로 진화했습니다.</p>
+            </li>
+        </ul>
+
+        <h2>AWS 글로벌 인프라의 철학</h2>
+        <p>AWS가 세계 1위인 이유는 강력한 **글로벌 인프라** 덕분입니다.</p>
+        
+        
+
+        <div class="infra-box">
+            <h3>리전(Region) vs 가용 영역(AZ)</h3>
+            <ul>
+                <li><strong>리전(Region):</strong> 전 세계 지리적으로 떨어진 영역 (예: 서울 리전).</li>
+                <li><strong>가용 영역(Availability Zone):</strong> 리전 내의 격리된 데이터 센터 군집. 하나의 리전은 보통 3개 이상의 AZ를 가집니다.</li>
+                <li><strong>엣지 로케이션(Edge Location):</strong> 사용자에게 더 빠르게 컨텐츠를 전달하기 위한 캐싱 서버 거점.</li>
+            </ul>
+        </div>
+        
+        <blockquote style="border-left: 5px solid #ccc; padding-left: 15px; font-style: italic; color: #666; margin-top: 30px;">
+            "Everything fails, all the time." (모든 것은 언제나 실패한다) <br>
+            - Werner Vogels (AWS CTO)
+        </blockquote>
+        <p>이 철학 때문에 AWS는 장애에 대비해 인프라를 여러 가용 영역에 분산하는 구조를 갖게 되었습니다.</p>
+    </div>''',
+                    'order': 3,
+                },
+                {
+                    'title': '핵심 서비스 가이드',
+                    'slug': 'aws-services',
+                    'content': '''<div class="container">
+        <h1>🛠 카테고리별 핵심 서비스</h1>
+        
+        <div class="service-detail">
+            <h3>1. 컴퓨팅: EC2 vs Lambda</h3>
+            <p><strong>EC2:</strong> 서버의 운영체제부터 제어가 필요할 때 사용하는 가상 서버입니다.</p>
+            <p><strong>Lambda:</strong> 서버 관리 없이 코드만 실행하고 싶을 때 사용하는 서버리스 서비스입니다.</p>
+        </div>
+        
+
+        <div class="service-detail">
+            <h3>2. 스토리지: S3 vs EBS</h3>
+            <p><strong>S3:</strong> 이미지, 영상 등 무제한 용량의 파일을 저장하는 객체 스토리지입니다.</p>
+            <p><strong>EBS:</strong> EC2 서버에 직접 꽂아서 쓰는 하드디스크 같은 블록 스토리지입니다.</p>
+        </div>
+    </div>''',
+                    'order': 4,
+                },
+                {
+                    'title': '자격증 준비',
+                    'slug': 'aws-cert',
+                    'content': '''<div class="container">
+        <h1>🎓 AWS 인증 자격증 가이드</h1>
+        
+        
+        <div class="card cert-info">
+            <h3>Cloud Practitioner (CLF-C02)</h3>
+            <p>비기술직군도 응시 가능하며, 클라우드의 전반적인 개념을 다룹니다.</p>
+        </div>
+        <div class="card cert-info highlight">
+            <h3>Solutions Architect Associate (SAA-C03)</h3>
+            <p><strong>수강생 추천!</strong> 가장 인기 있는 자격증으로, 효율적인 아키텍처 설계 능력을 검증합니다.</p>
+        </div>
+        
+        <h2>합격 팁</h2>
+        <ul>
+            <li>공식 화이트페이퍼를 정독하세요.</li>
+            <li>직접 AWS 콘솔에서 서비스를 구축해보는 실습이 필수입니다.</li>
+            <li>무료로 제공되는 AWS Skill Builder 교육을 활용하세요.</li>
+        </ul>
+    </div>''',
+                    'order': 5,
+                },
+                {
+                    'title': '지식 확인 퀴즈',
+                    'slug': 'aws-quiz',
+                    'content': '''<div class="container">
+        <h1>🧠 AWS 실력 점검 퀴즈</h1>
+        <p>10문제를 모두 풀고 하단의 결과 확인 버튼을 눌러주세요.</p>
+        <hr>
+
+        <div id="quiz-display">
+            </div>
+
+        <button class="btn-submit" onclick="calculateScore()">결과 확인 및 해설 보기</button>
+
+        <div id="result-box">
+            <h2 id="score-text"></h2>
+            <p>정답과 해설은 각 문제 아래에서 확인하실 수 있습니다.</p>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            { q: "1. AWS 리전(Region)에 대한 설명으로 옳은 것은?", a: 1, options: ["하나의 리전은 반드시 하나의 데이터 센터로 구성된다.", "지리적으로 격리된 전 세계의 물리적 위치를 의미한다.", "모든 리전의 서비스 비용은 전 세계적으로 동일하다.", "사용자는 리전을 직접 선택할 수 없다."], exp: "해설: 리전은 가용성을 위해 최소 2개 이상의 독립된 가용 영역(AZ)으로 구성된 지리적 거점입니다." },
+            { q: "2. 서버 관리 없이 코드만 실행하는 '서버리스' 서비스는?", a: 1, options: ["Amazon EC2", "AWS Lambda", "Amazon RDS", "Amazon Redshift"], exp: "해설: Lambda는 인프라 관리 없이 이벤트에 반응하여 코드를 실행하는 대표적인 서버리스 서비스입니다." },
+            { q: "3. 책임 공유 모델에서 '클라우드 자체의 보안'을 책임지는 주체는?", a: 0, options: ["AWS", "고객", "정부", "하드웨어 제조사"], exp: "해설: 물리적 인프라, 하이퍼바이저 등 클라우드 자체의 보안은 AWS의 책임입니다." },
+            { q: "4. Amazon S3의 특징으로 옳지 않은 것은?", a: 2, options: ["저장 용량에 제한이 거의 없다.", "버킷이라는 단위로 데이터를 관리한다.", "운영체제를 설치하여 부팅 디스크로 사용한다.", "정적 웹사이트 호스팅이 가능하다."], exp: "해설: 부팅 디스크용 스토리지는 블록 스토리지인 EBS입니다. S3는 객체 스토리지입니다." },
+            { q: "5. 트래픽에 따라 EC2 수량을 자동으로 조절하는 서비스는?", a: 2, options: ["Elastic Load Balancing", "CloudWatch", "Amazon EC2 Auto Scaling", "Route 53"], exp: "해설: Auto Scaling은 설정된 조건에 따라 서버 대수를 확장/축소하여 가용성을 관리합니다." },
+            { q: "6. 입문자가 가장 먼저 도전하기 좋은 기초 단계의 자격증은?", a: 0, options: ["Certified Cloud Practitioner", "Solutions Architect Associate", "Developer Associate", "SysOps Administrator"], exp: "해설: CCP(Cloud Practitioner)는 클라우드의 기본 개념을 다루는 가장 기초적인 인증입니다." },
+            { q: "7. 다음 중 NoSQL 데이터베이스 서비스는?", a: 3, options: ["Amazon RDS", "Amazon Aurora", "Amazon Redshift", "Amazon DynamoDB"], exp: "해설: DynamoDB는 완전 관리형 NoSQL 데이터베이스 서비스입니다." },
+            { q: "8. 사용하지 않는 리소스를 중지하여 비용을 아끼는 설계 원칙은?", a: 1, options: ["운영 우수성", "비용 최적화", "성능 효율성", "신뢰성"], exp: "해설: 불필요한 비용을 줄이고 효율을 높이는 것은 '비용 최적화'의 핵심입니다." },
+            { q: "9. 사용자나 그룹의 접근 권한을 제어하는 보안 서비스는?", a: 2, options: ["AWS Shield", "AWS WAF", "AWS IAM", "AWS KMS"], exp: "해설: IAM(Identity and Access Management)은 신원 및 접근 권한을 제어하는 핵심 서비스입니다." },
+            { q: "10. 필요한 리소스를 단 몇 분 만에 확보하여 빠르게 실험하는 능력은?", a: 3, options: ["탄력성", "내구성", "가용성", "민첩성"], exp: "해설: 인프라 구축 시간을 단축하여 비즈니스 변화에 빠르게 대응하는 능력을 '민첩성(Agility)'이라 합니다." }
+        ];
+
+        function renderQuiz() {
+            const quizDisplay = document.getElementById('quiz-display');
+            quizData.forEach((item, index) => {
+                const quizHtml = `
+                    <div class="quiz-item" id="quiz-item-${index}">
+                        <span class="question">${item.q}</span>
+                        <div class="options-list">
+                            ${item.options.map((opt, i) => `
+                                <div class="option-item">
+                                    <label class="option-label" data-value="${i}">
+                                        <input type="radio" name="q${index}" value="${i}"> ${opt}
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="explanation" id="exp${index}" style="display: none;">${item.exp}</div>
+                    </div>
+                `;
+                quizDisplay.innerHTML += quizHtml;
+            });
+        }
+
+        function calculateScore() {
+            let score = 0;
+            quizData.forEach((item, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                const quizItem = document.getElementById(`quiz-item-${index}`);
+                const selectedValue = selected ? parseInt(selected.value) : null;
+                const isCorrect = selectedValue === item.a;
+                
+                // 정답/오답 표시
+                if (selected) {
+                    const selectedLabel = selected.closest('label');
+                    if (isCorrect) {
+                        selectedLabel.classList.add('correct-answer');
+                        quizItem.classList.add('quiz-correct');
+                    } else {
+                        selectedLabel.classList.add('wrong-answer');
+                        quizItem.classList.add('quiz-wrong');
+                    }
+                } else {
+                    quizItem.classList.add('quiz-no-answer');
+                }
+                
+                // 정답 표시
+                const correctInput = document.querySelector(`input[name="q${index}"][value="${item.a}"]`);
+                const correctLabel = correctInput.closest('label');
+                if (!correctLabel.classList.contains('correct-answer')) {
+                    correctLabel.classList.add('show-correct');
+                }
+                
+                if (isCorrect) {
+                    score++;
+                }
+                
+                // 해설 표시
+                document.getElementById(`exp${index}`).style.display = 'block';
+            });
+
+            const resultBox = document.getElementById('result-box');
+            const scoreText = document.getElementById('score-text');
+            resultBox.style.display = 'flex';
+            resultBox.style.flexDirection = 'column';
+            resultBox.style.alignItems = 'center';
+            resultBox.style.justifyContent = 'center';
+            scoreText.innerText = `결과: ${quizData.length}문제 중 ${score}문제를 맞히셨습니다!`;
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        renderQuiz();
+    </script>''',
+                    'order': 6,
+                },
+            ],
+        }

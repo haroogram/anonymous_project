@@ -196,11 +196,13 @@ jobs:
                 --query 'sort_by(LaunchTemplateVersions, &VersionNumber)[-1].VersionNumber' \
                 --output text)
             echo "[LT] Creating new version with AMI: ${AMI_ID}"
+            echo "[LT] Note: UserData from source version will be removed (Packer AMI already has all required setup)"
             aws ec2 create-launch-template-version \
                 --launch-template-id $LT_ID \
                 --source-version $LATEST_VERSION \
                 --launch-template-data "{
                 \"ImageId\": \"${AMI_ID}\",
+                \"UserData\": \"\",
                 \"TagSpecifications\": [
                     {\"ResourceType\": \"instance\", \"Tags\": [{\"Key\": \"Name\", \"Value\": \"anonymous-project\"}]}
                 ]

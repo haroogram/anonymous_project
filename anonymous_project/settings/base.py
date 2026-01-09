@@ -85,11 +85,22 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
-STATIC_URL = 'static/'
+# 주의: production.py에서 S3를 사용하는 경우 이 값이 덮어써집니다.
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Static files storage 설정
+# 개발 환경에서도 ManifestStaticFilesStorage를 사용하여
+# CSS/JS 파일 변경 시 자동으로 URL이 변경되도록 함
+# 참고: 프로덕션 환경에서는 production.py에서 덮어쓰기됨
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",
+    },
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/6.0/ref/settings/#default-auto-field
@@ -118,12 +129,17 @@ CACHES = {
             'CONNECTION_POOL_KWARGS': {
                 'max_connections': 50,
                 'retry_on_timeout': True,
+                'socket_keepalive': True,  # TCP keepalive 활성화
+                'socket_keepalive_options': {},  # keepalive 옵션
             },
             # ElastiCache 사용 시 SSL/TLS 설정 (필요한 경우)
             # 'CONNECTION_POOL_KWARGS': {
             #     'ssl': True,
             #     'ssl_cert_reqs': None,
             # },
+            # 연결 풀 재사용 최적화
+            'COMPRESSOR': 'django_redis.compressors.zlib.ZlibCompressor',
+            'IGNORE_EXCEPTIONS': True,  # Redis 연결 실패 시에도 애플리케이션 계속 실행
         },
         'KEY_PREFIX': 'anonymous_project',
         'TIMEOUT': 300,  # 기본 캐시 타임아웃 (초)
@@ -149,18 +165,35 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE  # 'Asia/Seoul'
 CELERY_ENABLE_UTC = False
 
+# Celery 연결 최적화 (Redis 연결 수 감소)
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+CELERY_BROKER_CONNECTION_MAX_RETRIES = 10
+CELERY_BROKER_CONNECTION_RETRY = True
+CELERY_BROKER_POOL_LIMIT = 10  # 브로커 연결 풀 크기 제한
+CELERY_RESULT_BACKEND_CONNECTION_RETRY_ON_STARTUP = True
+CELERY_RESULT_BACKEND_CONNECTION_MAX_RETRIES = 10
+CELERY_RESULT_BACKEND_CONNECTION_RETRY = True
+
+# Celery 결과 백엔드 최적화 (결과 TTL 설정으로 메모리 절약)
+CELERY_RESULT_EXPIRES = 3600  # 결과 1시간 후 만료 (초)
+CELERY_RESULT_CACHE_MAX = 10000  # 최대 캐시 항목 수
+
+# Celery Worker 최적화
+CELERY_WORKER_PREFETCH_MULTIPLIER = 4  # Worker가 한 번에 가져올 작업 수
+CELERY_WORKER_MAX_TASKS_PER_CHILD = 1000  # 작업 처리 후 프로세스 재시작 (메모리 누수 방지)
+
 # Celery Beat 설정 (Redis 기반 분산 락 사용)
 # DatabaseScheduler를 사용하면 Django admin에서 스케줄을 관리할 수 있음
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
-# Celery Beat 스케줄 정의
-from celery.schedules import crontab
+# Celery Beat 스케줄 정의 -> DB로 관리
+# from celery.schedules import crontab
 
-CELERY_BEAT_SCHEDULE = {
-    'sync-visitor-stats-daily': {
-        'task': 'main.tasks.sync_visitor_stats_task',
-        'schedule': crontab(hour=0, minute=1),  # 매일 자정 1분에 실행
-        'options': {'expires': 60 * 60},  # 작업 만료 시간 (1시간)
-    },
-}
+# CELERY_BEAT_SCHEDULE = {
+#     'sync-visitor-stats-daily': {
+#         'task': 'main.tasks.sync_visitor_stats_task',
+#         'schedule': crontab(hour=0, minute=1),  # 매일 자정 1분에 실행
+#         'options': {'expires': 60 * 60},  # 작업 만료 시간 (1시간)
+#     },
+# }
 

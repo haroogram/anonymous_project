@@ -1,5 +1,9 @@
 #!/bin/bash
+# Ubuntu 22.04 LTS 환경용 AWS CodeDeploy Agent 설치 스크립트
 set -e
+
+# Ubuntu/Debian 계열 시스템에서 비대화형 모드 설정
+export DEBIAN_FRONTEND=noninteractive
 
 echo "================================"
 echo "[3/8] AWS CodeDeploy Agent 설치"
@@ -16,10 +20,10 @@ fi
 
 # Ruby 설치 (CodeDeploy Agent는 Ruby로 작성됨)
 # 참고: apt-get update는 01-base-setup.sh에서 이미 실행됨
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
+# 참고: wget은 01-base-setup.sh에서 이미 설치됨
+sudo apt-get install -y \
     ruby \
-    ruby-dev \
-    wget
+    ruby-dev
 
 # CodeDeploy Agent 다운로드 및 설치
 # 참고: Private Subnet에서는 S3 VPC Endpoint 또는 NAT Gateway를 통해 접근해야 함
@@ -35,16 +39,19 @@ sudo ./install auto
 # 설치 확인
 if sudo service codedeploy-agent status > /dev/null 2>&1; then
     echo "✅ CodeDeploy Agent 설치 완료"
-    # 서비스 비활성화 (AMI에서는 시작하지 않음, 실제 EC2에서 시작)
-    sudo systemctl stop codedeploy-agent || true
-    sudo systemctl disable codedeploy-agent || true
+    # 서비스 활성화 및 시작 (AMI에서 enable 상태로 유지, EC2 시작 시 자동 실행)
+    sudo systemctl enable codedeploy-agent
+    sudo systemctl start codedeploy-agent || true
+    echo "✅ CodeDeploy Agent 서비스 활성화 및 시작 완료"
 else
     echo "⚠️  CodeDeploy Agent 설치 확인 필요"
+    # 설치 실패해도 서비스는 활성화 시도
+    sudo systemctl enable codedeploy-agent || true
 fi
 
 # 설치 파일 정리
 rm -f ./install
 
 echo "✅ CodeDeploy Agent 설치 스크립트 완료"
-echo "⚠️  참고: 실제 EC2 인스턴스에서 CodeDeploy Agent를 시작해야 합니다."
+echo "✅ CodeDeploy Agent가 enable 상태로 설정되어 EC2 시작 시 자동 실행됩니다."
 

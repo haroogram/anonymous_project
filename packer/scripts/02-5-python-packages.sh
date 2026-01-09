@@ -11,10 +11,11 @@ if [ ! -f "/tmp/requirements.txt" ]; then
     exit 0
 fi
 
-# Python 가상환경 생성 (AMI에 미리 설치해두기)
+# 가상환경 디렉토리 확인 (07-directories-setup.sh에서 생성됨)
+# 만약 디렉토리가 없으면 여기서 생성 (순서 보장을 위해)
 VENV_DIR="/home/ubuntu/venv"
 if [ ! -d "$VENV_DIR" ]; then
-    echo "Python 가상환경 생성 중..."
+    echo "⚠️  가상환경 디렉토리가 없습니다. 생성 중..."
     python3 -m venv $VENV_DIR
     sudo chown -R ubuntu:ubuntu $VENV_DIR
 fi
@@ -23,8 +24,9 @@ fi
 echo "가상환경 활성화 및 패키지 설치 중..."
 source $VENV_DIR/bin/activate
 
-# pip 업그레이드
-pip install --upgrade pip setuptools wheel
+# pip 업그레이드 (setuptools는 81 미만으로 고정)
+pip install --upgrade pip wheel
+pip install "setuptools<81"
 
 # requirements.txt의 패키지들 설치 (AMI 빌드 시점에 인터넷 접근 가능)
 echo "requirements.txt 패키지 설치 중..."

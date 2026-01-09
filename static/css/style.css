@@ -27,12 +27,20 @@ body {
     background-color: var(--bg-color);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden; /* 가로 스크롤 방지 */
 }
 
 .container {
     max-width: 1280px;
     margin: 0 auto;
     padding: 0 24px;
+    width: 100%;
+}
+
+@media (max-width: 1024px) {
+    .container {
+        max-width: 100%;
+    }
 }
 
 /* 헤더 */
@@ -160,6 +168,9 @@ body {
     transition: all 0.3s ease;
     background-color: var(--white);
     color: var(--text-color);
+    min-height: 44px; /* 터치 타겟 최소 크기 */
+    -webkit-appearance: none;
+    appearance: none;
 }
 
 .search-input:focus {
@@ -184,6 +195,10 @@ body {
     transition: all 0.3s ease;
     box-shadow: var(--shadow-md);
     white-space: nowrap;
+    min-height: 44px; /* 터치 타겟 최소 크기 */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .search-btn:hover {
@@ -199,7 +214,7 @@ body {
 
 .content-wrapper {
     display: grid;
-    grid-template-columns: 260px 1fr;
+    grid-template-columns: minmax(220px, 260px) minmax(0, 1fr); /* 사이드바 폭을 일정 범위로 고정 */
     gap: 2.5rem;
 }
 
@@ -260,6 +275,9 @@ body {
     transition: all 0.2s ease;
     font-size: 0.95rem;
     font-weight: 500;
+    white-space: nowrap;          /* 메뉴를 한 줄로 고정 */
+    overflow: hidden;             /* 넘치는 텍스트 숨김 */
+    /* text-overflow: ellipsis;      말줄임표 처리 */
 }
 
 .sidebar-menu ul a:hover {
@@ -282,6 +300,7 @@ body {
     padding: 3rem;
     box-shadow: var(--shadow-md);
     border: 1px solid var(--border-color);
+    scroll-margin-top: 200px; /* 앵커 스크롤 시 고정 헤더 높이 보정 (더 여유있게 조정) */
 }
 
 /* 히어로 섹션 */
@@ -335,7 +354,9 @@ body {
 
 /* 버튼 스타일 */
 .btn {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     padding: 0.875rem 2rem;
     text-decoration: none;
     border-radius: 10px;
@@ -345,6 +366,13 @@ body {
     border: none;
     cursor: pointer;
     letter-spacing: 0.3px;
+    min-height: 44px; /* 터치 타겟 최소 크기 */
+}
+
+@media (max-width: 480px) {
+    .btn {
+        min-height: 40px;
+    }
 }
 
 .btn-primary {
@@ -733,14 +761,24 @@ body {
     padding: 1.5rem;
     margin: 1.5rem 0;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     box-shadow: var(--shadow-md);
     position: relative;
     line-height: 1.6;
     color: #e4e4e7;
     font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
     font-size: 0.95em;
-    white-space: pre-wrap;
-    word-wrap: break-word;
+    white-space: pre;
+    word-wrap: normal;
+    word-break: normal;
+}
+
+@media (max-width: 768px) {
+    .article-content pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        word-break: break-word;
+    }
 }
 
 /* pre 태그만 있는 경우 (code 없이) - diagram 외부 */
@@ -876,7 +914,7 @@ body {
 .article-content th {
     padding: 1rem 1.25rem;
     text-align: left;
-    color: var(--white);
+    color: var(--primary-color); /* 헤더 배경이 흰색일 때도 잘 보이도록 텍스트 색상 조정 */
     font-weight: 600;
     font-size: 0.95rem;
     letter-spacing: 0.3px;
@@ -923,6 +961,21 @@ body {
 
 .article-content img[width] {
     max-width: 100%;
+    width: auto;
+}
+
+/* 이미지 반응형 처리 */
+@media (max-width: 768px) {
+    .article-content img {
+        margin: 1.5rem 0;
+        border-radius: 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .article-content img {
+        margin: 1rem 0;
+    }
 }
 
 /* 구분선 */
@@ -1071,67 +1124,220 @@ body {
     font-size: 0.9rem;
 }
 
-/* 반응형 디자인 */
+/* 모바일 메뉴 토글 버튼 */
+.mobile-menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 30px;
+    height: 30px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 1001;
+}
+
+.mobile-menu-toggle span {
+    width: 100%;
+    height: 3px;
+    background-color: var(--primary-color);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+    transform-origin: center;
+}
+
+.mobile-menu-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(8px, 8px);
+}
+
+.mobile-menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.mobile-menu-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -7px);
+}
+
+/* 반응형 디자인 - 태블릿 (1024px 이하) */
+@media (max-width: 1024px) {
+    .container {
+        padding: 0 20px;
+    }
+
+    .content-wrapper {
+        gap: 2rem;
+    }
+
+    .sidebar {
+        padding: 1.5rem;
+    }
+
+    .content-area {
+        padding: 2.5rem;
+    }
+
+    .hero-content h2 {
+        font-size: 2.5rem;
+    }
+
+    .categories-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .features-grid {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 2rem;
+    }
+}
+
+/* 반응형 디자인 - 모바일 (768px 이하) */
 @media (max-width: 768px) {
+    .container {
+        padding: 0 16px;
+    }
+
     .content-wrapper {
         grid-template-columns: 1fr;
+        gap: 1.5rem;
     }
 
     .sidebar {
         position: static;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
+        padding: 1.5rem;
     }
 
     .header-content {
         flex-wrap: wrap;
         gap: 1rem;
+        position: relative;
     }
 
     .logo-section {
         flex-wrap: wrap;
         gap: 1rem;
-        flex: 1 1 100%;
+        flex: 1 1 auto;
+    }
+
+    .logo h1 {
+        font-size: 1.5rem;
     }
 
     .visitor-stats {
         padding-left: 0;
         border-left: none;
         gap: 1rem;
+        order: 3;
+        width: 100%;
+        justify-content: flex-start;
     }
 
     .visitor-stat-item {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
     }
 
     .visitor-count {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+    }
+
+    /* 모바일 메뉴 토글 버튼 표시 */
+    .mobile-menu-toggle {
+        display: flex;
+        order: 2;
+    }
+
+    /* 모바일에서 네비게이션 숨김 */
+    .main-nav {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: var(--white);
+        box-shadow: var(--shadow-lg);
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease, padding 0.3s ease;
+        padding: 0;
+        border-top: 1px solid var(--border-color);
+        z-index: 1000;
+    }
+
+    .main-nav.active {
+        max-height: 500px;
+        padding: 1rem 0;
     }
 
     .main-nav ul {
-        gap: 1rem;
-        font-size: 0.85rem;
-        flex-wrap: wrap;
+        flex-direction: column;
+        gap: 0;
+        padding: 0 16px;
     }
 
     .main-nav li {
-        margin: 0.25rem 0;
+        margin: 0;
+        width: 100%;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .main-nav li:last-child {
+        border-bottom: none;
+    }
+
+    .main-nav a {
+        display: block;
+        padding: 1rem 0;
+        width: 100%;
+    }
+
+    .main-nav a::after {
+        display: none;
+    }
+
+    .header-actions {
+        order: 4;
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+
+    .search-form {
+        flex-direction: row;
+        width: 100%;
+        gap: 0.5rem;
+    }
+
+    .search-input {
+        flex: 1;
+        width: auto;
+        font-size: 0.9rem;
+        padding: 0.5rem 0.875rem;
+    }
+
+    .search-btn {
+        flex-shrink: 0;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
     }
 
     .hero-content h2 {
-        font-size: 2rem;
+        font-size: 1.75rem;
+        line-height: 1.3;
     }
 
     .hero-content p {
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
 
     .hero-section {
-        padding: 3rem 2rem;
+        padding: 3rem 1.5rem;
+        border-radius: 12px;
     }
 
     .hero-buttons {
         flex-direction: column;
         width: 100%;
+        gap: 0.75rem;
     }
 
     .hero-buttons .btn {
@@ -1140,10 +1346,24 @@ body {
 
     .categories-grid {
         grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+
+    .category-card {
+        padding: 2rem 1.5rem;
     }
 
     .section-title {
-        font-size: 2rem;
+        font-size: 1.75rem;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .feature-card {
+        padding: 1.5rem;
     }
 
     .topic-content {
@@ -1152,23 +1372,73 @@ body {
         gap: 1rem;
     }
 
+    .topic-card {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1.5rem;
+    }
+
+    .topic-number {
+        width: 48px;
+        height: 48px;
+        font-size: 1.1rem;
+    }
+
     .content-area {
-        padding: 2rem 1.5rem;
+        padding: 1.5rem;
+        border-radius: 8px;
+    }
+
+    .tutorial-header {
+        margin-bottom: 2rem;
     }
 
     .tutorial-header h1 {
-        font-size: 2rem;
+        font-size: 1.75rem;
+    }
+
+    .tutorial-header p {
+        font-size: 1rem;
+    }
+
+    .topic-detail-header {
+        margin-bottom: 2rem;
     }
 
     .topic-detail-header h1 {
-        font-size: 2rem;
+        font-size: 1.75rem;
+    }
+
+    .breadcrumb {
+        font-size: 0.85rem;
     }
 
     /* 모바일에서 코드 블록 스타일 조정 */
+    .article-content {
+        font-size: 1rem;
+    }
+
+    .article-content h1 {
+        font-size: 1.75rem;
+    }
+
+    .article-content h2 {
+        font-size: 1.5rem;
+    }
+
+    .article-content h3 {
+        font-size: 1.25rem;
+    }
+
+    .article-content h4 {
+        font-size: 1.1rem;
+    }
+
     .article-content pre {
         padding: 1rem;
         margin: 1rem 0;
         border-radius: 8px;
+        font-size: 0.85em;
     }
 
     .article-content pre code {
@@ -1176,21 +1446,201 @@ body {
     }
 
     .article-content code {
-        font-size: 0.85em;
+        font-size: 0.8em;
         padding: 0.15rem 0.4rem;
     }
 
-    .search-form {
-        flex-direction: column;
-        width: 100%;
+    /* 테이블 반응형 처리 */
+    .article-content table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 1.5rem 0;
     }
 
-    .search-input {
+    .article-content thead,
+    .article-content tbody,
+    .article-content tr {
+        display: table;
         width: 100%;
+        table-layout: fixed;
     }
 
-    .search-btn {
-        width: 100%;
+    .article-content th,
+    .article-content td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    /* 푸터 반응형 */
+    .footer {
+        padding: 3rem 0 1.5rem;
+    }
+
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .footer-section {
+        text-align: center;
+    }
+
+    /* 검색 결과 페이지 반응형 */
+    .search-results-header h1 {
+        font-size: 1.75rem;
+    }
+
+    .search-query {
+        font-size: 1rem;
+    }
+
+    .search-topic-item {
+        padding: 1.25rem;
+    }
+
+    .search-topic-item h3 {
+        font-size: 1.1rem;
+    }
+}
+
+/* 반응형 디자인 - 작은 모바일 (480px 이하) */
+@media (max-width: 480px) {
+    .container {
+        padding: 0 12px;
+    }
+
+    .header-content {
+        padding: 1rem 0;
+    }
+
+    .logo h1 {
+        font-size: 1.25rem;
+    }
+
+    .visitor-stats {
+        gap: 0.75rem;
+    }
+
+    .visitor-stat-item {
+        font-size: 0.75rem;
+    }
+
+    .visitor-count {
+        font-size: 0.8rem;
+    }
+
+    .hero-content h2 {
+        font-size: 1.5rem;
+    }
+
+    .hero-content p {
+        font-size: 0.95rem;
+    }
+
+    .hero-section {
+        padding: 2.5rem 1rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+    }
+
+    .category-card {
+        padding: 1.5rem 1rem;
+    }
+
+    .category-icon {
+        width: 70px;
+        height: 70px;
+        font-size: 1.75rem;
+    }
+
+    .category-card h3 {
+        font-size: 1.25rem;
+    }
+
+    .content-area {
+        padding: 1.25rem;
+    }
+
+    .sidebar {
+        padding: 1.25rem;
+    }
+
+    .tutorial-header h1,
+    .topic-detail-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .article-content {
+        font-size: 0.95rem;
+    }
+
+    .article-content h1 {
+        font-size: 1.5rem;
+    }
+
+    .article-content h2 {
+        font-size: 1.25rem;
+    }
+
+    .article-content h3 {
+        font-size: 1.1rem;
+    }
+
+    .article-content pre {
+        padding: 0.75rem;
+        font-size: 0.8em;
+    }
+
+    .article-content pre code {
+        font-size: 0.8em;
+    }
+
+    .article-content code {
+        font-size: 0.75em;
+    }
+
+    .article-content th,
+    .article-content td {
+        padding: 0.5rem 0.375rem;
+        font-size: 0.8rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+    }
+
+    .topic-card {
+        padding: 1.25rem;
+    }
+
+    .topic-number {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .topic-content h3 {
+        font-size: 1.1rem;
+    }
+
+    .main-content {
+        padding: 2rem 0;
+    }
+
+    .footer {
+        padding: 2.5rem 0 1.25rem;
+    }
+
+    .search-results-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .search-topic-item {
+        padding: 1rem;
     }
 }
 
@@ -1441,6 +1891,49 @@ body {
     
     .nav-card.full-width {
         grid-column: span 1;
+    }
+
+    .nav-card {
+        padding: 1.5rem;
+    }
+
+    .nav-card .card-header {
+        margin-bottom: 12px;
+    }
+
+    .nav-card .icon {
+        font-size: 1.75rem;
+        width: 40px;
+        height: 40px;
+    }
+
+    .nav-card .card-header .card-title {
+        font-size: 1rem;
+    }
+
+    .nav-card p {
+        font-size: 0.85rem;
+    }
+}
+/* 650px 이하에서 코드 블록 줄바꿈 강제 */
+@media (max-width: 680px) {
+    .article-content pre,
+    .article-content pre code {
+        white-space: pre-wrap !important;
+        word-wrap: break-word !important;
+        word-break: break-word !important;
+        overflow-x: visible !important;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard {
+        gap: 16px;
+    }
+
+    .nav-card {
+        padding: 1.25rem;
     }
 }
 

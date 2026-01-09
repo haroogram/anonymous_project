@@ -9,7 +9,7 @@ echo "================================"
 echo "ApplicationStart 시작"
 echo "================================"
 
-APP_DIR="/home/ubuntu/app"
+APP_DIR="/home/ubuntu/anonymous_project"
 VENV_DIR="/home/ubuntu/venv"
 
 # 가상환경 활성화
@@ -43,8 +43,92 @@ fi
 # 또는 Supervisor를 사용하는 경우 (권장)
 # Supervisor 설정 파일이 /etc/supervisor/conf.d/ 아래에 있다고 가정
 if command -v supervisorctl &> /dev/null; then
-    echo "Supervisor로 애플리케이션 재시작 중..."
-    sudo supervisorctl restart anonymous_project || sudo supervisorctl start anonymous_project || true
+    echo "Supervisor로 애플리케이션 시작 중..."
+    
+    # 사전 체크: 필요한 디렉토리 및 파일 확인
+    echo "사전 체크 중..."
+    
+    # 로그 디렉토리 생성
+    if [ ! -d "$APP_DIR/logs" ]; then
+        echo "로그 디렉토리 생성 중..."
+        mkdir -p $APP_DIR/logs
+        chmod 755 $APP_DIR/logs
+    fi
+    
+    # 작업 디렉토리 확인
+    if [ ! -d "$APP_DIR" ]; then
+        echo "❌ 작업 디렉토리가 존재하지 않습니다: $APP_DIR"
+        exit 1
+    fi
+    
+    # gunicorn 실행 파일 확인
+    if [ ! -f "$VENV_DIR/bin/gunicorn" ]; then
+        echo "❌ gunicorn 실행 파일을 찾을 수 없습니다: $VENV_DIR/bin/gunicorn"
+        exit 1
+    fi
+    
+    # gunicorn 실행 가능 여부 확인
+    if [ ! -x "$VENV_DIR/bin/gunicorn" ]; then
+        echo "⚠️  gunicorn 실행 파일에 실행 권한이 없습니다. 권한 부여 중..."
+        chmod +x $VENV_DIR/bin/gunicorn
+    fi
+    
+    # gunicorn 버전 확인 (실행 가능한지 테스트)
+    echo "gunicorn 버전 확인 중..."
+    $VENV_DIR/bin/gunicorn --version || {
+        echo "❌ gunicorn 실행 실패. 가상환경이나 의존성 문제일 수 있습니다."
+        exit 1
+    }
+    
+    # Supervisor 설정 파일 확인
+    if [ -f "/etc/supervisor/conf.d/anonymous_project.conf" ]; then
+        echo "Supervisor 설정 파일 확인됨"
+    else
+        echo "⚠️  Supervisor 설정 파일을 찾을 수 없습니다: /etc/supervisor/conf.d/anonymous_project.conf"
+    fi
+    
+    # Supervisor 설정 다시 읽기
+    echo "Supervisor 설정 다시 읽기..."
+    sudo supervisorctl reread || true
+    sudo supervisorctl update || true
+    
+    # 먼저 상태 확인
+    status=$(sudo supervisorctl status anonymous_project 2>/dev/null || echo "")
+    if echo "$status" | grep -q "RUNNING"; then
+        echo "애플리케이션이 이미 실행 중입니다. 재시작합니다..."
+        sudo supervisorctl restart anonymous_project
+    else
+        echo "애플리케이션을 시작합니다..."
+        sudo supervisorctl start anonymous_project
+    fi
+    
+    # 시작 확인 (최대 30초 대기)
+    echo "애플리케이션 시작 대기 중..."
+    for i in {1..30}; do
+        status=$(sudo supervisorctl status anonymous_project 2>/dev/null || echo "")
+        if echo "$status" | grep -q "RUNNING"; then
+            echo "✅ 애플리케이션이 시작되었습니다."
+            sleep 2  # 포트 바인딩을 위한 추가 대기
+            break
+        elif echo "$status" | grep -q "FATAL\|BACKOFF\|EXITED"; then
+            echo "❌ 애플리케이션 시작 실패: $status"
+            echo "Supervisor 로그 확인 중..."
+            sudo tail -n 20 /var/log/supervisor/supervisord.log 2>/dev/null || true
+            if [ -f "$APP_DIR/logs/gunicorn.log" ]; then
+                echo "Gunicorn 로그 (마지막 20줄):"
+                tail -n 20 $APP_DIR/logs/gunicorn.log || true
+            fi
+            exit 1
+        fi
+        sleep 1
+    done
+    
+    # 최종 상태 확인
+    final_status=$(sudo supervisorctl status anonymous_project 2>/dev/null || echo "")
+    if ! echo "$final_status" | grep -q "RUNNING"; then
+        echo "❌ 애플리케이션 시작 실패 (타임아웃): $final_status"
+        exit 1
+    fi
 fi
 
 # 또는 systemd를 사용하는 경우

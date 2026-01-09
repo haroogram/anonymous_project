@@ -52,10 +52,65 @@ DATABASES = {
         'PORT': DB_PORT,
         'OPTIONS': {
             'charset': 'utf8mb4',
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES', character_set_connection=utf8mb4, collation_connection=utf8mb4_unicode_ci",
         },
     }
 }
+
+# Static files 설정 - S3 사용 (프로덕션)
+# base.py의 STATIC_ROOT를 덮어쓰기 위해 명시적으로 설정
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# 환경 변수 값 정규화 (공백 제거, 대소문자 무시)
+use_s3_static_env = os.getenv('USE_S3_STATIC', 'False').strip().lower()
+USE_S3_STATIC = use_s3_static_env in ('true', '1', 'yes')
+
+if USE_S3_STATIC:
+    # S3를 사용하는 경우
+    INSTALLED_APPS += ['storages']
+    
+    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STATIC_BUCKET_NAME')
+    AWS_S3_REGION_NAME = os.getenv('AWS_REGION', 'ap-northeast-2')
+    
+    if not all([AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_STORAGE_BUCKET_NAME]):
+        raise ValueError("S3 Static files를 사용하려면 AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_STATIC_BUCKET_NAME 환경 변수가 필요합니다!")
+    
+    # S3 커스텀 도메인 (STATIC_URL 계산에 필요)
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
+    AWS_DEFAULT_ACL = None
+      
+    # Static files를 S3에 저장 (Manifest 기능 포함)
+    # ManifestStaticStorage는 파일 내용의 해시를 파일명에 추가하여
+    # CSS/JS 파일 변경 시 자동으로 새로운 URL이 생성되도록 합니다.
+    STORAGES = {
+        "staticfiles": {
+            "BACKEND": "main.storages.ManifestStaticStorage",
+        },
+        # default는 Django 기본값 사용 (로컬 파일 시스템)
+        # Media files를 S3에 저장하려면 MediaStorage 클래스를 추가하세요
+    }
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+    # STATIC_ROOT는 base.py에서 이미 설정되어 있지만, S3 사용 시에도 필요 (임시 저장용)
+    
+    # Media files도 S3를 사용하려면 아래 주석 해제
+    # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    # MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+
+    # S3 설정 완료 (로깅은 after_install.sh에서 처리)
+    pass
+else:
+    # 로컬 파일 시스템 사용 (Manifest 기능 포함)
+    # ManifestStaticFilesStorage를 사용하여 파일 변경 시 자동으로 URL이 변경되도록 함
+    STORAGES = {
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",
+        },
+    }
+    STATIC_URL = '/static/'
+    # STATIC_ROOT는 이미 base.py에서 설정됨
+    pass
 
 # 로깅 설정
 LOGGING = {
