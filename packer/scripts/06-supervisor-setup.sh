@@ -18,22 +18,105 @@ if [ ! -d /etc/supervisor/conf.d ]; then
     sudo mkdir -p /etc/supervisor/conf.d
 fi
 
+# Gunicorn wrapper 스크립트 생성 (.env 파일 로드)
+sudo tee /home/ubuntu/anonymous_project/gunicorn_wrapper.sh > /dev/null <<'GUNICORN_EOF'
+#!/bin/bash
+# Gunicorn wrapper - .env 파일 로드 후 gunicorn 실행
+APP_DIR="/home/ubuntu/anonymous_project"
+VENV_DIR="/home/ubuntu/venv"
+
+# .env 파일이 있으면 안전하게 로드 (특수문자 처리)
+if [ -f "$APP_DIR/.env" ]; then
+    # .env 파일을 안전하게 파싱하여 환경 변수로 설정
+    while IFS= read -r line || [ -n "$line" ]; do
+        # 주석이나 빈 줄 건너뛰기
+        [[ "$line" =~ ^[[:space:]]*# ]] && continue
+        [[ -z "$line" ]] && continue
+        
+        # 첫 번째 = 기준으로 key와 value 분리 (값에 =가 포함될 수 있음)
+        if [[ "$line" =~ ^([^=]+)=(.*)$ ]]; then
+            key="${BASH_REMATCH[1]}"
+            value="${BASH_REMATCH[2]}"
+            
+            # 앞뒤 공백 제거
+            key=$(echo "$key" | xargs)
+            value=$(echo "$value" | xargs)
+            
+            # 값이 있으면 환경 변수로 설정 (값에 특수문자가 있어도 안전하게 처리)
+            if [ -n "$key" ] && [ -n "$value" ]; then
+                export "$key"="$value"
+            fi
+        fi
+    done < "$APP_DIR/.env"
+fi
+
+# 환경 변수 설정
+export DJANGO_SETTINGS_MODULE=anonymous_project.settings.production
+
+# Gunicorn 실행
+exec "$VENV_DIR/bin/gunicorn" anonymous_project.wsgi:application "$@"
+GUNICORN_EOF
+
+sudo chmod +x /home/ubuntu/anonymous_project/gunicorn_wrapper.sh
+sudo chown ubuntu:ubuntu /home/ubuntu/anonymous_project/gunicorn_wrapper.sh
+
+# Celery wrapper 스크립트 생성
+sudo tee /home/ubuntu/anonymous_project/celery_wrapper.sh > /dev/null <<'CELERY_EOF'
+#!/bin/bash
+# Celery wrapper - .env 파일 로드 후 celery 실행
+APP_DIR="/home/ubuntu/anonymous_project"
+VENV_DIR="/home/ubuntu/venv"
+
+# .env 파일이 있으면 안전하게 로드 (특수문자 처리)
+if [ -f "$APP_DIR/.env" ]; then
+    # .env 파일을 안전하게 파싱하여 환경 변수로 설정
+    while IFS= read -r line || [ -n "$line" ]; do
+        # 주석이나 빈 줄 건너뛰기
+        [[ "$line" =~ ^[[:space:]]*# ]] && continue
+        [[ -z "$line" ]] && continue
+        
+        # 첫 번째 = 기준으로 key와 value 분리 (값에 =가 포함될 수 있음)
+        if [[ "$line" =~ ^([^=]+)=(.*)$ ]]; then
+            key="${BASH_REMATCH[1]}"
+            value="${BASH_REMATCH[2]}"
+            
+            # 앞뒤 공백 제거
+            key=$(echo "$key" | xargs)
+            value=$(echo "$value" | xargs)
+            
+            # 값이 있으면 환경 변수로 설정 (값에 특수문자가 있어도 안전하게 처리)
+            if [ -n "$key" ] && [ -n "$value" ]; then
+                export "$key"="$value"
+            fi
+        fi
+    done < "$APP_DIR/.env"
+fi
+
+# 환경 변수 설정
+export DJANGO_SETTINGS_MODULE=anonymous_project.settings.production
+
+# Celery 실행
+exec "$VENV_DIR/bin/celery" -A anonymous_project "$@"
+CELERY_EOF
+
+sudo chmod +x /home/ubuntu/anonymous_project/celery_wrapper.sh
+sudo chown ubuntu:ubuntu /home/ubuntu/anonymous_project/celery_wrapper.sh
+
 # 기본 Supervisor 설정 파일 생성 (템플릿)
 sudo tee /etc/supervisor/conf.d/anonymous_project.conf > /dev/null <<EOF
 ; Django Gunicorn 프로세스 관리
 [program:anonymous_project]
-command=/home/ubuntu/venv/bin/gunicorn anonymous_project.wsgi:application --bind 0.0.0.0:8000 --workers 3 --timeout 120
+command=/home/ubuntu/anonymous_project/gunicorn_wrapper.sh --bind 0.0.0.0:8000 --workers 3 --timeout 120
 directory=/home/ubuntu/anonymous_project
 user=ubuntu
 autostart=false
 autorestart=true
 redirect_stderr=true
 stdout_logfile=/home/ubuntu/anonymous_project/logs/gunicorn.log
-environment=DJANGO_SETTINGS_MODULE="anonymous_project.settings.production"
 
 ; Celery Worker (필요한 경우)
 [program:celery_worker]
-command=/home/ubuntu/venv/bin/celery -A anonymous_project worker --loglevel=info
+command=/home/ubuntu/anonymous_project/celery_wrapper.sh worker --loglevel=info
 directory=/home/ubuntu/anonymous_project
 user=ubuntu
 autostart=false
@@ -43,7 +126,7 @@ stdout_logfile=/home/ubuntu/anonymous_project/logs/celery_worker.log
 
 ; Celery Beat (필요한 경우)
 [program:celery_beat]
-command=/home/ubuntu/venv/bin/celery -A anonymous_project beat --loglevel=info
+command=/home/ubuntu/anonymous_project/celery_wrapper.sh beat --loglevel=info
 directory=/home/ubuntu/anonymous_project
 user=ubuntu
 autostart=false

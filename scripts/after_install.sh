@@ -87,12 +87,71 @@ export DJANGO_SETTINGS_MODULE=anonymous_project.settings.production
 if [ ! -f "$APP_DIR/.env" ]; then
     echo "⚠️  경고: .env 파일이 없습니다. 환경 변수를 확인하세요."
     echo "⚠️  DB 연결 및 migrations가 실패할 수 있습니다."
+    echo ""
+    echo "필수 환경 변수:"
+    echo "  - DB_NAME: RDS 데이터베이스 이름"
+    echo "  - DB_USER: RDS 사용자 이름"
+    echo "  - DB_PASSWORD: RDS 비밀번호"
+    echo "  - DB_HOST: RDS 엔드포인트"
+    echo "  - DB_PORT: RDS 포트 (기본값: 3306)"
+    echo "  - SECRET_KEY: Django SECRET_KEY"
+    echo "  - ALLOWED_HOSTS: 허용된 호스트 (쉼표 구분)"
 else
     echo "✅ .env 파일 확인됨"
-    # .env 파일의 환경 변수 로드 (주석 제외)
-    set -a
-    source <(grep -v '^#' $APP_DIR/.env | sed 's/^/export /')
-    set +a
+    # .env 파일의 환경 변수 로드 (특수문자 안전하게 처리)
+    while IFS= read -r line || [ -n "$line" ]; do
+        # 주석이나 빈 줄 건너뛰기
+        [[ "$line" =~ ^[[:space:]]*# ]] && continue
+        [[ -z "$line" ]] && continue
+        
+        # 첫 번째 = 기준으로 key와 value 분리 (값에 =가 포함될 수 있음)
+        if [[ "$line" =~ ^([^=]+)=(.*)$ ]]; then
+            key="${BASH_REMATCH[1]}"
+            value="${BASH_REMATCH[2]}"
+            
+            # 앞뒤 공백 제거
+            key=$(echo "$key" | xargs)
+            value=$(echo "$value" | xargs)
+            
+            # 값이 있으면 환경 변수로 설정 (값에 특수문자가 있어도 안전하게 처리)
+            if [ -n "$key" ] && [ -n "$value" ]; then
+                export "$key"="$value"
+            fi
+        fi
+    done < "$APP_DIR/.env"
+    
+    # 필수 환경 변수 확인
+    echo ""
+    echo "환경 변수 확인 중..."
+    MISSING_VARS=()
+    if [ -z "$DB_NAME" ]; then
+        MISSING_VARS+=("DB_NAME")
+    fi
+    if [ -z "$DB_USER" ]; then
+        MISSING_VARS+=("DB_USER")
+    fi
+    if [ -z "$DB_PASSWORD" ]; then
+        MISSING_VARS+=("DB_PASSWORD")
+    fi
+    if [ -z "$SECRET_KEY" ]; then
+        MISSING_VARS+=("SECRET_KEY")
+    fi
+    if [ -z "$ALLOWED_HOSTS" ]; then
+        MISSING_VARS+=("ALLOWED_HOSTS")
+    fi
+    
+    if [ ${#MISSING_VARS[@]} -gt 0 ]; then
+        echo "❌ 필수 환경 변수가 설정되지 않았습니다: ${MISSING_VARS[*]}"
+        echo "⚠️  .env 파일을 확인하고 필수 환경 변수를 설정하세요."
+    else
+        echo "✅ 필수 환경 변수 확인 완료"
+        echo "  - DB_NAME: ${DB_NAME}"
+        echo "  - DB_USER: ${DB_USER}"
+        echo "  - DB_HOST: ${DB_HOST:-localhost}"
+        echo "  - DB_PORT: ${DB_PORT:-3306}"
+        echo "  - SECRET_KEY: 설정됨"
+        echo "  - ALLOWED_HOSTS: ${ALLOWED_HOSTS}"
+    fi
 fi
 
 # Django static files 수집
