@@ -25,11 +25,29 @@ sudo tee /home/ubuntu/anonymous_project/gunicorn_wrapper.sh > /dev/null <<'GUNIC
 APP_DIR="/home/ubuntu/anonymous_project"
 VENV_DIR="/home/ubuntu/venv"
 
-# .env 파일이 있으면 로드
+# .env 파일이 있으면 안전하게 로드 (특수문자 처리)
 if [ -f "$APP_DIR/.env" ]; then
-    set -a
-    source <(grep -v '^#' "$APP_DIR/.env" | sed 's/^/export /')
-    set +a
+    # .env 파일을 안전하게 파싱하여 환경 변수로 설정
+    while IFS= read -r line || [ -n "$line" ]; do
+        # 주석이나 빈 줄 건너뛰기
+        [[ "$line" =~ ^[[:space:]]*# ]] && continue
+        [[ -z "$line" ]] && continue
+        
+        # 첫 번째 = 기준으로 key와 value 분리 (값에 =가 포함될 수 있음)
+        if [[ "$line" =~ ^([^=]+)=(.*)$ ]]; then
+            key="${BASH_REMATCH[1]}"
+            value="${BASH_REMATCH[2]}"
+            
+            # 앞뒤 공백 제거
+            key=$(echo "$key" | xargs)
+            value=$(echo "$value" | xargs)
+            
+            # 값이 있으면 환경 변수로 설정 (값에 특수문자가 있어도 안전하게 처리)
+            if [ -n "$key" ] && [ -n "$value" ]; then
+                export "$key"="$value"
+            fi
+        fi
+    done < "$APP_DIR/.env"
 fi
 
 # 환경 변수 설정
@@ -49,11 +67,29 @@ sudo tee /home/ubuntu/anonymous_project/celery_wrapper.sh > /dev/null <<'CELERY_
 APP_DIR="/home/ubuntu/anonymous_project"
 VENV_DIR="/home/ubuntu/venv"
 
-# .env 파일이 있으면 로드
+# .env 파일이 있으면 안전하게 로드 (특수문자 처리)
 if [ -f "$APP_DIR/.env" ]; then
-    set -a
-    source <(grep -v '^#' "$APP_DIR/.env" | sed 's/^/export /')
-    set +a
+    # .env 파일을 안전하게 파싱하여 환경 변수로 설정
+    while IFS= read -r line || [ -n "$line" ]; do
+        # 주석이나 빈 줄 건너뛰기
+        [[ "$line" =~ ^[[:space:]]*# ]] && continue
+        [[ -z "$line" ]] && continue
+        
+        # 첫 번째 = 기준으로 key와 value 분리 (값에 =가 포함될 수 있음)
+        if [[ "$line" =~ ^([^=]+)=(.*)$ ]]; then
+            key="${BASH_REMATCH[1]}"
+            value="${BASH_REMATCH[2]}"
+            
+            # 앞뒤 공백 제거
+            key=$(echo "$key" | xargs)
+            value=$(echo "$value" | xargs)
+            
+            # 값이 있으면 환경 변수로 설정 (값에 특수문자가 있어도 안전하게 처리)
+            if [ -n "$key" ] && [ -n "$value" ]; then
+                export "$key"="$value"
+            fi
+        fi
+    done < "$APP_DIR/.env"
 fi
 
 # 환경 변수 설정
