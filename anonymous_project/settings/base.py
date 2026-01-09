@@ -5,11 +5,18 @@ Django base settings for anonymous_project project.
 """
 
 from pathlib import Path
-import os
-from dotenv import load_dotenv
+import environ
 
-# .env 파일 로드
-load_dotenv()
+# 환경 변수 초기화
+env = environ.Env(
+    # 기본값 설정 (필요한 경우)
+    DEBUG=(bool, False),
+    REDIS_PORT=(int, 6379),
+    REDIS_DB=(int, 0),
+)
+
+# .env 파일이 있는 경우 자동으로 로드
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -107,10 +114,10 @@ STORAGES = {
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Redis Cache 설정 (ElastiCache for Redis 지원)
-REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
-REDIS_PORT = int(os.getenv('REDIS_PORT', '6379'))
-REDIS_PASSWORD = os.getenv('REDIS_PASSWORD', None)  # ElastiCache의 경우 password 인증 사용 가능
-REDIS_DB = int(os.getenv('REDIS_DB', '0'))
+REDIS_HOST = env('REDIS_HOST', default='localhost')
+REDIS_PORT = env('REDIS_PORT', default=6379)
+REDIS_PASSWORD = env('REDIS_PASSWORD', default=None)  # ElastiCache의 경우 password 인증 사용 가능
+REDIS_DB = env('REDIS_DB', default=0)
 
 # Redis 연결 URL 구성
 if REDIS_PASSWORD:
