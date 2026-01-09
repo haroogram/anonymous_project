@@ -92,6 +92,16 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+# Static files storage 설정
+# 개발 환경에서도 ManifestStaticFilesStorage를 사용하여
+# CSS/JS 파일 변경 시 자동으로 URL이 변경되도록 함
+# 참고: 프로덕션 환경에서는 production.py에서 덮어쓰기됨
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",
+    },
+}
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/6.0/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
