@@ -300,7 +300,7 @@ body {
     padding: 3rem;
     box-shadow: var(--shadow-md);
     border: 1px solid var(--border-color);
-    scroll-margin-top: 96px; /* 앵커 스크롤 시 고정 헤더 높이 보정 */
+    scroll-margin-top: 200px; /* 앵커 스크롤 시 고정 헤더 높이 보정 (더 여유있게 조정) */
 }
 
 /* 히어로 섹션 */
