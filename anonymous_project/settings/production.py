@@ -21,10 +21,35 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
 if not ALLOWED_HOSTS:
     raise ValueError("ALLOWED_HOSTS 환경 변수가 설정되지 않았습니다!")
 
+# ALB를 통한 접속을 위한 설정
+# ALB 도메인을 환경 변수에서 가져오거나 자동 감지
+ALB_DOMAIN = env('ALB_DOMAIN', default=None)
+if ALB_DOMAIN and ALB_DOMAIN not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(ALB_DOMAIN)
+
+# CSRF 신뢰할 수 있는 Origin 설정 (ALB 도메인 포함)
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
+# ALB를 통한 접속을 위해 ALB 도메인 추가
+if ALB_DOMAIN:
+    # HTTP와 HTTPS 모두 허용 (ALB 설정에 따라 다름)
+    alb_http = f'http://{ALB_DOMAIN}'
+    alb_https = f'https://{ALB_DOMAIN}'
+    if alb_http not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(alb_http)
+    if alb_https not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(alb_https)
+
 # 보안 설정
+# ALB 뒤에 있으므로 SECURE_SSL_REDIRECT는 False로 설정 (ALB에서 SSL 종료)
 SECURE_SSL_REDIRECT = env('SECURE_SSL_REDIRECT', default=False)
+# ALB가 HTTPS를 사용하는 경우에만 True로 설정
 SESSION_COOKIE_SECURE = env('SESSION_COOKIE_SECURE', default=False)
 CSRF_COOKIE_SECURE = env('CSRF_COOKIE_SECURE', default=False)
+
+# ALB를 통한 접속 시 X-Forwarded-Proto 헤더 신뢰
+USE_X_FORWARDED_HOST = True
+USE_X_FORWARDED_PORT = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
