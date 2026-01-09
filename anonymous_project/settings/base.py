@@ -16,7 +16,7 @@ env = environ.Env(
 )
 
 # .env 파일이 있는 경우 자동으로 로드
-environ.Env.read_env()
+environ.Env.read_env('/home/ubuntu/anonymous_project/.env')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
