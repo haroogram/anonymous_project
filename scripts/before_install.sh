@@ -224,5 +224,114 @@ fi
 # sudo apt-get update
 # sudo apt-get install -y python3-pip python3-venv nginx
 
+# ========================================
+# Supervisor 설치 및 설정 (packer AMI가 없는 경우에도 동작하도록 보강)
+# ========================================
+echo "Supervisor 설치 및 설정 확인 중..."
+
+if ! command -v supervisorctl &> /dev/null; then
+    echo "Supervisor가 설치되어 있지 않습니다. 설치 중..."
+    sudo apt-get update -y
+    sudo apt-get install -y supervisor
+else
+    echo "✅ Supervisor 이미 설치됨"
+fi
+
+# Supervisor 설정 디렉토리 보장
+if [ ! -d /etc/supervisor/conf.d ]; then
+    sudo mkdir -p /etc/supervisor/conf.d
+fi
+
+# Gunicorn wrapper 스크립트 생성 (.env 파일 로드)
+sudo tee /home/ubuntu/anonymous_project/gunicorn_wrapper.sh > /dev/null <<'GUNICORN_EOF'
+#!/bin/bash
+# Gunicorn wrapper - .env 파일 로드 후 gunicorn 실행
+APP_DIR="/home/ubuntu/anonymous_project"
+VENV_DIR="/home/ubuntu/venv"
+
+# .env 파일이 있으면 로드
+if [ -f "$APP_DIR/.env" ]; then
+    set -a
+    source <(grep -v '^#' "$APP_DIR/.env" | sed 's/^/export /')
+    set +a
+fi
+
+# 환경 변수 설정
+export DJANGO_SETTINGS_MODULE=anonymous_project.settings.production
+
+# Gunicorn 실행
+exec "$VENV_DIR/bin/gunicorn" anonymous_project.wsgi:application "$@"
+GUNICORN_EOF
+
+sudo chmod +x /home/ubuntu/anonymous_project/gunicorn_wrapper.sh
+sudo chown ubuntu:ubuntu /home/ubuntu/anonymous_project/gunicorn_wrapper.sh
+
+# Celery wrapper 스크립트 생성
+sudo tee /home/ubuntu/anonymous_project/celery_wrapper.sh > /dev/null <<'CELERY_EOF'
+#!/bin/bash
+# Celery wrapper - .env 파일 로드 후 celery 실행
+APP_DIR="/home/ubuntu/anonymous_project"
+VENV_DIR="/home/ubuntu/venv"
+
+# .env 파일이 있으면 로드
+if [ -f "$APP_DIR/.env" ]; then
+    set -a
+    source <(grep -v '^#' "$APP_DIR/.env" | sed 's/^/export /')
+    set +a
+fi
+
+# 환경 변수 설정
+export DJANGO_SETTINGS_MODULE=anonymous_project.settings.production
+
+# Celery 실행
+exec "$VENV_DIR/bin/celery" -A anonymous_project "$@"
+CELERY_EOF
+
+sudo chmod +x /home/ubuntu/anonymous_project/celery_wrapper.sh
+sudo chown ubuntu:ubuntu /home/ubuntu/anonymous_project/celery_wrapper.sh
+
+# Supervisor 프로그램 설정 파일 생성/갱신
+sudo tee /etc/supervisor/conf.d/anonymous_project.conf > /dev/null <<EOF
+; Django Gunicorn 프로세스 관리
+[program:anonymous_project]
+command=/home/ubuntu/anonymous_project/gunicorn_wrapper.sh --bind 0.0.0.0:8000 --workers 3 --timeout 120
+directory=/home/ubuntu/anonymous_project
+user=ubuntu
+autostart=false
+autorestart=true
+redirect_stderr=true
+stdout_logfile=/home/ubuntu/anonymous_project/logs/gunicorn.log
+
+; Celery Worker (필요한 경우)
+[program:celery_worker]
+command=/home/ubuntu/anonymous_project/celery_wrapper.sh worker --loglevel=info
+directory=/home/ubuntu/anonymous_project
+user=ubuntu
+autostart=false
+autorestart=true
+redirect_stderr=true
+stdout_logfile=/home/ubuntu/anonymous_project/logs/celery_worker.log
+
+; Celery Beat (필요한 경우)
+[program:celery_beat]
+command=/home/ubuntu/anonymous_project/celery_wrapper.sh beat --loglevel=info
+directory=/home/ubuntu/anonymous_project
+user=ubuntu
+autostart=false
+autorestart=true
+redirect_stderr=true
+stdout_logfile=/home/ubuntu/anonymous_project/logs/celery_beat.log
+EOF
+
+# Supervisor 서비스 활성화 및 재시작
+sudo systemctl enable supervisor || true
+sudo systemctl restart supervisor || sudo systemctl start supervisor || true
+
+# Supervisor 설정 다시 읽기
+sudo supervisorctl reread || true
+sudo supervisorctl update || true
+
+echo "✅ Supervisor 설치 및 설정 완료 (CodeDeploy 단계)"
+
 echo "BeforeInstall 완료"
 

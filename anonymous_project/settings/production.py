@@ -34,14 +34,26 @@ import pymysql
 pymysql.install_as_MySQLdb()
 
 # 데이터베이스 설정 - RDS 연결
-DB_NAME = env('DB_NAME')
-DB_USER = env('DB_USER')
-DB_PASSWORD = env('DB_PASSWORD')
+# 환경 변수가 없으면 명시적으로 에러 발생
+DB_NAME = env('DB_NAME', default=None)
+DB_USER = env('DB_USER', default=None)
+DB_PASSWORD = env('DB_PASSWORD', default=None)
 DB_HOST = env('DB_HOST', default='localhost')
-DB_PORT = env('DB_PORT', default=3306)
+DB_PORT = env.int('DB_PORT', default=3306)
 
-if not all([DB_NAME, DB_USER, DB_PASSWORD]):
-    raise ValueError("데이터베이스 환경 변수(DB_NAME, DB_USER, DB_PASSWORD)가 설정되지 않았습니다!")
+# 빈 값 체크
+if not DB_NAME or not DB_USER or not DB_PASSWORD:
+    missing_vars = []
+    if not DB_NAME:
+        missing_vars.append('DB_NAME')
+    if not DB_USER:
+        missing_vars.append('DB_USER')
+    if not DB_PASSWORD:
+        missing_vars.append('DB_PASSWORD')
+    raise ValueError(
+        f"데이터베이스 환경 변수가 설정되지 않았습니다: {', '.join(missing_vars)}. "
+        f".env 파일 또는 환경 변수를 확인하세요."
+    )
 
 DATABASES = {
     'default': {

@@ -65,6 +65,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'anonymous_project.wsgi.application'
 
 # Database 설정은 development.py와 production.py에서 환경 변수로 설정
+# 명시적으로 설정하지 않으면 에러가 발생하도록 빈 딕셔너리로 초기화
+DATABASES = {}
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
