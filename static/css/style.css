@@ -914,7 +914,7 @@ body {
 .article-content th {
     padding: 1rem 1.25rem;
     text-align: left;
-    color: var(--white);
+    color: var(--primary-color); /* 헤더 배경이 흰색일 때도 잘 보이도록 텍스트 색상 조정 */
     font-weight: 600;
     font-size: 0.95rem;
     letter-spacing: 0.3px;
@@ -1913,6 +1913,17 @@ body {
 
     .nav-card p {
         font-size: 0.85rem;
+    }
+}
+/* 650px 이하에서 코드 블록 줄바꿈 강제 */
+@media (max-width: 680px) {
+    .article-content pre,
+    .article-content pre code {
+        white-space: pre-wrap !important;
+        word-wrap: break-word !important;
+        word-break: break-word !important;
+        overflow-x: visible !important;
+        max-width: 100%;
     }
 }
 
