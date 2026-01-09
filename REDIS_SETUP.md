@@ -202,15 +202,39 @@ date_count = get_daily_visitors_count('2024-01-14')
    - `visitors:set:YYYY-MM-DD`: 특정 날짜의 고유 접속자 IP 집합 (중복 제거용)
 3. **중복 제거**: 같은 IP 주소는 하루에 한 번만 카운트됩니다 (세트 사용).
 
-## 제외 경로
+## 제외 경로 및 필터
 
 다음 경로는 접속자 수 카운팅에서 제외됩니다:
 - `/admin`
 - `/static`
 - `/media`
 - `/favicon.ico`
+- `/api/`
+- `/health`, `/healthz`
+- `/robots.txt`
+- `/sitemap.xml`, `/sitemap`
+- `/.well-known`
+- `/__debug__`, `/debug`
+
+### 추가 필터링
+
+미들웨어는 다음을 자동으로 필터링합니다:
+
+1. **User-Agent 필터링**: 봇, 크롤러, 헬스체크 도구 자동 제외
+   - 검색엔진 봇 (bot, crawler, spider 등)
+   - 헬스체크 도구 (HealthCheck, monitor, ping 등)
+   - 모니터링 서비스 (UptimeRobot, Pingdom, StatusCake 등)
+   - 자동화 도구 (curl, wget, python 등)
+   - AWS ELB 헬스체크
+   - Kubernetes 프로브
+
+2. **IP 주소 필터링**: 내부 IP 자동 제외
+   - localhost (127.x.x.x)
+   - 사설 IP 대역 (10.x.x.x, 172.16-31.x.x, 192.168.x.x)
+   - 링크 로컬 (169.254.x.x)
 
 제외 경로를 추가하려면 `main/middleware.py`의 `VisitorCountMiddleware.EXCLUDED_PATHS` 리스트를 수정하세요.
+User-Agent 패턴을 추가하려면 `EXCLUDED_USER_AGENTS` 리스트를 수정하세요.
 
 ## 문제 해결
 
@@ -250,6 +274,60 @@ date_count = get_daily_visitors_count('2024-01-14')
 - Redis는 메모리 기반이므로 매우 빠른 성능을 제공합니다
 - 일별 키는 30일 후 자동 만료되도록 설정되어 있습니다
 - 대량의 트래픽이 예상되는 경우 Redis 연결 풀 크기를 조정할 수 있습니다 (`settings/base.py`에서 `max_connections` 수정)
+
+## Redis 연결 수 최적화
+
+EC2에서 별도로 구축한 Redis 서버의 접속자 수(연결 수)를 줄이기 위한 최적화:
+
+### 1. 미들웨어 필터링 강화
+- 봇, 헬스체크, 모니터링 도구 자동 제외
+- 내부 IP 주소 자동 제외
+- 불필요한 경로 제외 (robots.txt, sitemap.xml 등)
+
+### 2. Redis 연결 풀 최적화
+- `max_connections`: 연결 풀 최대 크기 제한 (기본: 50)
+- `socket_keepalive`: TCP keepalive로 불필요한 재연결 방지
+- 연결 재사용 최적화
+
+### 3. Celery 연결 최적화
+- `CELERY_BROKER_POOL_LIMIT`: 브로커 연결 풀 크기 제한 (기본: 10)
+- `CELERY_RESULT_EXPIRES`: 결과 TTL 설정으로 메모리 절약 (기본: 3600초)
+- Worker 프로세스 최적화 설정
+
+### 4. Redis 연결 수 확인 방법
+
+Redis 서버에서 현재 연결 수 확인:
+```bash
+redis-cli -h your-redis-host -p 6379 INFO clients
+# 또는
+redis-cli -h your-redis-host -p 6379 CLIENT LIST | wc -l
+```
+
+일반적으로 다음 프로세스들이 Redis에 연결합니다:
+- Gunicorn 워커 프로세스 수 × 연결 풀 크기
+- Celery Worker 프로세스
+- Celery Beat 프로세스
+- Django 애플리케이션 (캐시 및 접속자 수 추적)
+
+### 5. 연결 수가 많은 경우 체크리스트
+
+1. **Gunicorn 워커 수 확인**: 워커가 많을수록 연결 수 증가
+   ```bash
+   ps aux | grep gunicorn
+   ```
+
+2. **Celery 프로세스 확인**: 불필요한 Worker/Beat 프로세스가 있는지 확인
+   ```bash
+   ps aux | grep celery
+   supervisorctl status celery_worker celery_beat
+   ```
+
+3. **연결 풀 크기 조정**: `settings/base.py`에서 `max_connections` 값 감소 고려
+
+4. **봇/헬스체크 요청 확인**: 로그에서 실제 사용자 요청인지 확인
+   ```bash
+   tail -f logs/django.log | grep "접속자 수"
+   ```
 
 ## 비용 최적화 (AWS ElastiCache)
 
