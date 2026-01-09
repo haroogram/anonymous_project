@@ -80,7 +80,7 @@ if USE_S3_STATIC:
     # S3 커스텀 도메인 (STATIC_URL 계산에 필요)
     AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
     AWS_DEFAULT_ACL = None
-    
+      
     # Static files를 S3에 저장
     # 커스텀 StaticStorage 클래스가 모든 S3 관련 설정을 포함하고 있음
     STORAGES = {
@@ -90,7 +90,7 @@ if USE_S3_STATIC:
         # default는 Django 기본값 사용 (로컬 파일 시스템)
         # Media files를 S3에 저장하려면 MediaStorage 클래스를 추가하세요
     }
-    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static'
     # STATIC_ROOT는 base.py에서 이미 설정되어 있지만, S3 사용 시에도 필요 (임시 저장용)
     
     # Media files도 S3를 사용하려면 아래 주석 해제
