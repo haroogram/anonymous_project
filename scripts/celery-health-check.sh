@@ -21,12 +21,37 @@ echo ""
 
 # 1. Redis 연결 확인
 echo "1. Redis 연결 확인:"
-if redis-cli ping > /dev/null 2>&1; then
+
+# 환경 변수에서 Redis 설정 읽기 (.env 파일이 있으면 로드)
+if [ -f "${PROJECT_DIR}/.env" ]; then
+    set -a
+    source "${PROJECT_DIR}/.env"
+    set +a
+fi
+
+# Redis 연결 정보 설정 (환경 변수 또는 기본값)
+REDIS_HOST="${REDIS_HOST:-localhost}"
+REDIS_PORT="${REDIS_PORT:-6379}"
+REDIS_PASSWORD="${REDIS_PASSWORD:-}"
+
+echo "   Redis 호스트: ${REDIS_HOST}:${REDIS_PORT}"
+
+# redis-cli 명령어 구성
+REDIS_CLI_CMD="redis-cli -h ${REDIS_HOST} -p ${REDIS_PORT}"
+
+# 비밀번호가 있으면 추가
+if [ -n "$REDIS_PASSWORD" ]; then
+    REDIS_CLI_CMD="${REDIS_CLI_CMD} -a ${REDIS_PASSWORD}"
+fi
+
+# Redis 연결 테스트
+if $REDIS_CLI_CMD ping > /dev/null 2>&1; then
     echo -e "${GREEN}✓ Redis 연결 성공${NC}"
-    redis-cli ping
+    $REDIS_CLI_CMD ping
 else
     echo -e "${RED}✗ Redis 연결 실패${NC}"
-    echo "   Redis 서버가 실행 중인지 확인하세요: redis-cli ping"
+    echo "   Redis 서버가 실행 중인지 확인하세요: $REDIS_CLI_CMD ping"
+    echo "   환경 변수 확인: REDIS_HOST=${REDIS_HOST}, REDIS_PORT=${REDIS_PORT}"
 fi
 echo ""
 
