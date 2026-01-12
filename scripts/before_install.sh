@@ -126,6 +126,19 @@ if [ -z "$ALLOWED_HOSTS" ]; then
 fi
 echo "ALLOWED_HOSTS=$ALLOWED_HOSTS" >> $TEMP_ENV_FILE
 
+# ALB 도메인 설정 (선택사항, ALB를 사용하는 경우)
+ALB_DOMAIN=$(get_ssm_parameter "alb/domain")
+if [ -n "$ALB_DOMAIN" ]; then
+    echo "ALB_DOMAIN=$ALB_DOMAIN" >> $TEMP_ENV_FILE
+    echo "✅ ALB 도메인 설정됨: $ALB_DOMAIN"
+fi
+
+# CSRF_TRUSTED_ORIGINS 설정 (선택사항)
+CSRF_TRUSTED_ORIGINS=$(get_ssm_parameter "django/csrf-trusted-origins")
+if [ -n "$CSRF_TRUSTED_ORIGINS" ]; then
+    echo "CSRF_TRUSTED_ORIGINS=$CSRF_TRUSTED_ORIGINS" >> $TEMP_ENV_FILE
+fi
+
 # 데이터베이스 설정 (필수)
 DB_NAME=$(get_ssm_parameter "db/name")
 DB_USER=$(get_ssm_parameter "db/user")
@@ -223,6 +236,151 @@ fi
 # 필요한 시스템 패키지 설치 확인 (필요한 경우)
 # sudo apt-get update
 # sudo apt-get install -y python3-pip python3-venv nginx
+
+# ========================================
+# Supervisor 설치 및 설정 (packer AMI가 없는 경우에도 동작하도록 보강)
+# ========================================
+echo "Supervisor 설치 및 설정 확인 중..."
+
+if ! command -v supervisorctl &> /dev/null; then
+    echo "Supervisor가 설치되어 있지 않습니다. 설치 중..."
+    sudo apt-get update -y
+    sudo apt-get install -y supervisor
+else
+    echo "✅ Supervisor 이미 설치됨"
+fi
+
+# Supervisor 설정 디렉토리 보장
+if [ ! -d /etc/supervisor/conf.d ]; then
+    sudo mkdir -p /etc/supervisor/conf.d
+fi
+
+# Gunicorn wrapper 스크립트 생성 (.env 파일 로드)
+sudo tee /home/ubuntu/anonymous_project/gunicorn_wrapper.sh > /dev/null <<'GUNICORN_EOF'
+#!/bin/bash
+# Gunicorn wrapper - .env 파일 로드 후 gunicorn 실행
+APP_DIR="/home/ubuntu/anonymous_project"
+VENV_DIR="/home/ubuntu/venv"
+
+# .env 파일이 있으면 안전하게 로드 (특수문자 처리)
+if [ -f "$APP_DIR/.env" ]; then
+    # .env 파일을 안전하게 파싱하여 환경 변수로 설정
+    while IFS= read -r line || [ -n "$line" ]; do
+        # 주석이나 빈 줄 건너뛰기
+        [[ "$line" =~ ^[[:space:]]*# ]] && continue
+        [[ -z "$line" ]] && continue
+        
+        # 첫 번째 = 기준으로 key와 value 분리 (값에 =가 포함될 수 있음)
+        if [[ "$line" =~ ^([^=]+)=(.*)$ ]]; then
+            key="${BASH_REMATCH[1]}"
+            value="${BASH_REMATCH[2]}"
+            
+            # 앞뒤 공백 제거
+            key=$(echo "$key" | xargs)
+            value=$(echo "$value" | xargs)
+            
+            # 값이 있으면 환경 변수로 설정 (값에 특수문자가 있어도 안전하게 처리)
+            if [ -n "$key" ] && [ -n "$value" ]; then
+                export "$key"="$value"
+            fi
+        fi
+    done < "$APP_DIR/.env"
+fi
+
+# 환경 변수 설정
+export DJANGO_SETTINGS_MODULE=anonymous_project.settings.production
+
+# Gunicorn 실행
+exec "$VENV_DIR/bin/gunicorn" anonymous_project.wsgi:application "$@"
+GUNICORN_EOF
+
+sudo chmod +x /home/ubuntu/anonymous_project/gunicorn_wrapper.sh
+sudo chown ubuntu:ubuntu /home/ubuntu/anonymous_project/gunicorn_wrapper.sh
+
+# Celery wrapper 스크립트 생성
+sudo tee /home/ubuntu/anonymous_project/celery_wrapper.sh > /dev/null <<'CELERY_EOF'
+#!/bin/bash
+# Celery wrapper - .env 파일 로드 후 celery 실행
+APP_DIR="/home/ubuntu/anonymous_project"
+VENV_DIR="/home/ubuntu/venv"
+
+# .env 파일이 있으면 안전하게 로드 (특수문자 처리)
+if [ -f "$APP_DIR/.env" ]; then
+    # .env 파일을 안전하게 파싱하여 환경 변수로 설정
+    while IFS= read -r line || [ -n "$line" ]; do
+        # 주석이나 빈 줄 건너뛰기
+        [[ "$line" =~ ^[[:space:]]*# ]] && continue
+        [[ -z "$line" ]] && continue
+        
+        # 첫 번째 = 기준으로 key와 value 분리 (값에 =가 포함될 수 있음)
+        if [[ "$line" =~ ^([^=]+)=(.*)$ ]]; then
+            key="${BASH_REMATCH[1]}"
+            value="${BASH_REMATCH[2]}"
+            
+            # 앞뒤 공백 제거
+            key=$(echo "$key" | xargs)
+            value=$(echo "$value" | xargs)
+            
+            # 값이 있으면 환경 변수로 설정 (값에 특수문자가 있어도 안전하게 처리)
+            if [ -n "$key" ] && [ -n "$value" ]; then
+                export "$key"="$value"
+            fi
+        fi
+    done < "$APP_DIR/.env"
+fi
+
+# 환경 변수 설정
+export DJANGO_SETTINGS_MODULE=anonymous_project.settings.production
+
+# Celery 실행
+exec "$VENV_DIR/bin/celery" -A anonymous_project "$@"
+CELERY_EOF
+
+sudo chmod +x /home/ubuntu/anonymous_project/celery_wrapper.sh
+sudo chown ubuntu:ubuntu /home/ubuntu/anonymous_project/celery_wrapper.sh
+
+# Supervisor 프로그램 설정 파일 생성/갱신
+sudo tee /etc/supervisor/conf.d/anonymous_project.conf > /dev/null <<EOF
+; Django Gunicorn 프로세스 관리
+[program:anonymous_project]
+command=/home/ubuntu/anonymous_project/gunicorn_wrapper.sh --bind 0.0.0.0:8000 --workers 3 --timeout 120
+directory=/home/ubuntu/anonymous_project
+user=ubuntu
+autostart=false
+autorestart=true
+redirect_stderr=true
+stdout_logfile=/home/ubuntu/anonymous_project/logs/gunicorn.log
+
+; Celery Worker (필요한 경우)
+[program:celery_worker]
+command=/home/ubuntu/anonymous_project/celery_wrapper.sh worker --loglevel=info
+directory=/home/ubuntu/anonymous_project
+user=ubuntu
+autostart=false
+autorestart=true
+redirect_stderr=true
+stdout_logfile=/home/ubuntu/anonymous_project/logs/celery_worker.log
+
+; Celery Beat (필요한 경우)
+[program:celery_beat]
+command=/home/ubuntu/anonymous_project/celery_wrapper.sh beat --loglevel=info
+directory=/home/ubuntu/anonymous_project
+user=ubuntu
+autostart=false
+autorestart=true
+redirect_stderr=true
+stdout_logfile=/home/ubuntu/anonymous_project/logs/celery_beat.log
+EOF
+
+# Supervisor 서비스 활성화 및 재시작
+sudo systemctl enable supervisor || true
+sudo systemctl restart supervisor || sudo systemctl start supervisor || true
+
+# Supervisor 설정 다시 읽기
+sudo supervisorctl reread || true
+sudo supervisorctl update || true
+
+echo "✅ Supervisor 설치 및 설정 완료 (CodeDeploy 단계)"
 
 echo "BeforeInstall 완료"
 
