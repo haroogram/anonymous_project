@@ -55,28 +55,64 @@ else
 fi
 echo ""
 
-# 2. Celery Worker 연결 확인
-echo "2. Celery Worker 연결 확인:"
-if [ -f "${VENV_DIR}/bin/celery" ]; then
-    cd "${PROJECT_DIR}"
-    if DJANGO_SETTINGS_MODULE=anonymous_project.settings.production ${VENV_DIR}/bin/celery -A anonymous_project.celery:app inspect ping > /dev/null 2>&1; then
-        echo -e "${GREEN}✓ Celery Worker 연결 성공${NC}"
-        DJANGO_SETTINGS_MODULE=anonymous_project.settings.production ${VENV_DIR}/bin/celery -A anonymous_project.celery:app inspect ping
+# 2. Supervisor 프로세스 상태 확인 (먼저 확인)
+echo "2. Supervisor 프로세스 상태:"
+WORKER_RUNNING=false
+BEAT_RUNNING=false
+
+if command -v supervisorctl > /dev/null 2>&1; then
+    # Supervisor 상태 확인
+    WORKER_STATUS=$(sudo supervisorctl status celery_worker 2>/dev/null | awk '{print $2}' || echo "")
+    BEAT_STATUS=$(sudo supervisorctl status celery_beat 2>/dev/null | awk '{print $2}' || echo "")
+    
+    # 전체 상태 출력
+    sudo supervisorctl status celery_worker celery_beat 2>/dev/null || echo "Supervisor 서비스를 확인할 수 없습니다"
+    
+    # 상태 파싱
+    if [ "$WORKER_STATUS" = "RUNNING" ]; then
+        WORKER_RUNNING=true
+        echo -e "   ${GREEN}✓ Celery Worker 프로세스 실행 중${NC}"
     else
-        echo -e "${RED}✗ Celery Worker 연결 실패${NC}"
-        echo "   Worker가 실행 중인지 확인하세요: supervisorctl status celery_worker"
+        echo -e "   ${RED}✗ Celery Worker 프로세스가 실행 중이 아닙니다 (상태: ${WORKER_STATUS:-UNKNOWN})${NC}"
+    fi
+    
+    if [ "$BEAT_STATUS" = "RUNNING" ]; then
+        BEAT_RUNNING=true
+        echo -e "   ${GREEN}✓ Celery Beat 프로세스 실행 중${NC}"
+    else
+        echo -e "   ${RED}✗ Celery Beat 프로세스가 실행 중이 아닙니다 (상태: ${BEAT_STATUS:-UNKNOWN})${NC}"
     fi
 else
-    echo -e "${YELLOW}⚠ Celery 명령어를 찾을 수 없습니다. 가상환경 경로를 확인하세요.${NC}"
+    echo -e "${YELLOW}⚠ supervisorctl 명령어를 찾을 수 없습니다${NC}"
 fi
 echo ""
 
-# 3. Supervisor 프로세스 상태 확인
-echo "3. Supervisor 프로세스 상태:"
-if command -v supervisorctl > /dev/null 2>&1; then
-    sudo supervisorctl status celery_worker celery_beat 2>/dev/null || echo "Supervisor 서비스를 확인할 수 없습니다"
+# 3. Celery Worker 연결 확인 (프로세스가 실행 중일 때만)
+echo "3. Celery Worker 연결 확인:"
+if [ "$WORKER_RUNNING" = true ]; then
+    if [ -f "${VENV_DIR}/bin/celery" ]; then
+        cd "${PROJECT_DIR}"
+        # 환경 변수 로드 (이미 위에서 로드했지만 확실히 하기 위해)
+        if [ -f "${PROJECT_DIR}/.env" ]; then
+            set -a
+            source "${PROJECT_DIR}/.env"
+            set +a
+        fi
+        
+        if DJANGO_SETTINGS_MODULE=anonymous_project.settings.production ${VENV_DIR}/bin/celery -A anonymous_project.celery:app inspect ping > /dev/null 2>&1; then
+            echo -e "${GREEN}✓ Celery Worker 연결 성공 (Redis 브로커 응답 정상)${NC}"
+            DJANGO_SETTINGS_MODULE=anonymous_project.settings.production ${VENV_DIR}/bin/celery -A anonymous_project.celery:app inspect ping
+        else
+            echo -e "${RED}✗ Celery Worker 연결 실패${NC}"
+            echo "   프로세스는 실행 중이지만 Redis 브로커에 연결할 수 없습니다."
+            echo "   Redis 연결 상태와 Worker 로그를 확인하세요."
+        fi
+    else
+        echo -e "${YELLOW}⚠ Celery 명령어를 찾을 수 없습니다. 가상환경 경로를 확인하세요.${NC}"
+    fi
 else
-    echo -e "${YELLOW}⚠ supervisorctl 명령어를 찾을 수 없습니다${NC}"
+    echo -e "${YELLOW}⚠ Celery Worker 프로세스가 실행 중이 아니므로 연결 확인을 건너뜁니다.${NC}"
+    echo "   먼저 Worker를 시작하세요: sudo supervisorctl start celery_worker"
 fi
 echo ""
 
