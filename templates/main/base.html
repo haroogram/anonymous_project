@@ -10,13 +10,13 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="Anonymous Project">
     <meta property="og:description" content="프로그래밍과 인프라를 쉽게 배우는 Anonymous Project">
-    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'img/anonymous.png' %}">
+    <meta property="og:image" content="{% static 'img/anonymous.png' %}">
 
     {# 선택: Twitter 카드도 함께 설정 (미리보기 호환성 향상) #}
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Anonymous Project">
     <meta name="twitter:description" content="프로그래밍과 인프라를 쉽게 배우는 Anonymous Project">
-    <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'img/anonymous.png' %}">
+    <meta name="twitter:image" content="{% static 'img/anonymous.png' %}">
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block extra_css %}{% endblock %}
