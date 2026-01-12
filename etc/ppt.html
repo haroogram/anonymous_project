@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CloudFormation 사용 이유 (PPT 발표 원고)</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: #121a33;
+      --text: #e9ecf5;
+      --muted: #b9c0d6;
+      --accent: #7aa2ff;
+      --line: rgba(255, 255, 255, .10);
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 20% -10%, rgba(122, 162, 255, .35), transparent 60%),
+        radial-gradient(900px 500px at 90% 10%, rgba(93, 214, 170, .18), transparent 55%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    header {
+      padding: 40px 18px 18px;
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      letter-spacing: -.3px;
+    }
+
+    .sub {
+      color: var(--muted);
+      margin: 0;
+      font-size: 14px;
+    }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255, 255, 255, .06), rgba(255, 255, 255, .03));
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px 18px 14px;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, .25);
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      letter-spacing: -.2px;
+    }
+
+    h3 {
+      margin: 14px 0 8px;
+      font-size: 15px;
+    }
+
+    ul {
+      margin: 8px 0 0 18px;
+      padding: 0;
+    }
+
+    li {
+      margin: 6px 0;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 12px;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 10px;
+      margin: 0 6px 8px 0;
+    }
+
+    .quote {
+      margin: 12px 0 0;
+      padding: 12px 14px;
+      border-left: 3px solid var(--accent);
+      background: rgba(122, 162, 255, .08);
+      border-radius: 10px;
+    }
+
+    code {
+      font-family: ui-monospace, monospace;
+      font-size: 12.5px;
+      background: rgba(255, 255, 255, .06);
+      padding: 2px 6px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+    }
+
+    footer {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 10px 18px 30px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .hr {
+      height: 1px;
+      background: var(--line);
+      margin: 12px 0 0;
+    }
+
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .image-grid img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+    }
+
+    .image-grid.small {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      max-width: 900px;
+      margin: 12px auto;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>CloudFormation 사용 이유</h1>
+    <p class="sub">
+      아키텍처 설계는 별도 담당 — 나는
+      <b>CloudFormation(YAML) 기반 인프라 구축 및 검증</b>을 담당
+    </p>
+    <div style="margin-top:12px">
+      <span class="tag">Infrastructure as Code</span>
+      <span class="tag">Stack 생성 / 삭제</span>
+      <span class="tag">YAML 자동화</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>1) CloudFormation을 사용한 배경</h2>
+      <ul>
+        <li>다수의 AWS 리소스를 동시에 구성해야 했다.</li>
+        <li>콘솔 수작업보다 코드 기반 관리가 효율적이라 판단했다.</li>
+        <li>팀 프로젝트 특성상 동일한 환경의 반복 구축이 필요했다.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>2) CloudFormation 한 줄 정의</h2>
+      <ul>
+        <li>AWS 인프라를 YAML 코드로 정의하는 서비스</li>
+        <li>여러 리소스를 하나의 Stack으로 관리</li>
+      </ul>
+      <p class="quote">
+        인프라를 코드로 관리하여 동일한 환경을 언제든 재현할 수 있다.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>3) CloudFormation을 선택한 이유</h2>
+      <h3>① 반복 구축 가능</h3>
+      <ul>
+        <li>스택 삭제 후 동일 환경 재생성 가능</li>
+      </ul>
+      <h3>② 설정 일관성</h3>
+      <ul>
+        <li>모든 설정이 YAML로 명시됨</li>
+      </ul>
+      <h3>③ 팀 협업에 적합</h3>
+      <ul>
+        <li>파일 공유만으로 환경 공유 가능</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>4) 교육 프로젝트 관점에서의 가치</h2>
+      <ul>
+        <li>Infrastructure as Code 실습 경험</li>
+        <li>수정 → 재배포 과정을 통한 이해도 향상</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>5) 담당 역할</h2>
+      <ul>
+        <li>CloudFormation YAML 작성</li>
+        <li>스택 생성/삭제 반복 검증</li>
+        <li>오류 발생 시 템플릿 수정</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>6) CloudFormation 스택 생성</h2>
+
+      <p>① YAML 템플릿 업로드</p>
+      <img src="img/stack.png" style="max-width:900px; width:100%; display:block; margin:12px auto; border-radius:12px">
+
+      <p>② 파라미터 설정 및 스택 생성</p>
+      <img src="img/stack1.png"
+        style="max-width:900px; width:100%; display:block; margin:12px auto; border-radius:12px">
+
+      <p>③ 생성 후 주요 리소스 확인</p>
+
+      <div class="image-grid small">
+        <img src="img/ins.png">
+        <img src="img/nat.png">
+        <img src="img/rt.png">
+        <img src="img/sb.png">
+        <img src="img/sg.png">
+        <img src="img/alb.png">
+      </div>
+
+      <ul>
+        <li>리소스가 정의된 순서대로 자동 생성됨</li>
+        <li>네트워크 및 컴퓨트 리소스 정상 생성 확인</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>7) 스택 생성 중 오류 (CREATE_FAILED)</h2>
+
+      <p>
+        스택 생성 단계에서 하나의 오류라도 발생하면
+        전체 스택 생성이 실패한다.
+      </p>
+
+      <div class="image-grid small">
+        <img src="img/fail-1.png">
+        <img src="img/fail-3.png">
+      </div>
+
+      <ul>
+        <li>스택 생성 단계에서 SecureString 미지원 → String으로 수정</li>
+        <li>S3, RDS 리소스 생성 권한 부족</li>
+        <li>파라미터 네이밍 규칙 오류</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>8) 스택 삭제 중 오류 (DELETE_FAILED)</h2>
+
+      <p>
+        S3, RDS와 같은 리소스는 생성 권한과 별도로
+        삭제 권한이 필요하며,
+        해당 권한이 없는 경우 스택 삭제가 중단되었다.
+      </p>
+
+      <p>
+      <div class="image-grid">
+        <img src="img/dfail-1.png">
+        <img src="img/dfail-2.png">
+        <img src="img/dfail-3.png">
+        <img src="img/dfail-4.png">
+      </div>
+      특히 스택 삭제 중 가장 자주 발생한 S3 버킷 오류의 경우,
+      삭제 오류를 방지하기 위해 버킷을 수동으로 먼저 삭제한 것이
+      CloudFormation 스택 삭제 실패의 원인이 되었다.
+      </p>
+
+      <p class="quote">
+        CloudFormation은 생성뿐 아니라 삭제 과정까지
+        리소스 관리 범위를 이해해야 안정적으로 사용할 수 있다.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>9) 마무리</h2>
+
+      <p>
+        CloudFormation을 이용한 인프라 구축은
+        코드 기반으로 환경을 관리할 수 있다는 점에서 매우 편리하다.
+      </p>
+
+      <p>
+        그러나 코드에 단 하나의 오류가 있거나,
+        파라미터로 전달되는 리소스에 대한 권한이 부족할 경우
+        스택 생성 및 삭제가 실패할 수 있다.
+        또한 스택 생성이 완료되었더라도,
+        헬스체크 실패(Unhealthy)나
+        Auto Scaling Group 설정 오류로 인해
+        인스턴스가 정상적으로 동작하지 않는 문제도 발생하였다.
+      </p>
+
+      <p>
+        실습 과정에서 스택 생성에는 평균 약 15분,
+        삭제에는 20~25분 정도가 소요되었으며,
+        작은 설정 오류 하나가 전체 작업 시간을 크게 증가시킨다는 점을
+        직접 경험할 수 있었다.
+      </p>
+
+      <p class="quote">
+        CloudFormation은 편리한 도구이지만,
+        안정적인 사용을 위해서는
+        사전 설계와 권한, 설정에 대한 충분한 이해가 필요하다.
+      </p>
+    </section>
+  </main>
+
+
+  <footer>
+    <div class="hr"></div>
+    Team Project · CloudFormation · HTML PPT & Report
+  </footer>
+</body>
+
+</html>
