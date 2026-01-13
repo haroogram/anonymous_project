@@ -146,3 +146,11 @@ def search(request):
         'results_count': sum(len(r['topics']) for r in results) if results else 0,
     }
     return render(request, 'main/search.html', context)
+
+
+def healthz(request):
+    """
+    Health check 엔드포인트
+    ASG/Target Group health check용
+    """
+    return JsonResponse({'status': 'ok'}, status=200)

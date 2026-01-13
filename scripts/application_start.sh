@@ -146,6 +146,79 @@ if command -v supervisorctl &> /dev/null; then
     sudo supervisorctl restart celery_beat || sudo supervisorctl start celery_beat || true
 fi
 
+# ========================================
+# Nginx 설정: 배포 후 상태 (앱으로 healthz 프록시)
+# ========================================
+echo "Nginx 설정: 배포 후 상태로 변경 중..."
+
+# Nginx 설정 파일 생성 (배포 후: 앱으로 healthz 프록시)
+sudo tee /etc/nginx/sites-available/anonymous_project > /dev/null <<'NGINX_POST_DEPLOY_EOF'
+# Django 애플리케이션을 위한 Nginx 설정
+# 배포 후 상태: 앱으로 healthz 프록시 (실제 앱 상태 확인)
+
+upstream django {
+    server 127.0.0.1:8000;
+}
+
+server {
+    listen 80;
+    server_name _;
+
+    client_max_body_size 100M;
+
+    # 헬스 체크 - 배포 후: 앱으로 프록시하여 실제 앱 상태 확인
+    location /healthz {
+        proxy_pass http://django;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_connect_timeout 5s;
+        proxy_send_timeout 5s;
+        proxy_read_timeout 5s;
+        access_log off;
+    }
+
+    # Static files
+    location /static/ {
+        alias /home/ubuntu/anonymous_project/staticfiles/;
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+    }
+
+    # Media files (필요한 경우)
+    # location /media/ {
+    #     alias /home/ubuntu/anonymous_project/media/;
+    #     expires 30d;
+    # }
+
+    # Django 애플리케이션
+    location / {
+        proxy_pass http://django;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_redirect off;
+        
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+    }
+}
+NGINX_POST_DEPLOY_EOF
+
+# Nginx 설정 테스트 및 재시작
+if sudo nginx -t; then
+    echo "✅ Nginx 설정 테스트 성공"
+    sudo systemctl reload nginx || sudo systemctl restart nginx || true
+    echo "✅ Nginx 설정 변경 완료 (배포 후 상태: 앱으로 healthz 프록시)"
+else
+    echo "❌ Nginx 설정 테스트 실패"
+    echo "⚠️  경고: Nginx 설정 변경 실패, 기존 설정 유지"
+    # 실패해도 배포는 계속 진행 (기존 설정 사용)
+fi
+
 deactivate
 
 echo "ApplicationStart 완료"
