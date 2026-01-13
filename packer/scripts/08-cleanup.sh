@@ -5,15 +5,9 @@ echo "================================"
 echo "[8/8] 정리 및 최적화"
 echo "================================"
 
-# Nginx 설정 파일 정리 (이전 설정 제거)
-echo "Nginx 설정 파일 정리 중..."
-# sites-enabled 하위의 모든 심볼릭 링크 제거 (이전 설정 제거)
-sudo rm -f /etc/nginx/sites-enabled/* 2>/dev/null || true
-# sites-available 하위의 이전 설정 파일 제거 (anonymous_project 제외)
-sudo find /etc/nginx/sites-available/ -type f ! -name "anonymous_project" ! -name "default" ! -name "default.backup" -delete 2>/dev/null || true
-# anonymous_project 설정 파일도 제거 (04-nginx-setup.sh에서 새로 생성됨)
-sudo rm -f /etc/nginx/sites-available/anonymous_project 2>/dev/null || true
-echo "✅ Nginx 설정 파일 정리 완료"
+# Nginx 설정 파일은 04-nginx-setup.sh에서 이미 올바르게 설정되었으므로 유지
+# cleanup 단계에서는 nginx 설정을 삭제하지 않음 (AMI에 포함되어야 함)
+# 단, 불필요한 default 설정만 제거 (이미 04-nginx-setup.sh에서 처리됨)
 
 # APT 캐시 정리
 sudo apt-get autoremove -y

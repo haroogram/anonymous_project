@@ -70,8 +70,9 @@ server {
 EOF
 
 # 사이트 활성화 (디폴트 비활성화)
-sudo ln -sf /etc/nginx/sites-available/anonymous_project /etc/nginx/sites-enabled/anonymous_project
 sudo rm -f /etc/nginx/sites-enabled/default
+sudo rm -f /etc/nginx/sites-enabled/healthz
+sudo ln -sf /etc/nginx/sites-available/anonymous_project /etc/nginx/sites-enabled/anonymous_project
 
 # Nginx 설정 테스트
 sudo nginx -t
