@@ -106,12 +106,63 @@ jobs:
             -var 'source_ami_id=' \
             packer.pkr.hcl | tee packer-build.log
           
-          # AMI ID 추출
-          AMI_ID=$(grep -oP 'ami-[a-z0-9]{17}' packer-build.log | tail -1 || grep -o 'ami-[a-z0-9]*' packer-manifest.json | head -1)
+          BUILD_EXIT_CODE=${PIPESTATUS[0]}
+          if [ $BUILD_EXIT_CODE -ne 0 ]; then
+            echo "❌ Packer 빌드 실패 (종료 코드: $BUILD_EXIT_CODE)"
+            echo "빌드 로그 (마지막 100줄):"
+            tail -n 100 packer-build.log
+            exit 1
+          fi
+          
+          echo ""
+          echo "Packer manifest 파일 확인 중..."
+          if [ ! -f "packer-manifest.json" ]; then
+            echo "❌ packer-manifest.json 파일이 생성되지 않았습니다."
+            echo "빌드 로그 (마지막 100줄):"
+            tail -n 100 packer-build.log
+            exit 1
+          fi
+          
+          # Packer manifest 파일에서 AMI ID 추출 (가장 신뢰할 수 있는 방법)
+          echo "Packer manifest 파일에서 AMI ID 추출 중..."
+          # jq 설치 (없으면 설치)
+          if ! command -v jq &> /dev/null; then
+            echo "jq 설치 중..."
+            sudo apt-get update -qq && sudo apt-get install -y jq
+          fi
+          
+          # manifest 파일 구조: {"builds": [{"name": "...", "artifact_id": "ap-northeast-2:ami-xxxxx", ...}]}
+          # artifact_id에서 AMI ID 추출
+          AMI_ID=$(jq -r '.builds[-1].artifact_id' packer-manifest.json 2>/dev/null | grep -oP 'ami-[a-z0-9]{17}' | head -1)
+          
+          # jq로 찾지 못한 경우 다른 방법 시도
+          if [ -z "$AMI_ID" ] || [ "$AMI_ID" = "null" ]; then
+            echo "jq로 찾지 못함, 다른 방법으로 추출 시도..."
+            # manifest 파일에서 직접 추출
+            AMI_ID=$(grep -oP 'ami-[a-z0-9]{17}' packer-manifest.json | head -1)
+          fi
+          
+          # manifest에서 찾지 못한 경우 로그에서 추출
+          if [ -z "$AMI_ID" ]; then
+            echo "로그에서 AMI ID 추출 시도 중..."
+            # Packer 출력 형식: "amazon-ebs.anonymous_project: AMIs were created:\namazon-ebs.anonymous_project: ap-northeast-2: ami-xxxxx"
+            AMI_ID=$(grep -i "AMIs were created" packer-build.log -A 5 | grep -oP 'ami-[a-z0-9]{17}' | head -1)
+          fi
+          
+          # 여전히 찾지 못한 경우 다른 패턴 시도
+          if [ -z "$AMI_ID" ]; then
+            echo "다른 패턴으로 AMI ID 추출 시도 중..."
+            AMI_ID=$(grep -oP 'ami-[a-z0-9]{17}' packer-build.log | tail -1)
+          fi
           
           if [ -z "$AMI_ID" ]; then
             echo "❌ AMI ID를 찾을 수 없습니다."
-            cat packer-build.log
+            echo ""
+            echo "Packer manifest 파일 내용:"
+            cat packer-manifest.json
+            echo ""
+            echo "Packer 빌드 로그 (마지막 100줄):"
+            tail -n 100 packer-build.log
             exit 1
           fi
           
@@ -120,6 +171,37 @@ jobs:
           
           # 출력 설정
           echo "ami-id=$AMI_ID" >> $GITHUB_OUTPUT
+          
+          # 디버깅: manifest 파일 내용 출력
+          echo ""
+          echo "Packer manifest 파일 내용:"
+          cat packer-manifest.json | jq '.' 2>/dev/null || cat packer-manifest.json
+
+      - name: Verify AMI exists
+        run: |
+          echo "생성된 AMI가 실제로 존재하는지 확인 중..."
+          AMI_ID="${{ env.AMI_ID }}"
+          AWS_REGION="${{ env.AWS_REGION }}"
+          
+          # AMI 존재 여부 확인
+          AMI_INFO=$(aws ec2 describe-images \
+            --image-ids "$AMI_ID" \
+            --region "$AWS_REGION" \
+            --query 'Images[0]' \
+            --output json 2>&1)
+          
+          if echo "$AMI_INFO" | grep -q "InvalidAMIID"; then
+            echo "❌ AMI가 존재하지 않습니다: $AMI_ID"
+            echo "AMI 정보: $AMI_INFO"
+            exit 1
+          elif echo "$AMI_INFO" | grep -q "ImageId"; then
+            echo "✅ AMI 확인 완료: $AMI_ID"
+            echo "AMI 상세 정보:"
+            echo "$AMI_INFO" | jq -r '{ImageId, Name, State, CreationDate, OwnerId}' 2>/dev/null || echo "$AMI_INFO"
+          else
+            echo "⚠️  AMI 확인 중 오류 발생: $AMI_INFO"
+            echo "AMI가 존재하는지 수동으로 확인하세요."
+          fi
 
       - name: Save AMI ID to Parameter Store
         run: |
