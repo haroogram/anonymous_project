@@ -288,13 +288,14 @@ jobs:
                 --query 'sort_by(LaunchTemplateVersions, &VersionNumber)[-1].VersionNumber' \
                 --output text)
             echo "[LT] Creating new version with AMI: ${AMI_ID}"
-            echo "[LT] Note: UserData from source version will be removed (Packer AMI already has all required setup)"
+            echo "[LT] Note: Keeping UserData from source version (may include Lifecycle Hook completion)"
+            # 원본 Launch Template의 UserData를 유지 (Lifecycle Hook 완료 로직이 있을 수 있음)
+            # ImageId만 업데이트하고 나머지는 source version에서 가져옴
             aws ec2 create-launch-template-version \
                 --launch-template-id $LT_ID \
                 --source-version $LATEST_VERSION \
                 --launch-template-data "{
                 \"ImageId\": \"${AMI_ID}\",
-                \"UserData\": \"\",
                 \"TagSpecifications\": [
                     {\"ResourceType\": \"instance\", \"Tags\": [{\"Key\": \"Name\", \"Value\": \"anonymous-project\"}]}
                 ]
