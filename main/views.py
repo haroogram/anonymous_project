@@ -154,3 +154,9 @@ def healthz(request):
     ASG/Target Group health check용
     """
     return JsonResponse({'status': 'ok'}, status=200)
+
+
+@cache_page(cache_timeout)
+def about(request):
+    """프로젝트 소개 페이지"""
+    return render(request, 'main/about.html')

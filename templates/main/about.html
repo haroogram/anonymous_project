@@ -1,0 +1,361 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}프로젝트 소개 - anonymous{% endblock %}
+
+{% block sidebar %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .content-wrapper {
+        grid-template-columns: 1fr !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="topic-detail-header">
+    <nav class="breadcrumb">
+        <a href="{% url 'index' %}">홈</a>
+        <span> / </span>
+        <span>프로젝트 소개</span>
+    </nav>
+    <h1>Anonymous Project 프로젝트</h1>
+</div>
+
+<div class="topic-content-area">
+    <article class="topic-article">
+        <div class="article-content">
+            <h1>Anonymous Project 프로젝트</h1>
+
+            <h2>1. 프로젝트 개요</h2>
+
+            <h3>1.1 프로젝트 소개</h3>
+            <p>Anonymous Project는 anonymous 스타일의 프로그래밍 교육 사이트를 Django 프레임워크로 구현한 프로젝트입니다. 네트워크, Linux, Python, AWS 등 다양한 IT 주제에 대한 튜토리얼과 교육 자료를 제공하는 온라인 학습 플랫폼입니다.</p>
+
+            <h3>1.2 프로젝트 목적</h3>
+            <ul>
+                <li>프로그래밍과 인프라를 쉽고 재미있게 배울 수 있는 온라인 학습 사이트 제공</li>
+                <li>카테고리별로 체계적으로 구성된 튜토리얼 콘텐츠 제공</li>
+                <li>사용자 친화적인 UI/UX를 통한 학습 경험 향상</li>
+            </ul>
+
+            <h3>1.3 주요 기능</h3>
+            <ul>
+                <li>🏠 <strong>메인 페이지</strong>: 카테고리별 튜토리얼 소개</li>
+                <li>📚 <strong>튜토리얼 페이지</strong>: 카테고리별 주제 목록 (Network, Linux, Python, AWS)</li>
+                <li>📖 <strong>상세 페이지</strong>: 각 주제의 상세 내용 표시</li>
+                <li>🔍 <strong>검색 기능</strong>: 제목과 내용에서 키워드 검색</li>
+                <li>📊 <strong>접속자 통계</strong>: 실시간 접속자 수 추적 및 통계 제공</li>
+                <li>🎨 <strong>반응형 디자인</strong>: 모바일 및 데스크톱 지원</li>
+                <li>🎯 <strong>깔끔한 UI/UX</strong>: anonymous 스타일의 현대적인 디자인</li>
+            </ul>
+
+            <h2>2. 기술 스택</h2>
+
+            <h3>2.1 Backend</h3>
+            <ul>
+                <li><strong>Python 3.x</strong>: 프로그래밍 언어</li>
+                <li><strong>Django 6.0</strong>: 웹 프레임워크</li>
+                <li><strong>Gunicorn</strong>: WSGI HTTP 서버 (프로덕션)</li>
+                <li><strong>Celery</strong>: 비동기 작업 처리</li>
+                <li><strong>django-celery-beat</strong>: 주기적 작업 스케줄링</li>
+            </ul>
+
+            <h3>2.2 Database</h3>
+            <ul>
+                <li><strong>MariaDB</strong>: 관계형 데이터베이스 (프로덕션)</li>
+                <li><strong>SQLite</strong>: 개발 환경용 데이터베이스</li>
+                <li><strong>PyMySQL</strong>: MariaDB/MySQL 연결 드라이버</li>
+            </ul>
+
+            <h3>2.3 Cache &amp; Message Broker</h3>
+            <ul>
+                <li><strong>Redis</strong>: 캐싱 및 Celery 메시지 브로커</li>
+                <li><strong>django-redis</strong>: Django Redis 캐시 백엔드</li>
+            </ul>
+
+            <h3>2.4 Frontend</h3>
+            <ul>
+                <li><strong>HTML5/CSS3</strong>: 마크업 및 스타일링</li>
+                <li><strong>JavaScript</strong>: 클라이언트 측 동작</li>
+            </ul>
+
+            <h3>2.5 배포 및 인프라</h3>
+            <ul>
+                <li><strong>AWS EC2</strong>: 서버 인프라</li>
+                <li><strong>AWS CodeDeploy</strong>: 자동 배포</li>
+                <li><strong>AWS S3</strong>: 정적 파일 저장 (선택사항)</li>
+                <li><strong>Nginx</strong>: 리버스 프록시 및 웹 서버</li>
+                <li><strong>Supervisor</strong>: 프로세스 관리</li>
+                <li><strong>Packer</strong>: 커스텀 AMI 빌드</li>
+            </ul>
+
+            <h3>2.6 개발 도구</h3>
+            <ul>
+                <li><strong>django-environ</strong>: 환경 변수 관리</li>
+                <li><strong>python-dotenv</strong>: .env 파일 로딩</li>
+                <li><strong>django-storages</strong>: S3 스토리지 지원</li>
+                <li><strong>boto3</strong>: AWS SDK</li>
+            </ul>
+
+            <h2>3. 시스템 아키텍처</h2>
+
+            <h3>3.1 애플리케이션 구조</h3>
+            <pre><code>anonymous_project/
+├── anonymous_project/      # 프로젝트 설정
+│   ├── settings/           # 설정 파일 (환경별 분리)
+│   │   ├── base.py        # 공통 설정
+│   │   ├── development.py # 개발 환경
+│   │   └── production.py  # 배포 환경
+│   ├── urls.py
+│   ├── wsgi.py
+│   ├── asgi.py
+│   └── celery.py          # Celery 설정
+├── main/                   # 메인 앱
+│   ├── models.py          # 데이터 모델
+│   ├── views.py           # 뷰 함수
+│   ├── urls.py            # URL 라우팅
+│   ├── tasks.py           # Celery 작업
+│   ├── middleware.py      # 미들웨어
+│   ├── utils.py           # 유틸리티 함수
+│   └── management/        # 관리 명령어
+├── templates/             # HTML 템플릿
+├── static/                # 정적 파일
+└── scripts/               # 배포 스크립트</code></pre>
+
+            <h3>3.2 데이터 모델</h3>
+
+            <h4>Category (카테고리)</h4>
+            <ul>
+                <li>네트워크, Linux, Python, AWS 등 대분류</li>
+                <li>순서(order) 필드를 통한 정렬 지원</li>
+                <li>슬러그(slug)를 통한 URL 생성</li>
+            </ul>
+
+            <h4>Topic (주제)</h4>
+            <ul>
+                <li>카테고리 하위의 세부 주제</li>
+                <li>제목, 내용, 순서 정보 포함</li>
+                <li>카테고리와 다대일 관계</li>
+            </ul>
+
+            <h4>VisitorStats (접속자 통계)</h4>
+            <ul>
+                <li>일별 접속자 수 통계</li>
+                <li>접속자 수 및 고유 접속자 수 추적</li>
+                <li>Celery를 통한 Redis → MariaDB 동기화</li>
+            </ul>
+
+            <h3>3.3 데이터 흐름</h3>
+
+            <h4>접속자 통계 처리 흐름</h4>
+            <ol>
+                <li>사용자 접속 시 미들웨어에서 Redis 카운트 증가</li>
+                <li>실시간 통계는 Redis에서 조회</li>
+                <li>Celery Beat 작업이 매일 자정에 전날 데이터를 MariaDB에 동기화</li>
+                <li>과거 데이터는 MariaDB에서 조회</li>
+            </ol>
+
+            <h2>4. 주요 기능 상세</h2>
+
+            <h3>4.1 튜토리얼 시스템</h3>
+            <ul>
+                <li>카테고리별 주제 목록 제공</li>
+                <li>사이드바를 통한 네비게이션</li>
+                <li>주제별 상세 내용 표시</li>
+                <li>순서(order) 기반 정렬</li>
+            </ul>
+
+            <h3>4.2 검색 기능</h3>
+            <ul>
+                <li>제목과 내용에서 키워드 검색 (대소문자 구분 없음)</li>
+                <li>카테고리별로 그룹화된 검색 결과</li>
+                <li>검색 결과 개수 표시</li>
+            </ul>
+
+            <h3>4.3 접속자 통계</h3>
+            <ul>
+                <li>실시간 접속자 수 표시 (Redis 기반)</li>
+                <li>일별 접속자 통계 (Redis → MariaDB 동기화)</li>
+                <li>고유 접속자 수 추적 (IP 기반 중복 제거)</li>
+                <li>누적 접속자 수 계산</li>
+            </ul>
+
+            <h3>4.4 캐싱 전략</h3>
+            <ul>
+                <li>개발 환경: 캐싱 비활성화 (디버깅 편의성)</li>
+                <li>프로덕션 환경: 24시간 캐시 적용</li>
+                <li>Redis를 통한 페이지 캐싱</li>
+            </ul>
+
+            <h2>5. 배포 아키텍처</h2>
+
+            <h3>5.1 배포 환경</h3>
+            <ul>
+                <li><strong>Public Subnet</strong>: 일반 EC2 배포</li>
+                <li><strong>Private Subnet</strong>: Packer AMI를 통한 배포 (권장)</li>
+            </ul>
+
+            <h3>5.2 CI/CD 파이프라인</h3>
+            <ol>
+                <li><strong>GitHub Actions</strong>: 코드 빌드 및 S3 업로드</li>
+                <li><strong>AWS CodeDeploy</strong>: EC2 인스턴스에 자동 배포</li>
+                <li><strong>배포 스크립트</strong>:
+                    <ul>
+                        <li><code>before_install.sh</code>: 환경 준비</li>
+                        <li><code>after_install.sh</code>: 의존성 설치 및 마이그레이션</li>
+                        <li><code>application_stop.sh</code>: 애플리케이션 중지</li>
+                        <li><code>application_start.sh</code>: 애플리케이션 시작</li>
+                        <li><code>validate_service.sh</code>: 헬스 체크</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>5.3 인프라 구성</h3>
+            <ul>
+                <li><strong>Nginx</strong>: 리버스 프록시 및 정적 파일 서빙</li>
+                <li><strong>Gunicorn</strong>: Django 애플리케이션 서버</li>
+                <li><strong>Supervisor</strong>: Gunicorn, Celery Worker, Celery Beat 프로세스 관리</li>
+                <li><strong>MariaDB</strong>: 데이터베이스 서버</li>
+                <li><strong>Redis</strong>: 캐시 및 메시지 브로커</li>
+            </ul>
+
+            <h3>5.4 Packer AMI 빌드</h3>
+            <p>Private Subnet 배포를 위한 커스텀 AMI 생성:</p>
+            <ul>
+                <li>Python 3, pip, venv</li>
+                <li>AWS CodeDeploy Agent</li>
+                <li>Nginx</li>
+                <li>MariaDB Client</li>
+                <li>Supervisor</li>
+                <li>기본 시스템 유틸리티</li>
+            </ul>
+
+            <h2>6. 개발 환경 설정</h2>
+
+            <h3>6.1 빠른 시작</h3>
+            <pre><code># 자동 설정 스크립트 실행
+chmod +x setup.sh
+./setup.sh</code></pre>
+
+            <p>자동 설정이 수행하는 작업:</p>
+            <ul>
+                <li>가상환경 생성 및 활성화</li>
+                <li>의존성 설치</li>
+                <li>.env 파일 생성</li>
+                <li>데이터베이스 마이그레이션</li>
+                <li>정적 파일 수집</li>
+            </ul>
+
+            <h3>6.2 환경 변수 설정</h3>
+            <ul>
+                <li><code>DJANGO_SETTINGS_MODULE</code>: 환경별 설정 선택</li>
+                <li><code>SECRET_KEY</code>: Django 시크릿 키</li>
+                <li><code>DEBUG</code>: 디버그 모드</li>
+                <li><code>ALLOWED_HOSTS</code>: 허용된 호스트</li>
+                <li>데이터베이스 연결 정보</li>
+                <li>Redis 연결 정보</li>
+            </ul>
+
+            <h3>6.3 데이터베이스 마이그레이션</h3>
+            <pre><code>python manage.py migrate
+python manage.py load_initial_data  # 초기 데이터 로드</code></pre>
+
+            <h2>7. 보안 고려사항</h2>
+
+            <h3>7.1 프로덕션 환경 보안</h3>
+            <ul>
+                <li><code>DEBUG=False</code> 설정</li>
+                <li><code>SECRET_KEY</code> 환경 변수 관리</li>
+                <li>HTTPS 강제 (SECURE_SSL_REDIRECT)</li>
+                <li>보안 쿠키 설정 (SESSION_COOKIE_SECURE, CSRF_COOKIE_SECURE)</li>
+                <li>ALLOWED_HOSTS 설정</li>
+            </ul>
+
+            <h3>7.2 데이터베이스 보안</h3>
+            <ul>
+                <li>전용 데이터베이스 사용자 생성</li>
+                <li>최소 권한 원칙 적용</li>
+                <li>환경 변수를 통한 민감 정보 관리</li>
+            </ul>
+
+            <h2>8. 모니터링 및 유지보수</h2>
+
+            <h3>8.1 로깅</h3>
+            <ul>
+                <li>애플리케이션 로그: <code>/home/ubuntu/app/logs/</code></li>
+                <li>Gunicorn 로그</li>
+                <li>Celery Worker 로그</li>
+                <li>Celery Beat 로그</li>
+            </ul>
+
+            <h3>8.2 프로세스 관리</h3>
+            <ul>
+                <li>Supervisor를 통한 프로세스 모니터링</li>
+                <li>자동 재시작 설정</li>
+                <li>헬스 체크 스크립트</li>
+            </ul>
+
+            <h3>8.3 정기 작업</h3>
+            <ul>
+                <li>Celery Beat를 통한 일일 접속자 통계 동기화</li>
+                <li>로그 로테이션</li>
+                <li>데이터베이스 백업</li>
+            </ul>
+
+            <h2>9. 향후 개선 사항</h2>
+
+            <h3>9.1 기능 개선</h3>
+            <ul>
+                <li>사용자 인증 시스템 추가</li>
+                <li>댓글 및 피드백 기능</li>
+                <li>북마크 기능</li>
+                <li>학습 진행도 추적</li>
+            </ul>
+
+            <h3>9.2 성능 개선</h3>
+            <ul>
+                <li>CDN을 통한 정적 파일 최적화</li>
+                <li>데이터베이스 쿼리 최적화</li>
+                <li>추가 캐싱 전략 적용</li>
+            </ul>
+
+            <h3>9.3 인프라 개선</h3>
+            <ul>
+                <li>로드 밸런서 도입</li>
+                <li>다중 가용 영역 배포</li>
+                <li>자동 스케일링 구성</li>
+                <li>모니터링 도구 통합 (CloudWatch, Sentry 등)</li>
+            </ul>
+
+            <h2>10. 참고 자료</h2>
+
+            <h3>10.1 프로젝트 문서</h3>
+            <ul>
+                <li><code>README.md</code>: 프로젝트 기본 문서</li>
+                <li><code>DEPLOYMENT.md</code>: 배포 가이드</li>
+                <li><code>CELERY_SETUP.md</code>: Celery 설정 가이드</li>
+                <li><code>CELERY_MONITORING.md</code>: Celery 모니터링 가이드</li>
+                <li><code>REDIS_SETUP.md</code>: Redis 설정 가이드</li>
+                <li><code>packer/README.md</code>: Packer AMI 빌드 가이드</li>
+            </ul>
+
+            <h3>10.2 주요 설정 파일</h3>
+            <ul>
+                <li><code>requirements.txt</code>: Python 패키지 의존성</li>
+                <li><code>appspec.yml</code>: CodeDeploy 배포 설정</li>
+                <li><code>packer.pkr.hcl</code>: Packer 빌드 설정</li>
+                <li><code>infrastructure.yaml</code>: 인프라 구성 (참고용)</li>
+            </ul>
+
+            <hr>
+
+            <p><strong>작성일</strong>: 2026년 1월<br>
+            <strong>프로젝트 버전</strong>: Django 6.0<br>
+            <strong>라이선스</strong>: 학습 목적</p>
+        </div>
+    </article>
+</div>
+{% endblock %}
