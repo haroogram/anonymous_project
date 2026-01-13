@@ -76,7 +76,12 @@ jobs:
       - name: Validate Packer configuration
         run: |
           echo "Packer 설정 검증 중..."
-          packer validate -var-file=packer/variables.pkr.hcl packer.pkr.hcl
+          # source_ami_id를 빈 문자열로 강제 설정하여 항상 최신 공식 Ubuntu AMI 사용
+          # 이전 커스텀 AMI를 사용하지 않도록 보장
+          packer validate \
+            -var-file=packer/variables.pkr.hcl \
+            -var 'source_ami_id=' \
+            packer.pkr.hcl
           echo "✅ Packer 설정 검증 완료"
 
       - name: Make scripts executable
@@ -94,7 +99,12 @@ jobs:
           echo ""
           
           # Packer 빌드 실행
-          packer build -var-file=packer/variables.pkr.hcl packer.pkr.hcl | tee packer-build.log
+          # source_ami_id를 빈 문자열로 강제 설정하여 항상 최신 공식 Ubuntu AMI 사용
+          # 이전 커스텀 AMI를 사용하지 않도록 보장 (완전히 새로운 AMI 빌드)
+          packer build \
+            -var-file=packer/variables.pkr.hcl \
+            -var 'source_ami_id=' \
+            packer.pkr.hcl | tee packer-build.log
           
           # AMI ID 추출
           AMI_ID=$(grep -oP 'ami-[a-z0-9]{17}' packer-build.log | tail -1 || grep -o 'ami-[a-z0-9]*' packer-manifest.json | head -1)
