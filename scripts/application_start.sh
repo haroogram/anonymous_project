@@ -152,6 +152,7 @@ fi
 echo "Nginx 설정: 배포 후 상태로 변경 중..."
 
 # Nginx 설정 파일 생성 (배포 후: 앱으로 healthz 프록시)
+sudo rm -f /etc/nginx/sites-enabled/healthz
 sudo tee /etc/nginx/sites-available/anonymous_project > /dev/null <<'NGINX_POST_DEPLOY_EOF'
 # Django 애플리케이션을 위한 Nginx 설정
 # 배포 후 상태: 앱으로 healthz 프록시 (실제 앱 상태 확인)
