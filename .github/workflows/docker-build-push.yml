@@ -84,18 +84,21 @@ jobs:
     name: Update K3s manifest and push
     runs-on: ubuntu-latest
     needs: build-and-push
-    if: ${{ secrets.DSO_REPO_TOKEN != '' }}  # 토큰이 있을 때만 실행 (선택적)
     permissions:
       contents: write
+    env:
+      DSO_REPO_TOKEN: ${{ secrets.DSO_REPO_TOKEN }}
     steps:
       - name: Checkout manifest repo (dso_project)
+        if: ${{ env.DSO_REPO_TOKEN != '' }}  # 토큰이 있을 때만 실행 (선택적)
         uses: actions/checkout@v4
         with:
           repository: ${{ vars.DSO_MANIFEST_REPO || 'haroogram/dso-project' }}
-          token: ${{ secrets.DSO_REPO_TOKEN }}
+          token: ${{ env.DSO_REPO_TOKEN }}
           path: dso-project
 
       - name: Update deployment image tag
+        if: ${{ env.DSO_REPO_TOKEN != '' }}
         run: |
           FILE="dso-project/k8s-manifests/deployment.yaml"
           IMAGE_TAG="${{ needs.build-and-push.outputs.image_tag }}"
@@ -106,6 +109,7 @@ jobs:
           IMAGE_NAME: haroogram/anonymous-project
 
       - name: Commit and push
+        if: ${{ env.DSO_REPO_TOKEN != '' }}
         run: |
           cd dso-project
           git config user.name "github-actions[bot]"
