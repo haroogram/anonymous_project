@@ -1,0 +1,119 @@
+# anonymous_project Docker 이미지 빌드 후 Docker Hub 푸시
+# → dso_project의 k8s-manifests/deployment.yaml에서 이 이미지를 참조하고,
+#   ArgoCD가 repo polling으로 새 이미지 배포
+
+name: Docker Build and Push to Docker Hub
+
+on:
+  push:
+    tags:
+      - 'v*'   # v1.1.4 등 푸시 시 semver 태그(1.1.4)로도 푸시
+  workflow_dispatch:
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME: haroogram/anonymous-project
+
+jobs:
+  build-and-push:
+    name: Build and Push Docker image
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.meta.outputs.image_tag }}
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract metadata and set tags
+        id: meta
+        run: |
+          SHORT_SHA="${GITHUB_SHA:0:7}"
+          echo "short_sha=$SHORT_SHA" >> $GITHUB_OUTPUT
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "image_tag=$VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "image_tag=sha-${SHORT_SHA}" >> $GITHUB_OUTPUT
+          fi
+          {
+            echo "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${SHORT_SHA}"
+            echo "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
+            if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+              echo "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${VERSION}"
+            fi
+          } >> tags.txt
+          echo "tags<<EOF" >> $GITHUB_OUTPUT
+          cat tags.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Summary
+        run: |
+          echo "## Docker image pushed" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${{ env.IMAGE_NAME }}:sha-${{ steps.meta.outputs.short_sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${{ env.IMAGE_NAME }}:latest\`" >> $GITHUB_STEP_SUMMARY
+          if [ -n "${{ steps.meta.outputs.version }}" ]; then
+            echo "- \`${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # K3s manifest 레포(dso_project)의 deployment.yaml image 태그를 새로 푸시한 태그로 갱신 후 push
+  # → ArgoCD가 해당 repo를 polling 하므로 자동으로 새 이미지 배포
+  update-manifest:
+    name: Update K3s manifest and push
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: ${{ secrets.DSO_REPO_TOKEN != '' }}  # 토큰이 있을 때만 실행 (선택적)
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout manifest repo (dso_project)
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.DSO_MANIFEST_REPO || 'haroogram/dso-project' }}
+          token: ${{ secrets.DSO_REPO_TOKEN }}
+          path: dso-project
+
+      - name: Update deployment image tag
+        run: |
+          FILE="dso-project/k8s-manifests/deployment.yaml"
+          IMAGE_TAG="${{ needs.build-and-push.outputs.image_tag }}"
+          # image: haroogram/anonymous-project:<tag> 형태 한 줄만 교체
+          sed -i "s|image: ${IMAGE_NAME}:.*|image: ${IMAGE_NAME}:${IMAGE_TAG}|" "$FILE"
+          grep "image:" "$FILE"
+        env:
+          IMAGE_NAME: haroogram/anonymous-project
+
+      - name: Commit and push
+        run: |
+          cd dso-project
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add k8s-manifests/deployment.yaml
+          if git diff --staged --quiet; then
+            echo "No change in image tag, skip push."
+          else
+            git commit -m "chore(anonymous-project): update image to ${{ needs.build-and-push.outputs.image_tag }} [skip ci]"
+            git push
+          fi

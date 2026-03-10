@@ -4,14 +4,54 @@
 
 ## 워크플로우 목록
 
-### 1. `build-ami.yml` - AMI 빌드
+### 1. `docker-build-push.yml` - Docker 이미지 빌드 및 Docker Hub 푸시 (K3s/ArgoCD 배포용)
+
+**목적**: 태그(`v*`) 푸시 시 Docker 이미지를 빌드하고 Docker Hub에 푸시. (선택) dso_project의 K3s manifest를 자동으로 수정해 ArgoCD가 새 이미지를 배포하도록 함.
+
+**트리거**:
+- `v*` 태그 push (예: `v1.1.4` → 이미지 태그 `1.1.4` 추가)
+- 수동 실행 (`workflow_dispatch`)
+
+**푸시되는 이미지 태그**:
+- `sha-<short_sha>` (예: `sha-a1b2c3d`) — 항상
+- `latest` — 항상
+- `<version>` (예: `1.1.4`) — 태그 push 시에만 (`v1.1.4` 푸시 시)
+
+**필요한 GitHub Secrets**:
+- `DOCKERHUB_USERNAME` — Docker Hub 사용자명
+- `DOCKERHUB_TOKEN` — Docker Hub Access Token (비밀번호 대신 사용 권장)
+
+**배포 흐름 (태그 기반 배포)**:
+1. anonymous_project에서 코드 수정 후 수시로 `branch`에 push (CI 대상, 배포 아님)
+2. 배포하고 싶은 시점에 `branch` 최신 커밋 기준으로 버전 태그 생성:
+   ```bash
+   git checkout 'branch'
+   git pull origin 'branch'
+   git tag v1.1.4
+   git push origin v1.1.4
+   ```
+3. `v1.1.4` 태그 push 시 본 워크플로가 실행되어 Docker 이미지를 빌드·푸시
+4. **(자동)** `DSO_REPO_TOKEN`이 설정되어 있으면, dso_project 레포를 체크아웃해 `k8s-manifests/deployment.yaml`의 image 태그를 새 태그(`1.1.4`)로 갱신 후 push
+5. ArgoCD가 dso_project repo를 polling하여 변경 감지 후 K3s에 새 이미지로 배포
+
+**K3s manifest 자동 갱신(선택)**  
+dso_project의 manifest까지 CI에서 자동으로 바꿔서 push하려면 다음을 설정한다.
+
+| 구분 | 이름 | 설명 |
+|------|------|------|
+| Secret | `DSO_REPO_TOKEN` | dso_project 레포에 **push** 권한(content write)이 있는 Personal Access Token (repo 권한) |
+| Variable | `DSO_MANIFEST_REPO` | (선택) manifest 레포 전체 이름. 미설정 시 `기본값` 사용 |
+
+- `DSO_REPO_TOKEN`을 비워 두면 **Docker 빌드·푸시만** 하고, manifest 수정 job은 건너뛴다.
+- 토큰은 GitHub → Settings → Developer settings → Personal access tokens 에서 생성하고, **repo** 체크 후 사용.
+
+### 2. `build-ami.yml` - AMI 빌드
 
 **목적**: Packer를 사용하여 커스텀 AMI 생성
 
 **트리거**:
-- 수동 실행 (`workflow_dispatch`)
-- `packer/**`, `packer.pkr.hcl`, `requirements.txt` 변경 시
-- 매월 1일 자정 자동 실행 (보안 업데이트 반영)
+- 수동 실행 (`workflow_dispatch`)  
+  *(이전에는 매월 1일 자정 자동 실행 스케줄이 있었지만, 현재 워크플로 파일에서는 주석 처리되어 있어 자동 실행되지 않습니다.)*
 
 **주요 작업**:
 1. Packer 설치
@@ -32,7 +72,7 @@
 - 생성된 AMI ID는 `/anonymous-project/ami-id` Parameter Store에 저장됨
 - 다음 배포에서 이 AMI를 사용할 수 있음
 
-### 2. `deploy.yml` - 애플리케이션 배포
+### 3. `deploy.yml` - 애플리케이션 배포
 
 **목적**: CodeDeploy를 사용하여 애플리케이션 코드 배포
 
@@ -68,17 +108,23 @@ git push origin main
 # 4. 새 AMI 생성 완료 후 EC2 인스턴스 교체
 ```
 
-### 시나리오 2: 애플리케이션 코드 변경
+### 시나리오 2: 애플리케이션 코드 변경 (K3s/ArgoCD + Docker 이미지 배포)
 
 ```bash
 # 1. 코드 수정
-# 2. 커밋 및 푸시
+# 2. 커밋 및 푸시 (CI 용도, 배포 아님)
 git add .
 git commit -m "Add new feature"
 git push origin main
 
-# 3. deploy.yml 자동 실행
-# 4. CodeDeploy로 배포 완료
+# 3. 배포할 시점에 main 최신 커밋에 태그 생성 후 푸시
+git checkout main
+git pull origin main
+git tag v1.1.4
+git push origin v1.1.4
+
+# 4. docker-build-push.yml이 실행되어 Docker 이미지 빌드/푸시
+# 5. (선택) dso_project manifest가 자동으로 업데이트되고, ArgoCD가 새 이미지로 배포
 ```
 
 ### 시나리오 3: 수동 AMI 빌드
