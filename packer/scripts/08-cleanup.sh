@@ -5,6 +5,10 @@ echo "================================"
 echo "[8/8] 정리 및 최적화"
 echo "================================"
 
+# Nginx 설정 파일은 04-nginx-setup.sh에서 이미 올바르게 설정되었으므로 유지
+# cleanup 단계에서는 nginx 설정을 삭제하지 않음 (AMI에 포함되어야 함)
+# 단, 불필요한 default 설정만 제거 (이미 04-nginx-setup.sh에서 처리됨)
+
 # APT 캐시 정리
 sudo apt-get autoremove -y
 sudo apt-get autoclean -y

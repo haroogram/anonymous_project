@@ -80,6 +80,18 @@ if not DB_NAME or not DB_USER or not DB_PASSWORD:
         f".env 파일 또는 환경 변수를 확인하세요."
     )
 
+DATABASE_OPTIONS = {
+    'charset': 'utf8mb4',
+    'init_command': "SET sql_mode='STRICT_TRANS_TABLES', character_set_connection=utf8mb4, collation_connection=utf8mb4_unicode_ci",
+}
+
+# SSL 연결 설정 (DATABASE_SSL_REQUIRED=true인 경우)
+DATABASE_SSL_REQUIRED = env('DATABASE_SSL_REQUIRED', default=False)
+if DATABASE_SSL_REQUIRED:
+    DATABASE_OPTIONS['ssl'] = {
+        'ssl': True,
+    }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -88,10 +100,7 @@ DATABASES = {
         'PASSWORD': DB_PASSWORD,
         'HOST': DB_HOST,
         'PORT': DB_PORT,
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES', character_set_connection=utf8mb4, collation_connection=utf8mb4_unicode_ci",
-        },
+        'OPTIONS': DATABASE_OPTIONS,
     }
 }
 
@@ -105,17 +114,21 @@ if USE_S3_STATIC:
     # S3를 사용하는 경우
     INSTALLED_APPS += ['storages']
     
-    AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
+    # IAM Role 사용 시 ACCESS_KEY는 선택사항 (boto3가 자동으로 IAM Role 자격 증명 사용)
+    AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID', default=None)
+    AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY', default=None)
     AWS_STORAGE_BUCKET_NAME = env('AWS_STATIC_BUCKET_NAME')
     AWS_S3_REGION_NAME = env('AWS_REGION', default='ap-northeast-2')
     
-    if not all([AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_STORAGE_BUCKET_NAME]):
-        raise ValueError("S3 Static files를 사용하려면 AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_STATIC_BUCKET_NAME 환경 변수가 필요합니다!")
+    if not AWS_STORAGE_BUCKET_NAME:
+        raise ValueError("S3 Static files를 사용하려면 AWS_STATIC_BUCKET_NAME 환경 변수가 필요합니다!")
     
-    # S3 커스텀 도메인 (STATIC_URL 계산에 필요)
+    # S3 도메인 (collectstatic 업로드용)
     AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
     AWS_DEFAULT_ACL = None
+    
+    # CloudFront CDN 도메인 (선택사항 - 설정 시 CDN 경유, 미설정 시 S3 직접 접근)
+    CDN_DOMAIN = env('CDN_DOMAIN', default=None)
       
     # Static files를 S3에 저장 (Manifest 기능 포함)
     # ManifestStaticStorage는 파일 내용의 해시를 파일명에 추가하여
@@ -127,7 +140,12 @@ if USE_S3_STATIC:
         # default는 Django 기본값 사용 (로컬 파일 시스템)
         # Media files를 S3에 저장하려면 MediaStorage 클래스를 추가하세요
     }
-    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+    
+    # CloudFront 사용 시 CDN 도메인으로, 미사용 시 S3 직접 접근
+    if CDN_DOMAIN:
+        STATIC_URL = f'https://{CDN_DOMAIN}/static/'
+    else:
+        STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
     # STATIC_ROOT는 base.py에서 이미 설정되어 있지만, S3 사용 시에도 필요 (임시 저장용)
     
     # Media files도 S3를 사용하려면 아래 주석 해제

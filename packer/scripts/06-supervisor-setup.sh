@@ -18,6 +18,15 @@ if [ ! -d /etc/supervisor/conf.d ]; then
     sudo mkdir -p /etc/supervisor/conf.d
 fi
 
+# 애플리케이션 디렉토리 생성 (07-directories-setup.sh보다 먼저 실행되므로 여기서 생성)
+APP_DIR="/home/ubuntu/anonymous_project"
+if [ ! -d "$APP_DIR" ]; then
+    echo "애플리케이션 디렉토리 생성 중..."
+    sudo mkdir -p "$APP_DIR"
+    sudo mkdir -p "$APP_DIR/logs"
+    sudo chown -R ubuntu:ubuntu "$APP_DIR"
+fi
+
 # Gunicorn wrapper 스크립트 생성 (.env 파일 로드)
 sudo tee /home/ubuntu/anonymous_project/gunicorn_wrapper.sh > /dev/null <<'GUNICORN_EOF'
 #!/bin/bash
