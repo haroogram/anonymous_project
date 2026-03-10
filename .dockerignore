@@ -1,0 +1,62 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+ENV/
+env/
+.eggs/
+*.egg-info/
+*.egg
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 환경 파일 (민감한 정보)
+.env
+.env.local
+.env.*.local
+
+# 테스트/캐시
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# 로그
+*.log
+logs/
+
+# 정적 파일 (빌드 시 생성)
+staticfiles/
+
+# 데이터베이스 (개발용)
+*.sqlite3
+db.sqlite3
+
+# Packer/배포 관련
+packer/
+*.pkr.hcl
+appspec.yml
+scripts/
+
+# 문서
+*.md
+!README.md
+
+# etc 폴더 (테스트 HTML)
+etc/
+
+# GitHub Actions
+.github/
