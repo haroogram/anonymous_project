@@ -63,13 +63,27 @@ class VisitorCountMiddleware:
         self._ip_patterns = [re.compile(pattern) for pattern in self.EXCLUDED_IP_PATTERNS]
     
     def __call__(self, request):
+        # 요청 정보 로깅 (실제 IP / 헤더 확인용)
+        ip_address = self._get_client_ip(request)
+        xff = request.META.get('HTTP_X_FORWARDED_FOR', '')
+        remote_addr = request.META.get('REMOTE_ADDR', '')
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+        # k3s/ALB health check 등은 로깅에서 제외
+        path = request.path or ""
+        if not (path.startswith('/healthz') or 'kube-probe' in user_agent):
+            logger.info(
+                "[VisitorCountMiddleware] path=%s ip=%s xff=%s remote_addr=%s ua=%s",
+                path,
+                ip_address,
+                xff,
+                remote_addr,
+                user_agent,
+            )
+
         # 접속자 수 카운팅 (제외 조건 체크)
         if not self._should_exclude(request):
             try:
-                # IP 주소 가져오기 (프록시 뒤에 있는 경우 X-Forwarded-For 헤더 확인)
-                ip_address = self._get_client_ip(request)
-                user_agent = request.META.get('HTTP_USER_AGENT', '')
-                
                 # 접속자 수 증가
                 increment_visitor_count(ip_address=ip_address, user_agent=user_agent)
             except Exception as e:
@@ -93,20 +107,41 @@ class VisitorCountMiddleware:
         path = request.path
         for excluded_path in self.EXCLUDED_PATHS:
             if path.startswith(excluded_path):
+                logger.info(
+                    "[VisitorCountMiddleware] exclude=True reason=path path=%s pattern=%s",
+                    path,
+                    excluded_path,
+                )
                 return True
         
         # User-Agent 확인
         user_agent = request.META.get('HTTP_USER_AGENT', '')
         for pattern in self._ua_patterns:
             if pattern.search(user_agent):
+                logger.info(
+                    "[VisitorCountMiddleware] exclude=True reason=user_agent ua=%s pattern=%s",
+                    user_agent,
+                    pattern.pattern,
+                )
                 return True
         
         # IP 주소 확인
         ip_address = self._get_client_ip(request)
         for pattern in self._ip_patterns:
             if pattern.match(ip_address):
+                logger.info(
+                    "[VisitorCountMiddleware] exclude=True reason=ip ip=%s pattern=%s",
+                    ip_address,
+                    pattern.pattern,
+                )
                 return True
-        
+
+        logger.info(
+            "[VisitorCountMiddleware] exclude=False path=%s ip=%s ua=%s",
+            path,
+            ip_address,
+            user_agent,
+        )
         return False
     
     def _get_client_ip(self, request):
