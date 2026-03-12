@@ -103,8 +103,15 @@ class VisitorCountMiddleware:
         Returns:
             bool: 제외해야 하면 True
         """
+        # 경로 / User-Agent 확인
+        path = request.path or ""
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+        # 헬스체크 관련 요청은 로깅 없이 바로 제외 처리
+        if path.startswith('/healthz') or path.startswith('/health') or 'kube-probe' in user_agent:
+            return True
+
         # 경로 확인
-        path = request.path
         for excluded_path in self.EXCLUDED_PATHS:
             if path.startswith(excluded_path):
                 logger.info(
@@ -115,7 +122,6 @@ class VisitorCountMiddleware:
                 return True
         
         # User-Agent 확인
-        user_agent = request.META.get('HTTP_USER_AGENT', '')
         for pattern in self._ua_patterns:
             if pattern.search(user_agent):
                 logger.info(
