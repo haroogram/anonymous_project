@@ -110,8 +110,8 @@ EOF
         # 기타 설정
         echo "DEBUG=${SSM_PARAMS[debug]:-False}" >> $TEMP_ENV_FILE
         echo "SECURE_SSL_REDIRECT=${SSM_PARAMS[secure-ssl-redirect]:-False}" >> $TEMP_ENV_FILE
-        echo "SESSION_COOKIE_SECURE=${SSM_PARAMS[session-cookie-secure]:-False}" >> $TEMP_ENV_FILE
-        echo "CSRF_COOKIE_SECURE=${SSM_PARAMS[csrf-cookie-secure]:-False}" >> $TEMP_ENV_FILE
+        echo "SESSION_COOKIE_SECURE=${SSM_PARAMS[session-cookie-secure]:-True}" >> $TEMP_ENV_FILE
+        echo "CSRF_COOKIE_SECURE=${SSM_PARAMS[csrf-cookie-secure]:-True}" >> $TEMP_ENV_FILE
         
         # S3 Static files 설정
         echo "USE_S3_STATIC=${SSM_PARAMS[use-s3-static]:-False}" >> $TEMP_ENV_FILE

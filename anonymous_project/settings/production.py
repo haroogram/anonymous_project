@@ -43,8 +43,8 @@ if ALB_DOMAIN:
 # ALB 뒤에 있으므로 SECURE_SSL_REDIRECT는 False로 설정 (ALB에서 SSL 종료)
 SECURE_SSL_REDIRECT = env('SECURE_SSL_REDIRECT', default=False)
 # ALB가 HTTPS를 사용하는 경우에만 True로 설정
-SESSION_COOKIE_SECURE = env('SESSION_COOKIE_SECURE', default=False)
-CSRF_COOKIE_SECURE = env('CSRF_COOKIE_SECURE', default=False)
+SESSION_COOKIE_SECURE = env('SESSION_COOKIE_SECURE', default=True)
+CSRF_COOKIE_SECURE = env('CSRF_COOKIE_SECURE', default=True)
 
 # ALB를 통한 접속 시 X-Forwarded-Proto 헤더 신뢰
 USE_X_FORWARDED_HOST = True
