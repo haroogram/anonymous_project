@@ -110,8 +110,8 @@ EOF
         # 기타 설정
         echo "DEBUG=${SSM_PARAMS[debug]:-False}" >> $TEMP_ENV_FILE
         echo "SECURE_SSL_REDIRECT=${SSM_PARAMS[secure-ssl-redirect]:-False}" >> $TEMP_ENV_FILE
-        echo "SESSION_COOKIE_SECURE=${SSM_PARAMS[session-cookie-secure]:-False}" >> $TEMP_ENV_FILE
-        echo "CSRF_COOKIE_SECURE=${SSM_PARAMS[csrf-cookie-secure]:-False}" >> $TEMP_ENV_FILE
+        echo "SESSION_COOKIE_SECURE=${SSM_PARAMS[session-cookie-secure]:-True}" >> $TEMP_ENV_FILE
+        echo "CSRF_COOKIE_SECURE=${SSM_PARAMS[csrf-cookie-secure]:-True}" >> $TEMP_ENV_FILE
         
         # S3 Static files 설정
         echo "USE_S3_STATIC=${SSM_PARAMS[use-s3-static]:-False}" >> $TEMP_ENV_FILE
@@ -145,16 +145,36 @@ else
     echo "[0/4] SSM 환경 변수 로드 건너뜀 (USE_SSM_ENV=true로 활성화)"
 fi
 
-# 1. 데이터베이스 마이그레이션
-echo "[1/4] 데이터베이스 마이그레이션 실행..."
+# 1. 데이터베이스 연결 확인 (로그 남기기)
+echo "[1/4] 데이터베이스 연결 확인..."
+python - << 'PY'
+import django
+import logging
+from django.db import connections
+from django.db.utils import OperationalError
+
+django.setup()
+logger = logging.getLogger('django.db')
+
+try:
+    conn = connections['default']
+    conn.cursor()
+    logger.warning("DB connection check succeeded for 'default' database.")
+except OperationalError as e:
+    logger.error("DB connection check failed for 'default' database: %s", e)
+    raise
+PY
+
+# 2. 데이터베이스 마이그레이션
+echo "[2/4] 데이터베이스 마이그레이션 실행..."
 python manage.py migrate --noinput
 
 # 2. 초기 데이터 로드 (실패해도 계속 진행)
-echo "[2/4] 초기 데이터 로드..."
+echo "[3/4] 초기 데이터 로드..."
 python manage.py load_initial_data || echo "⚠ 초기 데이터가 이미 존재하거나 로드 실패 (계속 진행)"
 
 # 3. 정적 파일 수집
-echo "[3/4] 정적 파일 수집..."
+echo "[4/4] 정적 파일 수집..."
 python manage.py collectstatic --noinput --clear || echo "⚠ collectstatic 실패 (계속 진행)"
 
 echo "==========================================="
