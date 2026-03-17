@@ -145,14 +145,6 @@ else
     echo "[0/4] SSM 환경 변수 로드 건너뜀 (USE_SSM_ENV=true로 활성화)"
 fi
 
-# 생성된 .env 파일을 셸 환경 변수로 로드
-if [ -f "/app/.env" ]; then
-    echo "환경 변수(.env) 셸로 로드 중..."
-    set -a
-    . /app/.env
-    set +a
-fi
-
 # 1. 데이터베이스 연결 확인 (로그 남기기)
 echo "[1/4] 데이터베이스 연결 확인..."
 python - << 'PY'
