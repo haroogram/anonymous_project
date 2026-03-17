@@ -16,7 +16,8 @@ env = environ.Env(
 )
 
 # .env 파일이 있는 경우 자동으로 로드
-environ.Env.read_env('/home/ubuntu/anonymous_project/.env')
+# 컨테이너 환경에서는 /app/.env 를 기본 경로로 사용
+environ.Env.read_env('/app/.env')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
