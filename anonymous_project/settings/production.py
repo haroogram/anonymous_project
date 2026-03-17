@@ -43,8 +43,8 @@ if ALB_DOMAIN:
 # ALB 뒤에 있으므로 SECURE_SSL_REDIRECT는 False로 설정 (ALB에서 SSL 종료)
 SECURE_SSL_REDIRECT = env('SECURE_SSL_REDIRECT', default=False)
 # ALB가 HTTPS를 사용하는 경우에만 True로 설정
-SESSION_COOKIE_SECURE = env('SESSION_COOKIE_SECURE', default=False)
-CSRF_COOKIE_SECURE = env('CSRF_COOKIE_SECURE', default=False)
+SESSION_COOKIE_SECURE = env('SESSION_COOKIE_SECURE', default=True)
+CSRF_COOKIE_SECURE = env('CSRF_COOKIE_SECURE', default=True)
 
 # ALB를 통한 접속 시 X-Forwarded-Proto 헤더 신뢰
 USE_X_FORWARDED_HOST = True
@@ -192,6 +192,14 @@ LOGGING = {
     'root': {
         'handlers': ['console', 'file'],
         'level': 'INFO',
+    },
+    'loggers': {
+        # 데이터베이스 관련 경고/에러를 명시적으로 남기기 위한 로거
+        'django.db': {
+            'handlers': ['console', 'file'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
     },
 }
 
