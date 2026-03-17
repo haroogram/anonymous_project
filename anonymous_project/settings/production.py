@@ -193,5 +193,13 @@ LOGGING = {
         'handlers': ['console', 'file'],
         'level': 'INFO',
     },
+    'loggers': {
+        # 데이터베이스 관련 경고/에러를 명시적으로 남기기 위한 로거
+        'django.db': {
+            'handlers': ['console', 'file'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+    },
 }
 
