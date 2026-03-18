@@ -106,6 +106,15 @@ EOF
         echo "REDIS_PORT=${SSM_PARAMS[redis/port]:-6379}" >> $TEMP_ENV_FILE
         [ -n "${SSM_PARAMS[redis/password]}" ] && echo "REDIS_PASSWORD=${SSM_PARAMS[redis/password]}" >> $TEMP_ENV_FILE
         echo "REDIS_DB=${SSM_PARAMS[redis/db]:-0}" >> $TEMP_ENV_FILE
+
+        # Email(SMTP) 설정 (선택 - SES 등)
+        [ -n "${SSM_PARAMS[email/backend]}" ] && echo "EMAIL_BACKEND=${SSM_PARAMS[email/backend]}" >> $TEMP_ENV_FILE
+        [ -n "${SSM_PARAMS[email/host]}" ] && echo "EMAIL_HOST=${SSM_PARAMS[email/host]}" >> $TEMP_ENV_FILE
+        [ -n "${SSM_PARAMS[email/port]}" ] && echo "EMAIL_PORT=${SSM_PARAMS[email/port]}" >> $TEMP_ENV_FILE
+        [ -n "${SSM_PARAMS[email/use_tls]}" ] && echo "EMAIL_USE_TLS=${SSM_PARAMS[email/use_tls]}" >> $TEMP_ENV_FILE
+        [ -n "${SSM_PARAMS[email/default_from]}" ] && echo "DEFAULT_FROM_EMAIL=${SSM_PARAMS[email/default_from]}" >> $TEMP_ENV_FILE
+        [ -n "${SSM_PARAMS[email/smtp_username]}" ] && echo "EMAIL_HOST_USER=${SSM_PARAMS[email/smtp_username]}" >> $TEMP_ENV_FILE
+        [ -n "${SSM_PARAMS[email/smtp_password]}" ] && echo "EMAIL_HOST_PASSWORD=${SSM_PARAMS[email/smtp_password]}" >> $TEMP_ENV_FILE
         
         # 기타 설정
         echo "DEBUG=${SSM_PARAMS[debug]:-False}" >> $TEMP_ENV_FILE

@@ -31,16 +31,16 @@
                         <a href="{% url 'index' %}">
                             <h1>Anonymous Project</h1>
                         </a>
-                    </div>
-                    <div class="visitor-stats">
-                        <span class="visitor-stat-item">
-                            <span class="visitor-label">오늘:</span>
-                            <span class="visitor-count" id="today-visitors">-</span>
-                        </span>
-                        <span class="visitor-stat-item">
-                            <span class="visitor-label">전체:</span>
-                            <span class="visitor-count" id="total-visitors">-</span>
-                        </span>
+                        <div class="visitor-stats">
+                            <span class="visitor-stat-item">
+                                <span class="visitor-label">오늘:</span>
+                                <span class="visitor-count" id="today-visitors">-</span>
+                            </span>
+                            <span class="visitor-stat-item">
+                                <span class="visitor-label">전체:</span>
+                                <span class="visitor-count" id="total-visitors">-</span>
+                            </span>
+                        </div>
                     </div>
                 </div>
                 <button class="mobile-menu-toggle" aria-label="메뉴 열기">
@@ -69,6 +69,13 @@
                         >
                         <button type="submit" class="search-btn">검색</button>
                     </form>
+                    <div class="auth-actions">
+                        {% if request.user.is_authenticated %}
+                            <a href="{% url 'auth_logout' %}" class="btn btn-secondary">로그아웃</a>
+                        {% else %}
+                            <a href="{% url 'auth_login' %}" class="btn btn-primary">로그인/회원가입</a>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -77,7 +84,7 @@
     <!-- 메인 컨텐츠 -->
     <main class="main-content">
         <div class="container">
-            <div class="content-wrapper">
+            <div class="content-wrapper {% if not topics %}no-sidebar{% endif %}">
                 {% block sidebar %}
                 {% if topics %}
                 <aside class="sidebar">

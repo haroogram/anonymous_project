@@ -102,6 +102,8 @@ jobs:
         run: |
           FILE="dso-project/k8s-manifests/deployment.yaml"
           FILE_JOB="dso-project/k8s-manifests/admin-superuser-job.yaml"
+          FILE_WORKER="dso-project/k8s-manifests/celery-worker-deployment.yaml"
+          FILE_BEAT="dso-project/k8s-manifests/celery-beat-deployment.yaml"
           IMAGE_TAG="${{ needs.build-and-push.outputs.image_tag }}"
           # image: haroogram/anonymous-project:<tag> 형태 한 줄만 교체
           sed -i "s|image: ${IMAGE_NAME}:.*|image: ${IMAGE_NAME}:${IMAGE_TAG}|" "$FILE"
@@ -110,6 +112,12 @@ jobs:
           grep "image:" "$FILE"
           echo "Admin superuser job image line:"
           grep "image:" "$FILE_JOB"
+          sed -i "s|image: ${IMAGE_NAME}:.*|image: ${IMAGE_NAME}:${IMAGE_TAG}|" "$FILE_WORKER"
+          sed -i "s|image: ${IMAGE_NAME}:.*|image: ${IMAGE_NAME}:${IMAGE_TAG}|" "$FILE_BEAT"
+          echo "Celery worker image line:"
+          grep "image:" "$FILE_WORKER"
+          echo "Celery beat image line:"
+          grep "image:" "$FILE_BEAT"
         env:
           IMAGE_NAME: haroogram/anonymous-project
 
@@ -119,7 +127,11 @@ jobs:
           cd dso-project
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add k8s-manifests/deployment.yaml k8s-manifests/admin-superuser-job.yaml
+          git add \
+            k8s-manifests/deployment.yaml \
+            k8s-manifests/admin-superuser-job.yaml \
+            k8s-manifests/celery-worker-deployment.yaml \
+            k8s-manifests/celery-beat-deployment.yaml
           if git diff --staged --quiet; then
             echo "No change in image tag, skip push."
           else

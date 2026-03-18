@@ -104,6 +104,18 @@ DATABASES = {
     }
 }
 
+# 이메일 설정 - 프로덕션에서는 실제 SMTP 또는 이메일 서비스 사용
+EMAIL_BACKEND = env(
+    'EMAIL_BACKEND',
+    default='django.core.mail.backends.smtp.EmailBackend',
+)
+DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='no-reply@example.com')
+EMAIL_HOST = env('EMAIL_HOST', default='')
+EMAIL_PORT = env.int('EMAIL_PORT', default=587)
+EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
+EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=True)
+
 # Static files 설정 - S3 사용 (프로덕션)
 # base.py의 STATIC_ROOT를 덮어쓰기 위해 명시적으로 설정
 STATIC_ROOT = BASE_DIR / 'staticfiles'
