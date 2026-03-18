@@ -1,0 +1,12 @@
+{% load static %}
+
+안녕하세요, Anonymous Project 입니다.
+
+다음 링크를 클릭하여 계정을 활성화해 주세요:
+
+{{ protocol }}://{{ domain }}{% url 'auth_activate' uidb64=uid token=token %}
+
+이 링크는 일정 시간 후 만료될 수 있습니다.
+
+감사합니다.
+
