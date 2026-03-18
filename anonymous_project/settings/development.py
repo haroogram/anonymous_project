@@ -45,3 +45,12 @@ else:
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
+
+# 이메일 설정 - 개발 환경에서는 콘솔로 출력
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='no-reply@example.com')
+
+# 로그인/로그아웃 리다이렉트 설정
+LOGIN_URL = 'auth_login'
+LOGIN_REDIRECT_URL = 'index'
+LOGOUT_REDIRECT_URL = 'index'

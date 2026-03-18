@@ -68,6 +68,13 @@ body {
     gap: 2rem;
 }
 
+.logo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+}
+
 .logo h1 {
     font-size: 1.75rem;
     color: var(--primary-color);
@@ -78,6 +85,7 @@ body {
     -webkit-text-fill-color: transparent;
     background-clip: text;
     margin: 0;
+    white-space: nowrap;
 }
 
 .logo a {
@@ -89,8 +97,8 @@ body {
     display: flex;
     align-items: center;
     gap: 1.5rem;
-    padding-left: 1.5rem;
-    border-left: 1px solid var(--border-color);
+    padding-left: 0;
+    border-left: none;
 }
 
 .visitor-stat-item {
@@ -151,9 +159,22 @@ body {
     display: flex;
     gap: 1rem;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .search-form {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.auth-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.auth-actions {
     display: flex;
     gap: 0.5rem;
     align-items: center;
@@ -204,6 +225,55 @@ body {
 .search-btn:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
+}
+
+/* 헤더용 로그인/회원가입 버튼 - 검색 버튼과 높이/두께 맞추기 */
+.auth-actions .btn {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.9rem;
+    min-height: 44px;
+    border-radius: 8px;
+}
+
+/* 네비게이션용 primary는 톤만 맞추고, 덜 무거운 스타일로 */
+.header-actions .auth-actions .btn-primary {
+    background: var(--white);
+    background-image: none;
+    color: var(--secondary-color);
+    border: 1px solid var(--border-color);
+    box-shadow: none;
+}
+
+.header-actions .auth-actions .btn-primary:hover {
+    background-color: rgba(99, 102, 241, 0.06);
+    box-shadow: none;
+    transform: translateY(-1px);
+}
+
+/* 반응형: 헤더 요소 간격/폭 조정 */
+@media (max-width: 1024px) {
+    .search-input {
+        width: 200px;
+    }
+    .auth-actions .btn {
+        padding: 0.75rem 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-actions {
+        gap: 0.75rem;
+    }
+    .search-input {
+        width: 160px;
+    }
+    .auth-actions {
+        gap: 0.4rem;
+    }
+    .auth-actions .btn {
+        padding: 0.625rem 0.9rem;
+        font-size: 0.9rem;
+    }
 }
 
 /* 메인 컨텐츠 */
@@ -259,6 +329,118 @@ body {
 .sidebar-menu > a {
     text-decoration: none;
     color: inherit;
+}
+
+/* 인증 페이지 */
+.auth-page {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2rem 0;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    background-color: var(--white);
+    border-radius: 16px;
+    padding: 2rem 2.5rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.auth-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.auth-subtitle {
+    font-size: 0.95rem;
+    color: var(--text-light);
+    margin-bottom: 1.75rem;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-field label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-light);
+}
+
+.form-field input {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    font-size: 0.95rem;
+}
+
+.form-field input:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.10);
+}
+
+.form-field .errorlist {
+    margin-top: 0.25rem;
+    list-style: none;
+    color: #dc2626;
+    font-size: 0.8rem;
+}
+
+.auth-submit {
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.auth-switch,
+.auth-extra {
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+.auth-switch a {
+    color: var(--secondary-color);
+    font-weight: 500;
+}
+
+.auth-extra .muted {
+    font-size: 0.85rem;
+}
+
+.messages {
+    list-style: none;
+    margin-bottom: 1rem;
+}
+
+.message {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.message.success {
+    background-color: #ecfdf3;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.message.error {
+    background-color: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
 }
 
 .sidebar-menu > a:hover {

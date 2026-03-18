@@ -1,10 +1,27 @@
-from django.shortcuts import render, get_object_or_404
-from django.http import JsonResponse
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import JsonResponse, HttpResponseRedirect
 from django.db.models import Q
 from django.views.decorators.cache import cache_page
 from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User
+from django.urls import reverse
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.core.mail import send_mail
+
 from .models import Category, Topic
-from .utils import get_visitor_stats, get_today_visitors_count, get_total_visitors_count, get_daily_visitors_count
+from .utils import (
+    get_visitor_stats,
+    get_today_visitors_count,
+    get_total_visitors_count,
+    get_daily_visitors_count,
+)
+from .forms import SignupForm, LoginForm
+from .tokens import account_activation_token
 
 
 # 개발 환경에서는 캐싱 비활성화, 프로덕션에서는 24시간 캐싱
@@ -160,3 +177,117 @@ def healthz(request):
 def about(request):
     """프로젝트 소개 페이지"""
     return render(request, 'main/about.html')
+
+
+def signup(request):
+    """회원가입"""
+    if request.user.is_authenticated:
+        return redirect('index')
+
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            user: User = form.save(commit=False)
+            # 이메일 인증 전까지 비활성화
+            user.is_active = False
+            user.email = form.cleaned_data.get('email')
+            user.save()
+
+            # 이메일 인증 링크 발송
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            token = account_activation_token.make_token(user)
+            activate_url = request.build_absolute_uri(
+                reverse('auth_activate', kwargs={'uidb64': uid, 'token': token})
+            )
+
+            subject = 'Anonymous Project 계정 활성화 안내'
+            message = (
+                f'안녕하세요, Anonymous Project 입니다.\n\n'
+                f'다음 링크를 클릭하여 계정을 활성화해 주세요:\n\n'
+                f'{activate_url}\n\n'
+                f'이 링크는 일정 시간 후 만료될 수 있습니다.\n\n'
+                f'감사합니다.'
+            )
+
+            send_mail(
+                subject,
+                message,
+                None,
+                [user.email],
+                fail_silently=True,
+            )
+            return redirect('auth_signup_complete')
+    else:
+        form = SignupForm()
+
+    return render(request, 'auth/signup.html', {'form': form})
+
+
+def login_view(request):
+    """로그인"""
+    if request.user.is_authenticated:
+        return redirect('index')
+
+    next_url = request.GET.get('next') or request.POST.get('next')
+
+    if request.method == 'POST':
+        form = LoginForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            if not user.is_active:
+                messages.error(request, '이메일 인증이 완료되지 않은 계정입니다.')
+            else:
+                login(request, user)
+                redirect_to = next_url or reverse('index')
+                return HttpResponseRedirect(redirect_to)
+    else:
+        form = LoginForm()
+
+    context = {
+        'form': form,
+        'next': next_url,
+    }
+    return render(request, 'auth/login.html', context)
+
+
+def logout_view(request):
+    """로그아웃"""
+    if request.method == 'POST' or request.GET.get('next') is not None:
+        logout(request)
+        next_url = request.GET.get('next') or reverse('index')
+        return HttpResponseRedirect(next_url)
+
+    # GET 요청에서 단순 확인 후 로그아웃 처리
+    logout(request)
+    return redirect('index')
+
+
+def activate(request, uidb64, token):
+    """
+    이메일 인증 링크 처리
+    """
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and account_activation_token.check_token(user, token):
+        if not user.is_active:
+            user.is_active = True
+            user.save()
+            messages.success(
+                request,
+                '회원가입과 이메일 인증이 모두 완료되었습니다. 이제 Anonymous Project에 로그인하여 튜토리얼을 이용하실 수 있습니다.',
+            )
+        else:
+            messages.info(request, '이미 활성화된 계정입니다. 바로 로그인할 수 있습니다.')
+        return redirect('auth_login')
+
+    messages.error(request, '유효하지 않거나 만료된 인증 링크입니다.')
+    return render(request, 'auth/activation_invalid.html')
+
+
+def signup_complete(request):
+    """회원가입 완료 안내 페이지"""
+    return render(request, 'auth/signup_complete.html')
