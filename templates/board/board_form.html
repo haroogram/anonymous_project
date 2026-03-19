@@ -1,0 +1,138 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+    {% if post %}게시글 수정 - 자유게시판{% else %}게시글 작성 - 자유게시판{% endif %}
+{% endblock %}
+
+{% block sidebar %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .content-wrapper {
+        grid-template-columns: 1fr !important;
+    }
+    .board-form-wrapper {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+        padding: 24px 28px;
+    }
+    .board-form-header {
+        margin-bottom: 20px;
+    }
+    .board-form-header h1 {
+        font-size: 1.6rem;
+        margin: 0 0 8px 0;
+    }
+    .board-form-header p {
+        margin: 0;
+        font-size: 0.95rem;
+        color: #64748b;
+    }
+    .form-row {
+        margin-bottom: 16px;
+    }
+    .form-row label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 6px;
+        font-size: 0.95rem;
+    }
+    .form-row input[type="text"],
+    .form-row input[type="password"],
+    .form-row textarea {
+        width: 100%;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        padding: 10px 12px;
+        font-size: 0.95rem;
+    }
+    .form-row textarea {
+        min-height: 220px;
+        resize: vertical;
+    }
+    .form-help {
+        margin-top: 4px;
+        font-size: 0.85rem;
+        color: #94a3b8;
+    }
+    .form-error {
+        margin-top: 4px;
+        font-size: 0.85rem;
+        color: #dc2626;
+    }
+    .board-form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="board-form-wrapper">
+    <div class="board-form-header">
+        {% if post %}
+            <h1>게시글 수정</h1>
+            <p>게시글을 수정하려면 비밀번호를 다시 입력해 주세요.</p>
+        {% else %}
+            <h1>게시글 작성</h1>
+            <p>자유롭게 내용을 작성해 주세요. 로그인 없이 이용할 수 있습니다.</p>
+        {% endif %}
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="form-row">
+                {% for error in form.non_field_errors %}
+                    <div class="form-error">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="form-row">
+            <label for="{{ form.title.id_for_label }}">제목</label>
+            {{ form.title }}
+            {% if form.title.errors %}
+                {% for error in form.title.errors %}
+                    <div class="form-error">{{ error }}</div>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <div class="form-row">
+            <label for="{{ form.password.id_for_label }}">비밀번호</label>
+            {{ form.password }}
+            {% if form.password.help_text %}
+                <div class="form-help">{{ form.password.help_text }}</div>
+            {% endif %}
+            {% if form.password.errors %}
+                {% for error in form.password.errors %}
+                    <div class="form-error">{{ error }}</div>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <div class="form-row">
+            <label for="{{ form.content.id_for_label }}">내용</label>
+            {{ form.content }}
+            {% if form.content.errors %}
+                {% for error in form.content.errors %}
+                    <div class="form-error">{{ error }}</div>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <div class="board-form-actions">
+            <a href="{% url 'board_list' %}" class="btn btn-outline">취소</a>
+            <button type="submit" class="btn btn-primary">
+                {% if post %}수정하기{% else %}등록하기{% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+

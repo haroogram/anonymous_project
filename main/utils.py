@@ -1,5 +1,5 @@
 """
-접속자 수 추적을 위한 Redis 유틸리티 함수들
+접속자 수 추적 및 공통 유틸리티 함수들
 """
 from datetime import datetime, date
 from django.conf import settings
@@ -14,6 +14,20 @@ TODAY_VISITORS_KEY = 'visitors:today'  # 오늘 접속자 수
 TOTAL_VISITORS_KEY = 'visitors:total'  # 누적 접속자 수
 DAILY_VISITORS_KEY_PREFIX = 'visitors:daily:'  # 일별 접속자 수 (예: visitors:daily:2024-01-01)
 VISITOR_SET_KEY_PREFIX = 'visitors:set:'  # 일별 접속자 집합 (중복 제거용)
+
+
+def get_client_ip(request):
+    """
+    프록시/ALB 환경을 고려한 클라이언트 IP 추출.
+    VisitorCountMiddleware 및 기타 뷰에서 공통으로 사용합니다.
+    """
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        # "client, proxy1, proxy2" 형태일 수 있으므로 첫 번째 값 사용
+        ip = x_forwarded_for.split(',')[0].strip()
+    else:
+        ip = request.META.get('REMOTE_ADDR', '')
+    return ip or '0.0.0.0'
 
 
 def get_redis_client():

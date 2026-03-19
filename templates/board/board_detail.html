@@ -1,0 +1,72 @@
+{% extends 'main/base.html' %}
+
+{% block title %}{{ post.title }} - 자유게시판{% endblock %}
+
+{% block sidebar %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .content-wrapper {
+        grid-template-columns: 1fr !important;
+    }
+    .board-detail-header {
+        margin-bottom: 20px;
+    }
+    .board-detail-header h1 {
+        font-size: 1.6rem;
+        margin-bottom: 8px;
+    }
+    .board-meta {
+        font-size: 0.9rem;
+        color: #64748b;
+    }
+    .board-article {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+        padding: 20px 24px;
+        margin-bottom: 20px;
+        line-height: 1.7;
+        white-space: pre-wrap;
+    }
+    .board-actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+    }
+    .board-actions-left,
+    .board-actions-right {
+        display: flex;
+        gap: 8px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="board-detail-header">
+    <h1>{{ post.title }}</h1>
+    <div class="board-meta">
+        <span>작성자: {{ post.get_anonymous_nickname }}</span>
+        <span> · </span>
+        <span>{{ post.created_at|date:"Y-m-d H:i" }}</span>
+        {% if post.updated_at and post.updated_at > post.created_at %}
+            <span> (수정: {{ post.updated_at|date:"Y-m-d H:i" }})</span>
+        {% endif %}
+    </div>
+</div>
+
+<article class="board-article">
+    {{ post.content|linebreaksbr }}
+</article>
+
+<div class="board-actions">
+    <div class="board-actions-left">
+        <a href="{% url 'board_list' %}" class="btn btn-outline">목록으로</a>
+    </div>
+    <div class="board-actions-right">
+        <a href="{% url 'board_update' post.pk %}" class="btn btn-secondary">수정</a>
+        <a href="{% url 'board_delete' post.pk %}" class="btn btn-secondary">삭제</a>
+    </div>
+</div>
+{% endblock %}
+

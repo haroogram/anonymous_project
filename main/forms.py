@@ -1,4 +1,21 @@
 from django import forms
+
+from .models import BoardPost
+
+
+class BoardPostForm(forms.ModelForm):
+    password = forms.CharField(
+        widget=forms.PasswordInput(render_value=False),
+        label="비밀번호",
+        help_text="게시글 수정/삭제 시 사용할 비밀번호를 입력하세요.",
+    )
+
+    class Meta:
+        model = BoardPost
+        # author_name은 클라이언트 IP 기반으로 서버에서 자동 설정
+        fields = ["title", "password", "content"]
+
+from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 
