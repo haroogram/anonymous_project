@@ -4,7 +4,7 @@
 """
 import logging
 import re
-from .utils import increment_visitor_count
+from .utils import increment_visitor_count, get_client_ip
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +64,7 @@ class VisitorCountMiddleware:
     
     def __call__(self, request):
         # 요청 정보 로깅 (실제 IP / 헤더 확인용)
-        ip_address = self._get_client_ip(request)
+        ip_address = get_client_ip(request)
         xff = request.META.get('HTTP_X_FORWARDED_FOR', '')
         remote_addr = request.META.get('REMOTE_ADDR', '')
         user_agent = request.META.get('HTTP_USER_AGENT', '')
@@ -132,7 +132,7 @@ class VisitorCountMiddleware:
                 return True
         
         # IP 주소 확인
-        ip_address = self._get_client_ip(request)
+        ip_address = get_client_ip(request)
         for pattern in self._ip_patterns:
             if pattern.match(ip_address):
                 logger.info(
@@ -149,25 +149,4 @@ class VisitorCountMiddleware:
             user_agent,
         )
         return False
-    
-    def _get_client_ip(self, request):
-        """
-        클라이언트의 실제 IP 주소를 가져옵니다.
-        
-        프록시나 로드 밸런서를 통한 경우 X-Forwarded-For 헤더를 확인합니다.
-        
-        Args:
-            request: Django request 객체
-            
-        Returns:
-            str: IP 주소
-        """
-        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-        if x_forwarded_for:
-            # X-Forwarded-For 헤더는 여러 IP를 포함할 수 있음 (예: "client, proxy1, proxy2")
-            # 첫 번째 IP가 실제 클라이언트 IP
-            ip = x_forwarded_for.split(',')[0].strip()
-        else:
-            ip = request.META.get('REMOTE_ADDR', '')
-        return ip
 

@@ -6,6 +6,12 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     path('search/', views.search, name='search'),
     path('healthz/', views.healthz, name='healthz'),
+    # 자유게시판
+    path('board/', views.board_list, name='board_list'),
+    path('board/new/', views.board_create, name='board_create'),
+    path('board/<int:pk>/', views.board_detail, name='board_detail'),
+    path('board/<int:pk>/edit/', views.board_update, name='board_update'),
+    path('board/<int:pk>/delete/', views.board_delete, name='board_delete'),
     # 인증 관련
     path('auth/signup/', views.signup, name='auth_signup'),
     path('auth/signup/complete/', views.signup_complete, name='auth_signup_complete'),

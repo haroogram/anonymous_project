@@ -12,15 +12,17 @@ from django.urls import reverse
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.core.mail import send_mail
+import uuid
 
-from .models import Category, Topic
+from .models import Category, Topic, BoardPost
 from .utils import (
     get_visitor_stats,
     get_today_visitors_count,
     get_total_visitors_count,
     get_daily_visitors_count,
+    get_client_ip,
 )
-from .forms import SignupForm, LoginForm
+from .forms import SignupForm, LoginForm, BoardPostForm
 from .tokens import account_activation_token
 
 
@@ -306,3 +308,123 @@ def activate(request, uidb64, token):
 def signup_complete(request):
     """회원가입 완료 안내 페이지"""
     return render(request, 'auth/signup_complete.html')
+
+
+def board_list(request):
+    """자유게시판 목록"""
+    posts = BoardPost.objects.filter(is_deleted=False)
+    context = {
+        "posts": posts,
+    }
+    return render(request, "board/board_list.html", context)
+
+
+def board_detail(request, pk):
+    """자유게시판 상세"""
+    post = get_object_or_404(BoardPost, pk=pk, is_deleted=False)
+    context = {
+        "post": post,
+    }
+    return render(request, "board/board_detail.html", context)
+
+
+def _make_masked_author_from_ip(ip: str) -> str:
+    """
+    IP 기반 익명 작성자명 생성.
+    예: 112.221.33.44 -> 익명(112.221.xxx.xxx)
+    """
+    if not ip:
+        return "익명(anonymous)"
+
+    # IPv4 형식 우선 처리
+    parts = ip.split(".")
+    if len(parts) == 4 and all(part.isdigit() for part in parts):
+        return f"익명({parts[0]}.{parts[1]}.xxx.xxx)"
+
+    # 그 외(IPV6 등)는 앞부분만 간단히 마스킹
+    return f"익명({ip[:6]}**)"
+
+
+def _get_or_create_anonymous_id(request):
+    """
+    쿠키 기반 익명 ID 조회/생성.
+    Returns:
+        tuple[str, bool]: (anonymous_id, is_new)
+    """
+    anon_id = request.COOKIES.get("ap_anon_id")
+    is_new = False
+    if not anon_id:
+        anon_id = uuid.uuid4().hex
+        is_new = True
+    return anon_id, is_new
+
+
+def board_create(request):
+    """자유게시판 글 작성 (비로그인)"""
+    if request.method == "POST":
+        form = BoardPostForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            client_ip = get_client_ip(request)
+            post.author_name = _make_masked_author_from_ip(client_ip)
+            anon_id, is_new = _get_or_create_anonymous_id(request)
+            post.anonymous_id = anon_id
+            post.save()
+            messages.success(request, "게시글이 등록되었습니다.")
+            response = redirect("board_list")
+            if is_new:
+                response.set_cookie(
+                    "ap_anon_id",
+                    anon_id,
+                    max_age=60 * 60 * 24 * 365,  # 1년
+                    httponly=True,
+                    samesite="Lax",
+                )
+            return response
+    else:
+        form = BoardPostForm()
+
+    return render(request, "board/board_form.html", {"form": form})
+
+
+def board_update(request, pk):
+    """자유게시판 글 수정 (비밀번호 확인)"""
+    post = get_object_or_404(BoardPost, pk=pk, is_deleted=False)
+
+    if request.method == "POST":
+        form = BoardPostForm(request.POST, instance=post)
+        input_password = request.POST.get("password", "")
+        if form.is_valid():
+            if input_password != post.password:
+                form.add_error("password", "비밀번호가 일치하지 않습니다.")
+            else:
+                form.save()
+                messages.success(request, "게시글이 수정되었습니다.")
+                return redirect("board_detail", pk=post.pk)
+    else:
+        # 비밀번호는 다시 입력받기 위해 초기값 제거
+        initial_data = {
+            "title": post.title,
+            "content": post.content,
+        }
+        form = BoardPostForm(initial=initial_data)
+
+    return render(request, "board/board_form.html", {"form": form, "post": post})
+
+
+def board_delete(request, pk):
+    """자유게시판 글 삭제 (비밀번호 확인, soft delete)"""
+    post = get_object_or_404(BoardPost, pk=pk, is_deleted=False)
+
+    if request.method == "POST":
+        input_password = request.POST.get("password", "")
+        if input_password != post.password:
+            messages.error(request, "비밀번호가 일치하지 않습니다.")
+            return redirect("board_detail", pk=post.pk)
+
+        post.is_deleted = True
+        post.save(update_fields=["is_deleted"])
+        messages.success(request, "게시글이 삭제되었습니다.")
+        return redirect("board_list")
+
+    return render(request, "board/board_confirm_delete.html", {"post": post})
