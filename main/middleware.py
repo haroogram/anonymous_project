@@ -1,12 +1,39 @@
 """
-접속자 수 추적 미들웨어
-모든 요청에 대해 접속자 수를 카운팅합니다.
+접속자 수 추적 및 /admin IP 제한 미들웨어
 """
 import logging
 import re
+from django.conf import settings
+from django.http import HttpResponseForbidden
 from .utils import increment_visitor_count, get_client_ip
 
 logger = logging.getLogger(__name__)
+
+
+class AdminIPRestrictionMiddleware:
+    """
+    /admin 경로에 대한 IP 화이트리스트 미들웨어
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+        # settings 에서 허용 IP 목록을 가져오되, 기본값으로 질문에서 주신 두 IP를 사용
+        self.allowed_ips = getattr(
+            settings,
+            "ADMIN_ALLOWED_IPS",
+            ["121.141.92.16", "112.221.198.140"],
+        )
+
+    def __call__(self, request):
+        path = request.path or ""
+        if path.startswith("/admin"):
+            client_ip = get_client_ip(request)
+            if client_ip not in self.allowed_ips:
+                logger.warning(
+                    "[AdminIPRestriction] blocked path=%s ip=%s", path, client_ip
+                )
+                return HttpResponseForbidden("Forbidden")
+        return self.get_response(request)
 
 
 class VisitorCountMiddleware:
