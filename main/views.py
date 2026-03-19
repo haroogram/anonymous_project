@@ -229,7 +229,7 @@ def signup(request):
                 message,
                 None,
                 [user.email],
-                fail_silently=True,
+                fail_silently=False,
             )
             return redirect('auth_signup_complete')
     else:
