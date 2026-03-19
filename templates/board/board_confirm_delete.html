@@ -1,0 +1,92 @@
+{% extends 'main/base.html' %}
+
+{% block title %}게시글 삭제 - 자유게시판{% endblock %}
+
+{% block sidebar %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .content-wrapper {
+        grid-template-columns: 1fr !important;
+    }
+    .board-delete-wrapper {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+        padding: 24px 28px;
+    }
+    .board-delete-header h1 {
+        font-size: 1.6rem;
+        margin-bottom: 8px;
+    }
+    .board-delete-header p {
+        margin: 0;
+        font-size: 0.95rem;
+        color: #64748b;
+    }
+    .board-delete-summary {
+        margin: 18px 0;
+        padding: 12px 14px;
+        border-radius: 8px;
+        background: #f8fafc;
+        font-size: 0.95rem;
+    }
+    .form-row {
+        margin: 16px 0;
+    }
+    .form-row label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 6px;
+        font-size: 0.95rem;
+    }
+    .form-row input[type="password"] {
+        width: 100%;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        padding: 10px 12px;
+        font-size: 0.95rem;
+    }
+    .form-help {
+        margin-top: 4px;
+        font-size: 0.85rem;
+        color: #94a3b8;
+    }
+    .board-delete-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="board-delete-wrapper">
+    <div class="board-delete-header">
+        <h1>게시글 삭제</h1>
+        <p>아래 게시글을 삭제하려면 비밀번호를 입력해 주세요.</p>
+    </div>
+
+    <div class="board-delete-summary">
+        <div><strong>제목:</strong> {{ post.title }}</div>
+        <div><strong>작성자:</strong> {{ post.author_name }}</div>
+        <div><strong>작성일:</strong> {{ post.created_at|date:"Y-m-d H:i" }}</div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-row">
+            <label for="password">비밀번호</label>
+            <input type="password" id="password" name="password" autocomplete="off">
+            <div class="form-help">게시글 작성 시 입력한 비밀번호를 입력하세요.</div>
+        </div>
+
+        <div class="board-delete-actions">
+            <a href="{% url 'board_detail' post.pk %}" class="btn btn-outline">취소</a>
+            <button type="submit" class="btn btn-secondary">삭제하기</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
