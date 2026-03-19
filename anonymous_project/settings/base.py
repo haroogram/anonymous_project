@@ -42,7 +42,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'main.middleware.VisitorCountMiddleware',  # 접속자 수 추적 미들웨어
+    'main.middleware.AdminIPRestrictionMiddleware',  # /admin IP 화이트리스트
+    'main.middleware.VisitorCountMiddleware',        # 접속자 수 추적 미들웨어
 ]
 
 ROOT_URLCONF = 'anonymous_project.urls'
@@ -206,4 +207,10 @@ CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 #         'options': {'expires': 60 * 60},  # 작업 만료 시간 (1시간)
 #     },
 # }
+
+# /admin 접근 허용 IP 목록 (Django 레벨 화이트리스트)
+ADMIN_ALLOWED_IPS = env.list(
+    'ADMIN_ALLOWED_IPS',
+    default=['121.141.92.16', '112.221.198.140'],
+)
 
