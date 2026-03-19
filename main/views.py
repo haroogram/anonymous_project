@@ -24,11 +24,26 @@ from .forms import SignupForm, LoginForm
 from .tokens import account_activation_token
 
 
+def cache_page_by_auth(timeout):
+    """
+    로그인 여부(익명/로그인)에 따라 캐시 키 prefix를 다르게 주는 데코레이터.
+    익명 유저: key_prefix='anon'
+    로그인 유저: key_prefix='auth'
+    """
+    def decorator(view_func):
+        def _wrapped_view(request, *args, **kwargs):
+            key_prefix = 'auth' if request.user.is_authenticated else 'anon'
+            cached_view = cache_page(timeout, key_prefix=key_prefix)(view_func)
+            return cached_view(request, *args, **kwargs)
+        return _wrapped_view
+    return decorator
+
+
 # 개발 환경에서는 캐싱 비활성화, 프로덕션에서는 24시간 캐싱
 cache_timeout = 0 if settings.DEBUG else 60 * 60 * 24
 
 
-@cache_page(cache_timeout)
+@cache_page_by_auth(cache_timeout)
 def index(request):
     """메인 페이지"""
     categories = Category.objects.all()
@@ -38,7 +53,7 @@ def index(request):
     return render(request, 'main/index.html', context)
 
 
-@cache_page(cache_timeout)
+@cache_page_by_auth(cache_timeout)
 def tutorial(request, category):
     """카테고리별 튜토리얼 목록"""
     category_obj = get_object_or_404(Category, slug=category)
@@ -53,7 +68,7 @@ def tutorial(request, category):
     return render(request, 'main/tutorial.html', context)
 
 
-@cache_page(cache_timeout)
+@cache_page_by_auth(cache_timeout)
 def topic_detail(request, category, topic):
     """주제 상세 페이지"""
     category_obj = get_object_or_404(Category, slug=category)
@@ -173,7 +188,7 @@ def healthz(request):
     return JsonResponse({'status': 'ok'}, status=200)
 
 
-@cache_page(cache_timeout)
+@cache_page_by_auth(cache_timeout)
 def about(request):
     """프로젝트 소개 페이지"""
     return render(request, 'main/about.html')
