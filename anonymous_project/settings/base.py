@@ -46,6 +46,9 @@ MIDDLEWARE = [
     'main.middleware.VisitorCountMiddleware',        # 접속자 수 추적 미들웨어
 ]
 
+# CSRF 실패 시 공통 403 에러 페이지 사용
+CSRF_FAILURE_VIEW = 'main.error_views.csrf_failure'
+
 ROOT_URLCONF = 'anonymous_project.urls'
 
 TEMPLATES = [
