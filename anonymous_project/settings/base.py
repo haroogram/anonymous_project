@@ -46,6 +46,9 @@ MIDDLEWARE = [
     'main.middleware.VisitorCountMiddleware',        # 접속자 수 추적 미들웨어
 ]
 
+# CSRF 실패 시 공통 403 에러 페이지 사용
+CSRF_FAILURE_VIEW = 'main.error_views.csrf_failure'
+
 ROOT_URLCONF = 'anonymous_project.urls'
 
 TEMPLATES = [
@@ -106,6 +109,12 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # 사용자 업로드 (자유게시판 첨부 등)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# 업로드 파싱 단계 메모리 보호 설정
+# - FILE_UPLOAD_MAX_MEMORY_SIZE: 개별 파일을 메모리에 유지할 최대 크기 (초과 시 임시 파일로 처리)
+# - DATA_UPLOAD_MAX_MEMORY_SIZE: 요청 본문 파싱 시 허용할 최대 메모리 사용량
+FILE_UPLOAD_MAX_MEMORY_SIZE = env.int('FILE_UPLOAD_MAX_MEMORY_SIZE', default=2 * 1024 * 1024)  # 2MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = env.int('DATA_UPLOAD_MAX_MEMORY_SIZE', default=30 * 1024 * 1024)  # 30MB
 
 # 자유게시판 첨부 제한
 BOARD_ATTACHMENT_MAX_BYTES = 10 * 1024 * 1024  # 파일당 10MB
