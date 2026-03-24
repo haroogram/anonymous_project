@@ -45,6 +45,11 @@ SECURE_SSL_REDIRECT = env('SECURE_SSL_REDIRECT', default=False)
 # ALB가 HTTPS를 사용하는 경우에만 True로 설정
 SESSION_COOKIE_SECURE = env('SESSION_COOKIE_SECURE', default=True)
 CSRF_COOKIE_SECURE = env('CSRF_COOKIE_SECURE', default=True)
+# 세션 정책:
+# - 브라우저 종료 시 쿠키 폐기(재시작 후 자동 로그인 방지)
+# - 세션 유효시간 1시간
+SESSION_EXPIRE_AT_BROWSER_CLOSE = env.bool('SESSION_EXPIRE_AT_BROWSER_CLOSE', default=True)
+SESSION_COOKIE_AGE = env.int('SESSION_COOKIE_AGE', default=60 * 60)
 
 # ALB를 통한 접속 시 X-Forwarded-Proto 헤더 신뢰
 USE_X_FORWARDED_HOST = True
