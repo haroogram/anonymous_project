@@ -178,6 +178,27 @@ else:
     # STATIC_ROOT는 이미 base.py에서 설정됨
     pass
 
+# 자유게시판 첨부를 S3에 저장 (다중 Pod 환경에서 로컬 디스크 공유 문제 회피)
+# USE_S3_STATIC=true 일 때와 동일한 버킷·리전을 사용하며, 객체는 media/ prefix 아래에 저장됩니다.
+USE_S3_MEDIA = env.bool('USE_S3_MEDIA', default=False)
+if USE_S3_MEDIA:
+    if not USE_S3_STATIC:
+        raise ValueError(
+            "USE_S3_MEDIA=true 인 경우 USE_S3_STATIC=true 및 S3 관련 환경 변수가 필요합니다."
+        )
+    if 'storages' not in INSTALLED_APPS:
+        INSTALLED_APPS.append('storages')
+    STORAGES = {
+        **STORAGES,
+        "default": {
+            "BACKEND": "main.storages.MediaBoardStorage",
+        },
+    }
+    if CDN_DOMAIN:
+        MEDIA_URL = f'https://{CDN_DOMAIN}/media/'
+    else:
+        MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+
 # 로깅 설정
 LOGGING = {
     'version': 1,

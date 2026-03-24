@@ -103,6 +103,20 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+# 사용자 업로드 (자유게시판 첨부 등)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# 자유게시판 첨부 제한
+BOARD_ATTACHMENT_MAX_BYTES = 10 * 1024 * 1024  # 파일당 10MB
+BOARD_ATTACHMENT_MAX_COUNT = 5
+BOARD_ATTACHMENT_ALLOWED_EXTENSIONS = frozenset({
+    'pdf', 'txt', 'csv', 'md', 'json',
+    'png', 'jpg', 'jpeg', 'gif', 'webp',
+    'zip',
+    'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx',
+})
+
 # Static files storage 설정
 # 개발 환경에서도 ManifestStaticFilesStorage를 사용하여
 # CSS/JS 파일 변경 시 자동으로 URL이 변경되도록 함

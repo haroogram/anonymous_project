@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import JsonResponse, HttpResponseRedirect
-from django.db.models import Q
+from django.http import FileResponse, JsonResponse, HttpResponseRedirect
+from django.db import transaction
+from django.db.models import Count, Q
+from django.core.exceptions import ValidationError
 from django.views.decorators.cache import cache_page
 from django.conf import settings
 from django.contrib import messages
@@ -14,7 +16,8 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.core.mail import send_mail
 import uuid
 
-from .models import Category, Topic, BoardPost
+from .models import BoardAttachment, BoardPost, Category, Topic
+from .board_attachments import validate_board_uploaded_files
 from .utils import (
     get_visitor_stats,
     get_today_visitors_count,
@@ -312,7 +315,11 @@ def signup_complete(request):
 
 def board_list(request):
     """자유게시판 목록"""
-    posts = BoardPost.objects.filter(is_deleted=False)
+    posts = (
+        BoardPost.objects.filter(is_deleted=False)
+        .annotate(attachment_count=Count("attachments", distinct=True))
+        .order_by("-created_at")
+    )
     context = {
         "posts": posts,
     }
@@ -321,11 +328,28 @@ def board_list(request):
 
 def board_detail(request, pk):
     """자유게시판 상세"""
-    post = get_object_or_404(BoardPost, pk=pk, is_deleted=False)
+    post = get_object_or_404(
+        BoardPost.objects.prefetch_related("attachments"),
+        pk=pk,
+        is_deleted=False,
+    )
     context = {
         "post": post,
     }
     return render(request, "board/board_detail.html", context)
+
+
+def board_attachment_download(request, post_pk, attachment_pk):
+    """첨부파일 다운로드 (게시글이 삭제되지 않은 경우만)."""
+    post = get_object_or_404(BoardPost, pk=post_pk, is_deleted=False)
+    attachment = get_object_or_404(BoardAttachment, pk=attachment_pk, post=post)
+    filename = attachment.original_name or attachment.file.name.rsplit("/", 1)[-1]
+    file_handle = attachment.file.open("rb")
+    return FileResponse(
+        file_handle,
+        as_attachment=True,
+        filename=filename,
+    )
 
 
 def _make_masked_author_from_ip(ip: str) -> str:
@@ -343,6 +367,43 @@ def _make_masked_author_from_ip(ip: str) -> str:
 
     # 그 외(IPV6 등)는 앞부분만 간단히 마스킹
     return f"익명({ip[:6]}**)"
+
+
+def _board_form_context():
+    return {
+        "board_allowed_extensions": sorted(
+            getattr(settings, "BOARD_ATTACHMENT_ALLOWED_EXTENSIONS", ())
+        ),
+        "board_max_attachments": getattr(settings, "BOARD_ATTACHMENT_MAX_COUNT", 5),
+        "board_max_file_mb": getattr(
+            settings, "BOARD_ATTACHMENT_MAX_BYTES", 10 * 1024 * 1024
+        )
+        // (1024 * 1024),
+    }
+
+
+def _verified_remove_attachment_ids(post, request):
+    """POST의 remove_attachments가 해당 글의 첨부만 포함하는지 검증. 실패 시 None."""
+    raw = request.POST.getlist("remove_attachments")
+    if not raw:
+        return set()
+    ids = [int(x) for x in raw if str(x).isdigit()]
+    if not ids:
+        return set()
+    found = set(post.attachments.filter(pk__in=ids).values_list("pk", flat=True))
+    if set(ids) != found:
+        return None
+    return found
+
+
+def _save_new_attachments(post, files):
+    for f in files:
+        BoardAttachment.objects.create(
+            post=post,
+            file=f,
+            original_name=getattr(f, "name", "") or "",
+            size=getattr(f, "size", 0) or 0,
+        )
 
 
 def _get_or_create_anonymous_id(request):
@@ -363,44 +424,75 @@ def board_create(request):
     """자유게시판 글 작성 (비로그인)"""
     if request.method == "POST":
         form = BoardPostForm(request.POST)
+        files = request.FILES.getlist("attachments")
         if form.is_valid():
-            post = form.save(commit=False)
-            client_ip = get_client_ip(request)
-            post.author_name = _make_masked_author_from_ip(client_ip)
-            anon_id, is_new = _get_or_create_anonymous_id(request)
-            post.anonymous_id = anon_id
-            post.save()
-            messages.success(request, "게시글이 등록되었습니다.")
-            response = redirect("board_list")
-            if is_new:
-                response.set_cookie(
-                    "ap_anon_id",
-                    anon_id,
-                    max_age=60 * 60 * 24 * 365,  # 1년
-                    httponly=True,
-                    samesite="Lax",
-                )
-            return response
+            try:
+                validate_board_uploaded_files(files, current_count=0)
+            except ValidationError as e:
+                for msg in e.messages:
+                    form.add_error(None, msg)
+            else:
+                with transaction.atomic():
+                    post = form.save(commit=False)
+                    client_ip = get_client_ip(request)
+                    post.author_name = _make_masked_author_from_ip(client_ip)
+                    anon_id, is_new = _get_or_create_anonymous_id(request)
+                    post.anonymous_id = anon_id
+                    post.save()
+                    _save_new_attachments(post, files)
+                messages.success(request, "게시글이 등록되었습니다.")
+                response = redirect("board_list")
+                if is_new:
+                    response.set_cookie(
+                        "ap_anon_id",
+                        anon_id,
+                        max_age=60 * 60 * 24 * 365,  # 1년
+                        httponly=True,
+                        samesite="Lax",
+                    )
+                return response
     else:
         form = BoardPostForm()
 
-    return render(request, "board/board_form.html", {"form": form})
+    ctx = {"form": form, **_board_form_context()}
+    return render(request, "board/board_form.html", ctx)
 
 
 def board_update(request, pk):
     """자유게시판 글 수정 (비밀번호 확인)"""
-    post = get_object_or_404(BoardPost, pk=pk, is_deleted=False)
+    post = get_object_or_404(
+        BoardPost.objects.prefetch_related("attachments"),
+        pk=pk,
+        is_deleted=False,
+    )
 
     if request.method == "POST":
         form = BoardPostForm(request.POST, instance=post)
         input_password = request.POST.get("password", "")
-        if form.is_valid():
+        files = request.FILES.getlist("attachments")
+        remove_ids = _verified_remove_attachment_ids(post, request)
+
+        if remove_ids is None:
+            messages.error(request, "삭제할 첨부 정보가 올바르지 않습니다.")
+        elif form.is_valid():
             if input_password != post.password:
                 form.add_error("password", "비밀번호가 일치하지 않습니다.")
             else:
-                form.save()
-                messages.success(request, "게시글이 수정되었습니다.")
-                return redirect("board_detail", pk=post.pk)
+                remaining = post.attachments.exclude(pk__in=remove_ids or set()).count()
+                try:
+                    validate_board_uploaded_files(files, current_count=remaining)
+                except ValidationError as e:
+                    for msg in e.messages:
+                        form.add_error(None, msg)
+                else:
+                    with transaction.atomic():
+                        form.save()
+                        if remove_ids:
+                            for att in post.attachments.filter(pk__in=remove_ids):
+                                att.delete()
+                        _save_new_attachments(post, files)
+                    messages.success(request, "게시글이 수정되었습니다.")
+                    return redirect("board_detail", pk=post.pk)
     else:
         # 비밀번호는 다시 입력받기 위해 초기값 제거
         initial_data = {
@@ -409,7 +501,8 @@ def board_update(request, pk):
         }
         form = BoardPostForm(initial=initial_data)
 
-    return render(request, "board/board_form.html", {"form": form, "post": post})
+    ctx = {"form": form, "post": post, **_board_form_context()}
+    return render(request, "board/board_form.html", ctx)
 
 
 def board_delete(request, pk):
