@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import BoardPost, Category, Topic, VisitorStats
+
+from .models import BoardAttachment, BoardPost, Category, Topic, VisitorStats
 
 
 @admin.register(Category)
@@ -31,6 +32,12 @@ class VisitorStatsAdmin(admin.ModelAdmin):
     readonly_fields = ['created_at', 'updated_at']
 
 
+class BoardAttachmentInline(admin.TabularInline):
+    model = BoardAttachment
+    extra = 0
+    readonly_fields = ['uploaded_at', 'size']
+
+
 @admin.register(BoardPost)
 class BoardPostAdmin(admin.ModelAdmin):
     list_display = ['title', 'author_name', 'is_deleted', 'created_at', 'updated_at']
@@ -39,3 +46,4 @@ class BoardPostAdmin(admin.ModelAdmin):
     ordering = ['-created_at']
     readonly_fields = ['created_at', 'updated_at']
     date_hierarchy = 'created_at'
+    inlines = [BoardAttachmentInline]

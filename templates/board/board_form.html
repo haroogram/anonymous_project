@@ -38,6 +38,10 @@
         margin-bottom: 6px;
         font-size: 0.95rem;
     }
+    .form-row input[type="file"] {
+        width: 100%;
+        font-size: 0.9rem;
+    }
     .form-row input[type="text"],
     .form-row input[type="password"],
     .form-row textarea {
@@ -82,7 +86,7 @@
         {% endif %}
     </div>
 
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
 
         {% if form.non_field_errors %}
@@ -126,8 +130,34 @@
             {% endif %}
         </div>
 
+        {% if post and post.attachments.all %}
+        <div class="form-row">
+            <label>기존 첨부 삭제</label>
+            <div class="form-help" style="margin-bottom: 8px;">삭제할 파일에만 체크하세요. 비밀번호 확인 후 반영됩니다.</div>
+            {% for att in post.attachments.all %}
+            <div style="margin: 6px 0;">
+                <label style="display: inline; font-weight: normal;">
+                    <input type="checkbox" name="remove_attachments" value="{{ att.pk }}">
+                    {{ att.original_name }}
+                    {% if att.size %}<span class="form-help">({{ att.size|filesizeformat }})</span>{% endif %}
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="form-row">
+            <label for="id_attachments">첨부파일 추가</label>
+            <input type="file" name="attachments" id="id_attachments" multiple
+                   accept="{% for ext in board_allowed_extensions %}.{{ ext }}{% if not forloop.last %},{% endif %}{% endfor %}">
+            <div class="form-help">
+                한 글당 최대 {{ board_max_attachments }}개, 파일당 최대 약 {{ board_max_file_mb }}MB.
+                허용 형식: {% for ext in board_allowed_extensions %}.{{ ext }}{% if not forloop.last %}, {% endif %}{% endfor %}
+            </div>
+        </div>
+
         <div class="board-form-actions">
-            <a href="{% url 'board_list' %}" class="btn btn-outline">취소</a>
+            <a href="{% if post %}{% url 'board_detail' post.pk %}{% else %}{% url 'board_list' %}{% endif %}" class="btn btn-outline">취소</a>
             <button type="submit" class="btn btn-primary">
                 {% if post %}수정하기{% else %}등록하기{% endif %}
             </button>
