@@ -9,6 +9,17 @@ on:
     tags:
       - 'v*'   # v1.1.4 등 푸시 시 semver 태그(1.1.4)로도 푸시
   workflow_dispatch:
+    inputs:
+      no_cache:
+        description: '빌드 캐시 없이 전체 재빌드(apt 등 최신화). 평소 태그 빌드는 캐시 사용.'
+        required: false
+        default: false
+        type: boolean
+      release_version:
+        description: '배포용 이미지/manifest 태그 (예: 1.2.5 또는 v1.2.5). 비우면 :sha-만 사용.'
+        required: true
+        default: ''
+        type: string
 
 env:
   REGISTRY: docker.io
@@ -39,11 +50,22 @@ jobs:
 
       - name: Extract metadata and set tags
         id: meta
+        env:
+          DISPATCH_RELEASE_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.release_version || '' }}
         run: |
           SHORT_SHA="${GITHUB_SHA:0:7}"
           echo "short_sha=$SHORT_SHA" >> $GITHUB_OUTPUT
+          VERSION=""
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
             VERSION="${GITHUB_REF#refs/tags/v}"
+          else
+            RV="$(echo -n "${DISPATCH_RELEASE_VERSION:-}" | xargs)"
+            RV="${RV#v}"
+            if [[ -n "$RV" ]]; then
+              VERSION="$RV"
+            fi
+          fi
+          if [[ -n "$VERSION" ]]; then
             echo "version=$VERSION" >> $GITHUB_OUTPUT
             echo "image_tag=$VERSION" >> $GITHUB_OUTPUT
           else
@@ -52,7 +74,7 @@ jobs:
           {
             echo "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${SHORT_SHA}"
             echo "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
-            if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            if [[ -n "$VERSION" ]]; then
               echo "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${VERSION}"
             fi
           } >> tags.txt
@@ -65,6 +87,8 @@ jobs:
         with:
           context: .
           push: true
+          pull: true
+          no-cache: ${{ github.event_name == 'workflow_dispatch' && inputs.no_cache }}
           tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
