@@ -154,6 +154,7 @@
                 한 글당 최대 {{ board_max_attachments }}개, 파일당 최대 약 {{ board_max_file_mb }}MB.
                 허용 형식: {% for ext in board_allowed_extensions %}.{{ ext }}{% if not forloop.last %}, {% endif %}{% endfor %}
             </div>
+            <div id="attachment-client-error" class="form-error" style="display: none;"></div>
         </div>
 
         <div class="board-form-actions">
@@ -164,5 +165,82 @@
         </div>
     </form>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(() => {
+    const form = document.querySelector(".board-form-wrapper form");
+    const fileInput = document.getElementById("id_attachments");
+    if (!form || !fileInput) return;
+
+    const removeCheckboxes = Array.from(
+        form.querySelectorAll('input[name="remove_attachments"]')
+    );
+    const existingAttachmentCount = removeCheckboxes.length;
+    const maxAttachments = {{ board_max_attachments|default:5 }};
+    const maxFileBytes = {{ board_max_file_mb|default:10 }} * 1024 * 1024;
+    // Traefik 레벨 제한(64MB)보다 여유 있게 낮게 잡아 사전 차단
+    const maxTotalBytes = 60 * 1024 * 1024;
+    const allowedExts = new Set(
+        [{% for ext in board_allowed_extensions %}"{{ ext|lower }}"{% if not forloop.last %}, {% endif %}{% endfor %}]
+    );
+    const errorBox = document.getElementById("attachment-client-error");
+
+    const setError = (message) => {
+        if (!errorBox) return;
+        errorBox.textContent = message || "";
+        errorBox.style.display = message ? "block" : "none";
+    };
+
+    const getRemainingExistingCount = () =>
+        existingAttachmentCount - removeCheckboxes.filter((cb) => cb.checked).length;
+
+    const validateSelectedFiles = () => {
+        const files = Array.from(fileInput.files || []);
+        if (!files.length) {
+            setError("");
+            return true;
+        }
+
+        const remainingExisting = getRemainingExistingCount();
+        if (remainingExisting + files.length > maxAttachments) {
+            setError(`첨부파일은 최대 ${maxAttachments}개까지 등록할 수 있습니다.`);
+            return false;
+        }
+
+        let total = 0;
+        for (const file of files) {
+            total += file.size || 0;
+            const parts = (file.name || "").split(".");
+            const ext = parts.length > 1 ? parts.pop().toLowerCase() : "";
+            if (!allowedExts.has(ext)) {
+                setError(`허용되지 않는 파일 형식입니다: ${file.name}`);
+                return false;
+            }
+            if ((file.size || 0) > maxFileBytes) {
+                setError(`파일당 최대 ${Math.round(maxFileBytes / (1024 * 1024))}MB까지 업로드할 수 있습니다.`);
+                return false;
+            }
+        }
+
+        if (total > maxTotalBytes) {
+            setError("선택한 파일 총합이 너무 큽니다. 총 60MB 이하로 업로드해 주세요.");
+            return false;
+        }
+
+        setError("");
+        return true;
+    };
+
+    fileInput.addEventListener("change", validateSelectedFiles);
+    removeCheckboxes.forEach((cb) => cb.addEventListener("change", validateSelectedFiles));
+    form.addEventListener("submit", (event) => {
+        if (!validateSelectedFiles()) {
+            event.preventDefault();
+        }
+    });
+})();
+</script>
 {% endblock %}
 
