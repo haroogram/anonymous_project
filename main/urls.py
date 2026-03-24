@@ -1,11 +1,17 @@
 from django.urls import path
-from . import views
+from . import error_views, views
 
 urlpatterns = [
     path('', views.index, name='index'),
     path('about/', views.about, name='about'),
     path('search/', views.search, name='search'),
     path('healthz/', views.healthz, name='healthz'),
+    # CloudFront/ALB 등에서 단순 라우팅 가능한 에러 페이지 엔드포인트
+    path('errors/400/', lambda request: error_views.error_page(request, 400), name='error_400'),
+    path('errors/403/', lambda request: error_views.error_page(request, 403), name='error_403'),
+    path('errors/404/', lambda request: error_views.error_page(request, 404), name='error_404'),
+    path('errors/413/', lambda request: error_views.error_page(request, 413), name='error_413'),
+    path('errors/500/', lambda request: error_views.error_page(request, 500), name='error_500'),
     # 자유게시판
     path('board/', views.board_list, name='board_list'),
     path('board/new/', views.board_create, name='board_create'),
