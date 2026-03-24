@@ -12,6 +12,11 @@ urlpatterns = [
     path('board/<int:pk>/', views.board_detail, name='board_detail'),
     path('board/<int:pk>/edit/', views.board_update, name='board_update'),
     path('board/<int:pk>/delete/', views.board_delete, name='board_delete'),
+    path(
+        'board/<int:post_pk>/attachment/<int:attachment_pk>/download/',
+        views.board_attachment_download,
+        name='board_attachment_download',
+    ),
     # 인증 관련
     path('auth/signup/', views.signup, name='auth_signup'),
     path('auth/signup/complete/', views.signup_complete, name='auth_signup_complete'),

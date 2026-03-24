@@ -37,8 +37,8 @@ RUN sed -i 's/\r$//' /app/entrypoint.sh && chmod +x /app/entrypoint.sh
 # 로그 디렉토리 생성
 RUN mkdir -p /app/logs
 
-# 정적 파일 디렉토리 생성
-RUN mkdir -p /app/staticfiles
+# 정적 파일·미디어(업로드) 디렉토리 생성
+RUN mkdir -p /app/staticfiles /app/media
 
 # 비루트 사용자 생성 및 권한 설정
 RUN useradd --create-home --shell /bin/bash appuser \
