@@ -1,5 +1,20 @@
+import uuid
+
 from django.db import models
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.urls import reverse
+from django.utils import timezone
+
+
+def board_attachment_upload_to(instance: "BoardAttachment", filename: str) -> str:
+    """게시글별 하위 경로 + UUID 로 저장 경로 충돌 방지."""
+    ext = ""
+    if "." in filename:
+        ext = "." + filename.rsplit(".", 1)[-1].lower()
+    post_id = instance.post_id or "pending"
+    now = timezone.now()
+    return f"board/{now:%Y}/{now:%m}/{post_id}/{uuid.uuid4().hex}{ext}"
 
 
 class Category(models.Model):
@@ -93,7 +108,6 @@ class BoardPost(models.Model):
         help_text="쿠키 기반 익명 사용자 식별자",
     )
     content = models.TextField(verbose_name="내용")
-    # 향후 파일 업로드를 위한 확장 포인트 (별도 File 모델 또는 GenericRelation 등으로 확장 예정)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="작성일")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="수정일")
     is_deleted = models.BooleanField(default=False, verbose_name="삭제 여부")
@@ -122,3 +136,40 @@ class BoardPost(models.Model):
             if ip_inner:
                 return f"{code}({ip_inner})"
         return code
+
+
+class BoardAttachment(models.Model):
+    """자유게시판 첨부파일 (게시글당 다중 파일)."""
+
+    post = models.ForeignKey(
+        BoardPost,
+        on_delete=models.CASCADE,
+        related_name="attachments",
+        verbose_name="게시글",
+    )
+    file = models.FileField(
+        upload_to=board_attachment_upload_to,
+        max_length=500,
+        verbose_name="파일",
+    )
+    original_name = models.CharField(
+        max_length=255,
+        verbose_name="원본 파일명",
+        help_text="다운로드 시 표시할 이름",
+    )
+    size = models.PositiveIntegerField(default=0, verbose_name="크기(바이트)")
+    uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name="업로드 시각")
+
+    class Meta:
+        verbose_name = "자유게시판 첨부"
+        verbose_name_plural = "자유게시판 첨부"
+        ordering = ["uploaded_at", "id"]
+
+    def __str__(self):
+        return self.original_name or str(self.file)
+
+
+@receiver(pre_delete, sender=BoardAttachment)
+def _delete_board_attachment_file(sender, instance, **kwargs):
+    if instance.file:
+        instance.file.delete(save=False)

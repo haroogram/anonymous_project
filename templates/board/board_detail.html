@@ -39,6 +39,38 @@
         display: flex;
         gap: 8px;
     }
+    .board-attachments {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+        padding: 16px 20px;
+        margin-bottom: 20px;
+    }
+    .board-attachments h2 {
+        font-size: 1rem;
+        margin: 0 0 12px 0;
+        color: #334155;
+    }
+    .board-attachments ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    .board-attachments li {
+        padding: 8px 0;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+    }
+    .board-attachments li:last-child {
+        border-bottom: none;
+    }
+    .board-attachments .att-meta {
+        font-size: 0.85rem;
+        color: #94a3b8;
+    }
 </style>
 {% endblock %}
 
@@ -58,6 +90,25 @@
 <article class="board-article">
     {{ post.content|linebreaksbr }}
 </article>
+
+{% if post.attachments.all %}
+<div class="board-attachments">
+    <h2>첨부파일</h2>
+    <ul>
+        {% for att in post.attachments.all %}
+        <li>
+            <span>{{ att.original_name }}</span>
+            <span class="att-meta">
+                {% if att.size %}
+                    {{ att.size|filesizeformat }} ·
+                {% endif %}
+                <a href="{% url 'board_attachment_download' post.pk att.pk %}" class="btn btn-outline" style="padding: 4px 10px; font-size: 0.85rem;">다운로드</a>
+            </span>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
 
 <div class="board-actions">
     <div class="board-actions-left">

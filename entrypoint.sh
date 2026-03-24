@@ -124,6 +124,8 @@ EOF
         
         # S3 Static files 설정
         echo "USE_S3_STATIC=${SSM_PARAMS[use-s3-static]:-False}" >> $TEMP_ENV_FILE
+        # S3 사용자 업로드(자유게시판 첨부 등) — USE_S3_STATIC=true 및 버킷 설정과 함께 사용
+        echo "USE_S3_MEDIA=${SSM_PARAMS[use-s3-media]:-False}" >> $TEMP_ENV_FILE
         [ -n "${SSM_PARAMS[aws-access-key-id]}" ] && echo "AWS_ACCESS_KEY_ID=${SSM_PARAMS[aws-access-key-id]}" >> $TEMP_ENV_FILE
         [ -n "${SSM_PARAMS[aws-secret-access-key]}" ] && echo "AWS_SECRET_ACCESS_KEY=${SSM_PARAMS[aws-secret-access-key]}" >> $TEMP_ENV_FILE
         [ -n "${SSM_PARAMS[app/static_bucket]}" ] && echo "AWS_STATIC_BUCKET_NAME=${SSM_PARAMS[app/static_bucket]}" >> $TEMP_ENV_FILE

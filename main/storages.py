@@ -59,3 +59,15 @@ class StaticStorage(S3Boto3Storage):
     object_parameters = {
         'CacheControl': 'max-age=86400',  # 1일 캐시
     }
+
+
+class MediaBoardStorage(S3Boto3Storage):
+    """
+    자유게시판 첨부파일용 S3 저장소 (버킷 내 media/ prefix).
+    객체는 비공개로 두고, 다운로드는 Django 뷰에서 스트리밍합니다.
+    """
+
+    location = "media"
+    default_acl = None
+    file_overwrite = False
+    querystring_auth = False
