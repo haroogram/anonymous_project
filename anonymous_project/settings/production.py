@@ -7,10 +7,20 @@ EC2 Ubuntu 서버에서 사용합니다.
 
 from .base import *
 # base.py에서 이미 env를 초기화했으므로 재사용
+import os
+
+
+def env_raw(name, default=None):
+    """
+    django-environ의 '$VAR' 프록시 치환을 우회해 문자열을 원본 그대로 읽습니다.
+    시크릿 값에 '$'가 포함된 경우를 안전하게 처리하기 위함입니다.
+    """
+    value = os.environ.get(name)
+    return value if value is not None else default
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # 프로덕션에서는 반드시 환경 변수로 SECRET_KEY를 설정해야 합니다
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = env_raw('SECRET_KEY')
 if not SECRET_KEY:
     raise ValueError("SECRET_KEY 환경 변수가 설정되지 않았습니다!")
 
@@ -65,10 +75,10 @@ pymysql.install_as_MySQLdb()
 
 # 데이터베이스 설정 - RDS 연결
 # 환경 변수가 없으면 명시적으로 에러 발생
-DB_NAME = env('DB_NAME', default=None)
-DB_USER = env('DB_USER', default=None)
-DB_PASSWORD = env('DB_PASSWORD', default=None)
-DB_HOST = env('DB_HOST', default='localhost')
+DB_NAME = env_raw('DB_NAME', default=None)
+DB_USER = env_raw('DB_USER', default=None)
+DB_PASSWORD = env_raw('DB_PASSWORD', default=None)
+DB_HOST = env_raw('DB_HOST', default='localhost')
 DB_PORT = env.int('DB_PORT', default=3306)
 
 # 빈 값 체크
@@ -115,10 +125,10 @@ EMAIL_BACKEND = env(
     default='django.core.mail.backends.smtp.EmailBackend',
 )
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='no-reply@example.com')
-EMAIL_HOST = env('EMAIL_HOST', default='')
+EMAIL_HOST = env_raw('EMAIL_HOST', default='')
 EMAIL_PORT = env.int('EMAIL_PORT', default=587)
-EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='')
-EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
+EMAIL_HOST_USER = env_raw('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = env_raw('EMAIL_HOST_PASSWORD', default='')
 EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=True)
 
 # Static files 설정 - S3 사용 (프로덕션)
@@ -132,10 +142,10 @@ if USE_S3_STATIC:
     INSTALLED_APPS += ['storages']
     
     # IAM Role 사용 시 ACCESS_KEY는 선택사항 (boto3가 자동으로 IAM Role 자격 증명 사용)
-    AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID', default=None)
-    AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY', default=None)
-    AWS_STORAGE_BUCKET_NAME = env('AWS_STATIC_BUCKET_NAME')
-    AWS_S3_REGION_NAME = env('AWS_REGION', default='ap-northeast-2')
+    AWS_ACCESS_KEY_ID = env_raw('AWS_ACCESS_KEY_ID', default=None)
+    AWS_SECRET_ACCESS_KEY = env_raw('AWS_SECRET_ACCESS_KEY', default=None)
+    AWS_STORAGE_BUCKET_NAME = env_raw('AWS_STATIC_BUCKET_NAME')
+    AWS_S3_REGION_NAME = env_raw('AWS_REGION', default='ap-northeast-2')
     
     if not AWS_STORAGE_BUCKET_NAME:
         raise ValueError("S3 Static files를 사용하려면 AWS_STATIC_BUCKET_NAME 환경 변수가 필요합니다!")
