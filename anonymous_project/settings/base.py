@@ -234,7 +234,7 @@ CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 # /admin 접근 허용 IP 목록 (Django 레벨 화이트리스트)
 ADMIN_ALLOWED_IPS = env.list(
     'ADMIN_ALLOWED_IPS',
-    default=['121.141.92.16', '112.221.198.140'],
+    default=[],
 )
 
 # 비회원 게시판 POST rate limit (앱 레벨)
