@@ -225,7 +225,7 @@ def signup(request):
                 f'안녕하세요, Anonymous Project 입니다.\n\n'
                 f'다음 링크를 클릭하여 계정을 활성화해 주세요:\n\n'
                 f'{activate_url}\n\n'
-                f'이 링크는 일정 시간 후 만료될 수 있습니다.\n\n'
+                f'이 링크는 발송 시점부터 1시간 후 만료됩니다.\n\n'
                 f'감사합니다.'
             )
 

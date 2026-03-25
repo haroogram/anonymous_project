@@ -237,3 +237,7 @@ ADMIN_ALLOWED_IPS = env.list(
     default=['121.141.92.16', '112.221.198.140'],
 )
 
+# 이메일 인증 토큰 만료 시간(초)
+# PasswordResetTokenGenerator 기반 토큰(check_token)에 공통 적용
+PASSWORD_RESET_TIMEOUT = env.int('PASSWORD_RESET_TIMEOUT', default=60 * 60)
+
