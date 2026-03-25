@@ -17,11 +17,11 @@ class AdminIPRestrictionMiddleware:
 
     def __init__(self, get_response):
         self.get_response = get_response
-        # settings 에서 허용 IP 목록을 가져오되, 기본값으로 질문에서 주신 두 IP를 사용
+        # 허용 IP는 환경 변수(SSM -> .env -> settings)로 주입합니다.
         self.allowed_ips = getattr(
             settings,
             "ADMIN_ALLOWED_IPS",
-            ["121.141.92.16", "112.221.198.140"],
+            [],
         )
 
     def __call__(self, request):

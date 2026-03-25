@@ -11,6 +11,7 @@ urlpatterns = [
     path('errors/403/', lambda request: error_views.error_page(request, 403), name='error_403'),
     path('errors/404/', lambda request: error_views.error_page(request, 404), name='error_404'),
     path('errors/413/', lambda request: error_views.error_page(request, 413), name='error_413'),
+    path('errors/429/', lambda request: error_views.error_page(request, 429), name='error_429'),
     path('errors/500/', lambda request: error_views.error_page(request, 500), name='error_500'),
     # 자유게시판
     path('board/', views.board_list, name='board_list'),

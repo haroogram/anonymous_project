@@ -1,6 +1,34 @@
+from django import forms
 from django.contrib import admin
 
+from .board_password import hash_board_password
 from .models import BoardAttachment, BoardPost, Category, Topic, VisitorStats
+
+
+class BoardPostAdminForm(forms.ModelForm):
+    """관리자에서 비밀번호는 해시로 저장. 수정 시 비워두면 기존 값 유지."""
+
+    class Meta:
+        model = BoardPost
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["password"].widget = forms.PasswordInput(render_value=False)
+        if self.instance and self.instance.pk:
+            self.fields["password"].required = False
+            self.fields["password"].help_text = "변경할 때만 입력하세요. 비워두면 기존 비밀번호를 유지합니다."
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        pwd = (self.cleaned_data.get("password") or "").strip()
+        if pwd:
+            instance.password = hash_board_password(pwd)
+        elif instance.pk:
+            instance.password = BoardPost.objects.get(pk=instance.pk).password
+        if commit:
+            instance.save()
+        return instance
 
 
 @admin.register(Category)
@@ -40,6 +68,7 @@ class BoardAttachmentInline(admin.TabularInline):
 
 @admin.register(BoardPost)
 class BoardPostAdmin(admin.ModelAdmin):
+    form = BoardPostAdminForm
     list_display = ['title', 'author_name', 'is_deleted', 'created_at', 'updated_at']
     list_filter = ['is_deleted', 'created_at']
     search_fields = ['title', 'content', 'author_name', 'anonymous_id']

@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
 
+from .board_password import hash_board_password
 from .models import BoardPost
 
 
@@ -16,6 +17,14 @@ class BoardPostForm(forms.ModelForm):
         model = BoardPost
         # author_name은 클라이언트 IP 기반으로 서버에서 자동 설정
         fields = ["title", "password", "content"]
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        raw = self.cleaned_data["password"]
+        instance.password = hash_board_password(raw)
+        if commit:
+            instance.save()
+        return instance
 
 
 class SignupForm(UserCreationForm):
