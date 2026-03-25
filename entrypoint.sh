@@ -36,6 +36,17 @@ if [ "$USE_SSM_ENV" = "true" ]; then
 
 EOF
 
+    # .env에 안전하게 key=value를 기록합니다.
+    # 값이 '$'로 시작하면 django-environ이 프록시 변수로 해석할 수 있어 '\$'로 이스케이프합니다.
+    append_env_var() {
+        local key="$1"
+        local value="$2"
+        if [[ "$value" == \$* ]]; then
+            value="\\$value"
+        fi
+        printf "%s=%s\n" "$key" "$value" >> "$TEMP_ENV_FILE"
+    }
+
     # 환경 변수 로드 실패 플래그
     ENV_LOAD_ERROR=false
     
@@ -70,69 +81,69 @@ EOF
         # 필수 파라미터 확인 및 .env 파일 작성
         # Django 설정
         if [ -n "${SSM_PARAMS[django/secret_key]}" ]; then
-            echo "SECRET_KEY=${SSM_PARAMS[django/secret_key]}" >> $TEMP_ENV_FILE
+            append_env_var "SECRET_KEY" "${SSM_PARAMS[django/secret_key]}"
         else
             echo "❌ SECRET_KEY를 가져올 수 없습니다."
             ENV_LOAD_ERROR=true
         fi
         
         if [ -n "${SSM_PARAMS[django/allowed_hosts]}" ]; then
-            echo "ALLOWED_HOSTS=${SSM_PARAMS[django/allowed_hosts]}" >> $TEMP_ENV_FILE
+            append_env_var "ALLOWED_HOSTS" "${SSM_PARAMS[django/allowed_hosts]}"
         else
             echo "❌ ALLOWED_HOSTS를 가져올 수 없습니다."
             ENV_LOAD_ERROR=true
         fi
         
         # /admin 접근 허용 IP 목록 (선택)
-        [ -n "${SSM_PARAMS[django/admin_allowed_ips]}" ] && echo "ADMIN_ALLOWED_IPS=${SSM_PARAMS[django/admin_allowed_ips]}" >> $TEMP_ENV_FILE
+        [ -n "${SSM_PARAMS[django/admin_allowed_ips]}" ] && append_env_var "ADMIN_ALLOWED_IPS" "${SSM_PARAMS[django/admin_allowed_ips]}"
         
         # ALB 도메인 (선택)
-        [ -n "${SSM_PARAMS[alb/domain]}" ] && echo "ALB_DOMAIN=${SSM_PARAMS[alb/domain]}" >> $TEMP_ENV_FILE
+        [ -n "${SSM_PARAMS[alb/domain]}" ] && append_env_var "ALB_DOMAIN" "${SSM_PARAMS[alb/domain]}"
         
         # CSRF (선택)
-        [ -n "${SSM_PARAMS[django/csrf-trusted-origins]}" ] && echo "CSRF_TRUSTED_ORIGINS=${SSM_PARAMS[django/csrf-trusted-origins]}" >> $TEMP_ENV_FILE
+        [ -n "${SSM_PARAMS[django/csrf-trusted-origins]}" ] && append_env_var "CSRF_TRUSTED_ORIGINS" "${SSM_PARAMS[django/csrf-trusted-origins]}"
         
         # 데이터베이스 설정 (필수)
         if [ -n "${SSM_PARAMS[db/name]}" ] && [ -n "${SSM_PARAMS[db/user]}" ] && [ -n "${SSM_PARAMS[db/password]}" ]; then
-            echo "DB_NAME=${SSM_PARAMS[db/name]}" >> $TEMP_ENV_FILE
-            echo "DB_USER=${SSM_PARAMS[db/user]}" >> $TEMP_ENV_FILE
-            echo "DB_PASSWORD=${SSM_PARAMS[db/password]}" >> $TEMP_ENV_FILE
-            echo "DB_HOST=${SSM_PARAMS[db/host]:-localhost}" >> $TEMP_ENV_FILE
-            echo "DB_PORT=${SSM_PARAMS[db/port]:-3306}" >> $TEMP_ENV_FILE
+            append_env_var "DB_NAME" "${SSM_PARAMS[db/name]}"
+            append_env_var "DB_USER" "${SSM_PARAMS[db/user]}"
+            append_env_var "DB_PASSWORD" "${SSM_PARAMS[db/password]}"
+            append_env_var "DB_HOST" "${SSM_PARAMS[db/host]:-localhost}"
+            append_env_var "DB_PORT" "${SSM_PARAMS[db/port]:-3306}"
         else
             echo "❌ 데이터베이스 환경 변수를 가져올 수 없습니다."
             ENV_LOAD_ERROR=true
         fi
         
         # Redis 설정
-        echo "REDIS_HOST=${SSM_PARAMS[redis/host]:-localhost}" >> $TEMP_ENV_FILE
-        echo "REDIS_PORT=${SSM_PARAMS[redis/port]:-6379}" >> $TEMP_ENV_FILE
-        [ -n "${SSM_PARAMS[redis/password]}" ] && echo "REDIS_PASSWORD=${SSM_PARAMS[redis/password]}" >> $TEMP_ENV_FILE
-        echo "REDIS_DB=${SSM_PARAMS[redis/db]:-0}" >> $TEMP_ENV_FILE
+        append_env_var "REDIS_HOST" "${SSM_PARAMS[redis/host]:-localhost}"
+        append_env_var "REDIS_PORT" "${SSM_PARAMS[redis/port]:-6379}"
+        [ -n "${SSM_PARAMS[redis/password]}" ] && append_env_var "REDIS_PASSWORD" "${SSM_PARAMS[redis/password]}"
+        append_env_var "REDIS_DB" "${SSM_PARAMS[redis/db]:-0}"
 
         # Email(SMTP) 설정 (선택 - SES 등)
-        [ -n "${SSM_PARAMS[email/backend]}" ] && echo "EMAIL_BACKEND=${SSM_PARAMS[email/backend]}" >> $TEMP_ENV_FILE
-        [ -n "${SSM_PARAMS[email/host]}" ] && echo "EMAIL_HOST=${SSM_PARAMS[email/host]}" >> $TEMP_ENV_FILE
-        [ -n "${SSM_PARAMS[email/port]}" ] && echo "EMAIL_PORT=${SSM_PARAMS[email/port]}" >> $TEMP_ENV_FILE
-        [ -n "${SSM_PARAMS[email/use_tls]}" ] && echo "EMAIL_USE_TLS=${SSM_PARAMS[email/use_tls]}" >> $TEMP_ENV_FILE
-        [ -n "${SSM_PARAMS[email/default_from]}" ] && echo "DEFAULT_FROM_EMAIL=${SSM_PARAMS[email/default_from]}" >> $TEMP_ENV_FILE
-        [ -n "${SSM_PARAMS[email/smtp_username]}" ] && echo "EMAIL_HOST_USER=${SSM_PARAMS[email/smtp_username]}" >> $TEMP_ENV_FILE
-        [ -n "${SSM_PARAMS[email/smtp_password]}" ] && echo "EMAIL_HOST_PASSWORD=${SSM_PARAMS[email/smtp_password]}" >> $TEMP_ENV_FILE
+        [ -n "${SSM_PARAMS[email/backend]}" ] && append_env_var "EMAIL_BACKEND" "${SSM_PARAMS[email/backend]}"
+        [ -n "${SSM_PARAMS[email/host]}" ] && append_env_var "EMAIL_HOST" "${SSM_PARAMS[email/host]}"
+        [ -n "${SSM_PARAMS[email/port]}" ] && append_env_var "EMAIL_PORT" "${SSM_PARAMS[email/port]}"
+        [ -n "${SSM_PARAMS[email/use_tls]}" ] && append_env_var "EMAIL_USE_TLS" "${SSM_PARAMS[email/use_tls]}"
+        [ -n "${SSM_PARAMS[email/default_from]}" ] && append_env_var "DEFAULT_FROM_EMAIL" "${SSM_PARAMS[email/default_from]}"
+        [ -n "${SSM_PARAMS[email/smtp_username]}" ] && append_env_var "EMAIL_HOST_USER" "${SSM_PARAMS[email/smtp_username]}"
+        [ -n "${SSM_PARAMS[email/smtp_password]}" ] && append_env_var "EMAIL_HOST_PASSWORD" "${SSM_PARAMS[email/smtp_password]}"
         
         # 기타 설정
-        echo "DEBUG=${SSM_PARAMS[debug]:-False}" >> $TEMP_ENV_FILE
-        echo "SECURE_SSL_REDIRECT=${SSM_PARAMS[secure-ssl-redirect]:-False}" >> $TEMP_ENV_FILE
-        echo "SESSION_COOKIE_SECURE=${SSM_PARAMS[session-cookie-secure]:-True}" >> $TEMP_ENV_FILE
-        echo "CSRF_COOKIE_SECURE=${SSM_PARAMS[csrf-cookie-secure]:-True}" >> $TEMP_ENV_FILE
+        append_env_var "DEBUG" "${SSM_PARAMS[debug]:-False}"
+        append_env_var "SECURE_SSL_REDIRECT" "${SSM_PARAMS[secure-ssl-redirect]:-False}"
+        append_env_var "SESSION_COOKIE_SECURE" "${SSM_PARAMS[session-cookie-secure]:-True}"
+        append_env_var "CSRF_COOKIE_SECURE" "${SSM_PARAMS[csrf-cookie-secure]:-True}"
         
         # S3 Static files 설정
-        echo "USE_S3_STATIC=${SSM_PARAMS[use-s3-static]:-False}" >> $TEMP_ENV_FILE
+        append_env_var "USE_S3_STATIC" "${SSM_PARAMS[use-s3-static]:-False}"
         # S3 사용자 업로드(자유게시판 첨부 등) — USE_S3_STATIC=true 및 버킷 설정과 함께 사용
-        echo "USE_S3_MEDIA=${SSM_PARAMS[use-s3-media]:-False}" >> $TEMP_ENV_FILE
-        [ -n "${SSM_PARAMS[aws-access-key-id]}" ] && echo "AWS_ACCESS_KEY_ID=${SSM_PARAMS[aws-access-key-id]}" >> $TEMP_ENV_FILE
-        [ -n "${SSM_PARAMS[aws-secret-access-key]}" ] && echo "AWS_SECRET_ACCESS_KEY=${SSM_PARAMS[aws-secret-access-key]}" >> $TEMP_ENV_FILE
-        [ -n "${SSM_PARAMS[app/static_bucket]}" ] && echo "AWS_STATIC_BUCKET_NAME=${SSM_PARAMS[app/static_bucket]}" >> $TEMP_ENV_FILE
-        echo "AWS_REGION=$AWS_REGION" >> $TEMP_ENV_FILE
+        append_env_var "USE_S3_MEDIA" "${SSM_PARAMS[use-s3-media]:-False}"
+        [ -n "${SSM_PARAMS[aws-access-key-id]}" ] && append_env_var "AWS_ACCESS_KEY_ID" "${SSM_PARAMS[aws-access-key-id]}"
+        [ -n "${SSM_PARAMS[aws-secret-access-key]}" ] && append_env_var "AWS_SECRET_ACCESS_KEY" "${SSM_PARAMS[aws-secret-access-key]}"
+        [ -n "${SSM_PARAMS[app/static_bucket]}" ] && append_env_var "AWS_STATIC_BUCKET_NAME" "${SSM_PARAMS[app/static_bucket]}"
+        append_env_var "AWS_REGION" "$AWS_REGION"
     fi
     
     # 에러 발생 시 처리

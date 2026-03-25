@@ -14,6 +14,9 @@ env = environ.Env(
     REDIS_PORT=(int, 6379),
     REDIS_DB=(int, 0),
 )
+# .env 값이 '\$'로 이스케이프된 경우 원래 '$'로 복원
+# (django-environ의 '$VAR' 프록시 해석으로 인한 오동작 방지)
+env.escape_proxy = True
 
 # .env 파일이 있는 경우 자동으로 로드
 # 컨테이너 환경에서는 /app/.env 를 기본 경로로 사용
