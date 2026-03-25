@@ -96,9 +96,9 @@ class BoardPost(models.Model):
         help_text="닉네임 또는 이름",
     )
     password = models.CharField(
-        max_length=128,
+        max_length=256,
         verbose_name="수정/삭제 비밀번호",
-        help_text="게시글 수정/삭제 시 사용할 비밀번호",
+        help_text="게시글 수정/삭제 시 사용할 비밀번호 (해시 저장)",
     )
     anonymous_id = models.CharField(
         max_length=64,
