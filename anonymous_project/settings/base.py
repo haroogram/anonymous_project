@@ -234,6 +234,16 @@ CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 # /admin 접근 허용 IP 목록 (Django 레벨 화이트리스트)
 ADMIN_ALLOWED_IPS = env.list(
     'ADMIN_ALLOWED_IPS',
-    default=['121.141.92.16', '112.221.198.140'],
+    default=[],
 )
+
+# 비회원 게시판 POST rate limit (앱 레벨)
+# - BOARD_POST_RATE_LIMIT_COUNT: 윈도우 내 허용 요청 수
+# - BOARD_POST_RATE_LIMIT_WINDOW_SEC: 윈도우 길이(초)
+BOARD_POST_RATE_LIMIT_COUNT = env.int('BOARD_POST_RATE_LIMIT_COUNT', default=20)
+BOARD_POST_RATE_LIMIT_WINDOW_SEC = env.int('BOARD_POST_RATE_LIMIT_WINDOW_SEC', default=300)
+
+# 이메일 인증 토큰 만료 시간(초)
+# PasswordResetTokenGenerator 기반 토큰(check_token)에 공통 적용
+PASSWORD_RESET_TIMEOUT = env.int('PASSWORD_RESET_TIMEOUT', default=60 * 60)
 

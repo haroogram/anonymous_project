@@ -83,6 +83,9 @@ EOF
             ENV_LOAD_ERROR=true
         fi
         
+        # /admin 접근 허용 IP 목록 (선택)
+        [ -n "${SSM_PARAMS[django/admin_allowed_ips]}" ] && echo "ADMIN_ALLOWED_IPS=${SSM_PARAMS[django/admin_allowed_ips]}" >> $TEMP_ENV_FILE
+        
         # ALB 도메인 (선택)
         [ -n "${SSM_PARAMS[alb/domain]}" ] && echo "ALB_DOMAIN=${SSM_PARAMS[alb/domain]}" >> $TEMP_ENV_FILE
         

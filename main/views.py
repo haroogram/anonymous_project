@@ -3,6 +3,7 @@ from django.http import FileResponse, JsonResponse, HttpResponseRedirect
 from django.db import transaction
 from django.db.models import Count, Q
 from django.core.exceptions import ValidationError
+from django.core.cache import cache
 from django.views.decorators.cache import cache_page
 from django.conf import settings
 from django.contrib import messages
@@ -14,10 +15,13 @@ from django.urls import reverse
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.core.mail import send_mail
+import logging
+import hashlib
 import uuid
 
 from .models import BoardAttachment, BoardPost, Category, Topic
 from .board_attachments import validate_board_uploaded_files
+from .board_password import upgrade_stored_password_if_legacy, verify_board_password
 from .utils import (
     get_visitor_stats,
     get_today_visitors_count,
@@ -27,6 +31,86 @@ from .utils import (
 )
 from .forms import SignupForm, LoginForm, BoardPostForm
 from .tokens import account_activation_token
+
+logger = logging.getLogger(__name__)
+rate_limit_logger = logging.getLogger("security.ratelimit")
+
+
+def _board_rate_limit_exceeded(request, action: str) -> bool:
+    """
+    비회원 게시판 POST 요청에 대한 간단한 캐시 기반 rate limit.
+    키는 (action + client_ip + anonymous_id 쿠키) 단위로 관리합니다.
+    """
+    limit = int(getattr(settings, "BOARD_POST_RATE_LIMIT_COUNT", 20))
+    window = int(getattr(settings, "BOARD_POST_RATE_LIMIT_WINDOW_SEC", 300))
+    if limit <= 0 or window <= 0:
+        return False
+
+    client_ip = get_client_ip(request)
+    anon_id = request.COOKIES.get("ap_anon_id", "no-anon-id")
+    cache_key = f"ratelimit:board:{action}:{client_ip}:{anon_id}"
+
+    current = cache.get(cache_key)
+    if current is None:
+        cache.set(cache_key, 1, timeout=window)
+        return False
+
+    try:
+        current = cache.incr(cache_key)
+    except Exception:
+        # 일부 캐시 백엔드는 incr 지원이 제한될 수 있어 set fallback 사용
+        current = int(current) + 1
+        cache.set(cache_key, current, timeout=window)
+    return int(current) > limit
+
+
+def _wants_json_response(request) -> bool:
+    if request.path.startswith("/api/"):
+        return True
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+        return True
+    accept = (request.headers.get("Accept") or "").lower()
+    return "application/json" in accept and "text/html" not in accept
+
+
+def _rate_limit_response(request, action: str):
+    retry_after = int(getattr(settings, "BOARD_POST_RATE_LIMIT_WINDOW_SEC", 300))
+    client_ip = get_client_ip(request)
+    anon_id = request.COOKIES.get("ap_anon_id", "")
+    anon_id_hash = hashlib.sha256(anon_id.encode("utf-8")).hexdigest()[:12] if anon_id else "-"
+
+    rate_limit_logger.warning(
+        "event=rate_limit_block scope=board_post action=%s method=%s path=%s ip=%s anon_id_hash=%s ua=%s retry_after=%s",
+        action,
+        request.method,
+        request.path,
+        client_ip,
+        anon_id_hash,
+        request.META.get("HTTP_USER_AGENT", ""),
+        retry_after,
+    )
+    payload = {
+        "error": "rate_limited",
+        "message": "요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.",
+        "action": action,
+        "retry_after": retry_after,
+    }
+
+    if _wants_json_response(request):
+        response = JsonResponse(payload, status=429, json_dumps_params={"ensure_ascii": False})
+    else:
+        response = render(
+            request,
+            "errors/common_error.html",
+            {
+                "status_code": 429,
+                "title": "요청이 너무 많습니다.",
+                "description": f"잠시 후 다시 시도해 주세요. (약 {retry_after}초 후 재시도 권장)",
+            },
+            status=429,
+        )
+    response["Retry-After"] = str(retry_after)
+    return response
 
 
 def cache_page_by_auth(timeout):
@@ -225,7 +309,7 @@ def signup(request):
                 f'안녕하세요, Anonymous Project 입니다.\n\n'
                 f'다음 링크를 클릭하여 계정을 활성화해 주세요:\n\n'
                 f'{activate_url}\n\n'
-                f'이 링크는 일정 시간 후 만료될 수 있습니다.\n\n'
+                f'이 링크는 발송 시점부터 1시간 후 만료됩니다.\n\n'
                 f'감사합니다.'
             )
 
@@ -423,6 +507,8 @@ def _get_or_create_anonymous_id(request):
 def board_create(request):
     """자유게시판 글 작성 (비로그인)"""
     if request.method == "POST":
+        if _board_rate_limit_exceeded(request, "create"):
+            return _rate_limit_response(request, "create")
         form = BoardPostForm(request.POST)
         files = request.FILES.getlist("attachments")
         if form.is_valid():
@@ -467,6 +553,8 @@ def board_update(request, pk):
     )
 
     if request.method == "POST":
+        if _board_rate_limit_exceeded(request, "update"):
+            return _rate_limit_response(request, "update")
         form = BoardPostForm(request.POST, instance=post)
         input_password = request.POST.get("password", "")
         files = request.FILES.getlist("attachments")
@@ -475,7 +563,7 @@ def board_update(request, pk):
         if remove_ids is None:
             messages.error(request, "삭제할 첨부 정보가 올바르지 않습니다.")
         elif form.is_valid():
-            if input_password != post.password:
+            if not verify_board_password(input_password, post.password):
                 form.add_error("password", "비밀번호가 일치하지 않습니다.")
             else:
                 remaining = post.attachments.exclude(pk__in=remove_ids or set()).count()
@@ -510,11 +598,14 @@ def board_delete(request, pk):
     post = get_object_or_404(BoardPost, pk=pk, is_deleted=False)
 
     if request.method == "POST":
+        if _board_rate_limit_exceeded(request, "delete"):
+            return _rate_limit_response(request, "delete")
         input_password = request.POST.get("password", "")
-        if input_password != post.password:
+        if not verify_board_password(input_password, post.password):
             messages.error(request, "비밀번호가 일치하지 않습니다.")
             return redirect("board_detail", pk=post.pk)
 
+        upgrade_stored_password_if_legacy(post, input_password)
         post.is_deleted = True
         post.save(update_fields=["is_deleted"])
         messages.success(request, "게시글이 삭제되었습니다.")

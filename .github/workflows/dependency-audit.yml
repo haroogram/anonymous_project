@@ -1,0 +1,44 @@
+name: Dependency Vulnerability Audit
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "requirements.txt"
+      - "Dockerfile"
+      - ".github/workflows/**"
+  workflow_dispatch:
+  schedule:
+    # GitHub Actions cron은 UTC 기준입니다.
+    # 아래 값은 한국시간(KST) 기준 매월 2일 02:00에 해당합니다. (UTC 매월 1일 17:00)
+    - cron: "0 17 1 * *"
+
+concurrency:
+  group: dependency-audit-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pip-audit:
+    name: pip-audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m pip check
+
+      - name: Run vulnerability scan
+        run: |
+          python -m pip install pip-audit
+          python -m pip_audit -r requirements.txt

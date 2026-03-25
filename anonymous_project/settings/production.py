@@ -238,6 +238,12 @@ LOGGING = {
             'level': 'WARNING',
             'propagate': False,
         },
+        # Rate limit 차단 로그를 분리해서 추적하기 위한 보안 로거
+        'security.ratelimit': {
+            'handlers': ['console', 'file'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
     },
 }
 
