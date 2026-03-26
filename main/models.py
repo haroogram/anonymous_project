@@ -1,5 +1,6 @@
 import uuid
 
+from django.conf import settings
 from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
@@ -107,6 +108,14 @@ class BoardPost(models.Model):
         verbose_name="익명 ID",
         help_text="쿠키 기반 익명 사용자 식별자",
     )
+    author_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="board_posts",
+        verbose_name="로그인 작성자",
+    )
     content = models.TextField(verbose_name="내용")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="작성일")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="수정일")
@@ -136,6 +145,11 @@ class BoardPost(models.Model):
             if ip_inner:
                 return f"{code}({ip_inner})"
         return code
+
+    def get_display_author(self) -> str:
+        if self.author_user_id:
+            return self.author_user.get_username()
+        return self.get_anonymous_nickname()
 
 
 class BoardAttachment(models.Model):
@@ -173,3 +187,143 @@ class BoardAttachment(models.Model):
 def _delete_board_attachment_file(sender, instance, **kwargs):
     if instance.file:
         instance.file.delete(save=False)
+
+
+class BoardComment(models.Model):
+    """자유게시판 댓글 (대댓글은 parent 가 최상위 댓글인 경우만 허용)."""
+
+    post = models.ForeignKey(
+        BoardPost,
+        on_delete=models.CASCADE,
+        related_name="comments",
+        verbose_name="게시글",
+    )
+    parent = models.ForeignKey(
+        "self",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="replies",
+        verbose_name="상위 댓글",
+    )
+    author_name = models.CharField(
+        max_length=50,
+        verbose_name="작성자 표시",
+        help_text="IP 마스킹 등 서버에서 설정",
+    )
+    anonymous_id = models.CharField(
+        max_length=64,
+        blank=True,
+        db_index=True,
+        verbose_name="익명 ID",
+    )
+    author_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="board_comments",
+        verbose_name="로그인 작성자",
+    )
+    content = models.TextField(max_length=2000, verbose_name="내용")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="작성일")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="수정일")
+    is_deleted = models.BooleanField(default=False, verbose_name="삭제 여부")
+
+    class Meta:
+        verbose_name = "자유게시판 댓글"
+        verbose_name_plural = "자유게시판 댓글"
+        ordering = ["created_at", "id"]
+        indexes = [
+            models.Index(fields=["post", "parent", "is_deleted", "created_at"]),
+        ]
+
+    def __str__(self):
+        return f"{self.post_id}: {self.content[:40]}"
+
+    def get_anonymous_nickname(self) -> str:
+        code = f"#{self.anonymous_id[:4].upper()}" if self.anonymous_id else "익명"
+        ip_part = self.author_name or ""
+        if ip_part.startswith("익명(") and ip_part.endswith(")"):
+            ip_inner = ip_part[3:-1]
+            if ip_inner:
+                return f"{code}({ip_inner})"
+        return code
+
+    def get_display_author(self) -> str:
+        if self.author_user_id:
+            return self.author_user.get_username()
+        return self.get_anonymous_nickname()
+
+
+class BoardPostSubscriber(models.Model):
+    """로그인 사용자가 댓글을 단 글에 대해 이후 새 댓글 알림을 받기 위한 구독."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="board_post_subscriptions",
+        verbose_name="사용자",
+    )
+    post = models.ForeignKey(
+        BoardPost,
+        on_delete=models.CASCADE,
+        related_name="subscribers",
+        verbose_name="게시글",
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="구독일")
+
+    class Meta:
+        verbose_name = "게시글 알림 구독"
+        verbose_name_plural = "게시글 알림 구독"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "post"],
+                name="uniq_board_post_subscriber_user_post",
+            ),
+        ]
+
+
+class BoardNotification(models.Model):
+    """로그인 사용자용 자유게시판 알림 (구독 글의 새 댓글 / 내 댓글에 답글)."""
+
+    class Kind(models.TextChoices):
+        THREAD_COMMENT = "thread_comment", "게시글 새 댓글"
+        REPLY = "reply", "내 댓글에 답글"
+
+    recipient = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="board_notifications",
+        verbose_name="수신자",
+    )
+    post = models.ForeignKey(
+        BoardPost,
+        on_delete=models.CASCADE,
+        related_name="board_notifications",
+        verbose_name="게시글",
+    )
+    comment = models.ForeignKey(
+        BoardComment,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+        verbose_name="관련 댓글",
+    )
+    kind = models.CharField(
+        max_length=32,
+        choices=Kind.choices,
+        verbose_name="종류",
+    )
+    summary = models.CharField(max_length=200, verbose_name="요약")
+    is_read = models.BooleanField(default=False, verbose_name="읽음")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="생성일")
+
+    class Meta:
+        verbose_name = "자유게시판 알림"
+        verbose_name_plural = "자유게시판 알림"
+        ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["recipient", "is_read"]),
+        ]

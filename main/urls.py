@@ -24,6 +24,22 @@ urlpatterns = [
         views.board_attachment_download,
         name='board_attachment_download',
     ),
+    path(
+        'board/<int:pk>/comments/',
+        views.board_comment_create,
+        name='board_comment_create',
+    ),
+    path('notifications/', views.notification_list, name='notification_list'),
+    path(
+        'notifications/read-all/',
+        views.notification_mark_all_read,
+        name='notification_mark_all_read',
+    ),
+    path(
+        'notifications/<int:pk>/read/',
+        views.notification_mark_read,
+        name='notification_mark_read',
+    ),
     # 인증 관련
     path('auth/signup/', views.signup, name='auth_signup'),
     path('auth/signup/complete/', views.signup_complete, name='auth_signup_complete'),

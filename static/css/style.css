@@ -419,28 +419,130 @@ body {
     font-size: 0.85rem;
 }
 
-.messages {
-    list-style: none;
-    margin-bottom: 1rem;
+/* Django messages → 화면 하단 오른쪽 고정 토스트 (main.js) */
+.toast-stack {
+    position: fixed;
+    bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+    right: max(1rem, env(safe-area-inset-right, 0px));
+    top: auto;
+    z-index: 10050;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.55rem;
+    max-width: min(22rem, calc(100vw - 2rem));
+    pointer-events: none;
 }
 
-.message {
-    padding: 0.75rem 1rem;
-    border-radius: 8px;
+.toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    width: 100%;
+    padding: 0.8rem 0.65rem 0.8rem 1rem;
+    border-radius: 10px;
     font-size: 0.9rem;
-    margin-bottom: 0.5rem;
+    line-height: 1.45;
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.18);
+    border: 1px solid transparent;
+    opacity: 0;
+    transform: translateX(calc(100% + 1.5rem));
+    transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
 }
 
-.message.success {
-    background-color: #ecfdf3;
-    color: #166534;
-    border: 1px solid #bbf7d0;
+.toast.is-visible {
+    opacity: 1;
+    transform: translateX(0);
 }
 
-.message.error {
-    background-color: #fef2f2;
-    color: #b91c1c;
-    border: 1px solid #fecaca;
+.toast__text {
+    flex: 1;
+    min-width: 0;
+    word-break: break-word;
+}
+
+.toast__close {
+    flex-shrink: 0;
+    margin: -0.15rem -0.1rem 0 0;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: inherit;
+    opacity: 0.65;
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.toast__close:hover,
+.toast__close:focus-visible {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.06);
+    outline: none;
+}
+
+.toast--success {
+    background: #ecfdf5;
+    color: #065f46;
+    border-color: #a7f3d0;
+}
+
+.toast--error {
+    background: #fef2f2;
+    color: #991b1b;
+    border-color: #fecaca;
+}
+
+.toast--warning {
+    background: #fffbeb;
+    color: #92400e;
+    border-color: #fde68a;
+}
+
+.toast--info,
+.toast--debug {
+    background: #eff6ff;
+    color: #1e40af;
+    border-color: #bfdbfe;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .toast {
+        transition-duration: 0.01ms;
+    }
+}
+
+/* 알림·#comment- 앵커로 연 댓글 — 짧은 은은한 강조 (main.js 가 class 부여) */
+@keyframes notifCommentHighlight {
+    0% {
+        background-color: rgba(99, 102, 241, 0.1);
+        box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.26);
+    }
+    50% {
+        background-color: rgba(99, 102, 241, 0.055);
+        box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.14);
+    }
+    100% {
+        background-color: transparent;
+        box-shadow: none;
+    }
+}
+
+.comment-item.comment-item--notif-target {
+    border-radius: 10px;
+    animation: notifCommentHighlight 4.2s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .comment-item.comment-item--notif-target {
+        animation: none;
+        background-color: rgba(99, 102, 241, 0.085);
+        box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.2);
+    }
 }
 
 .sidebar-menu > a:hover {

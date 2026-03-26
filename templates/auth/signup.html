@@ -10,14 +10,6 @@
             Anonymous Project 계정을 생성하고 다양한 튜토리얼을 즐겨보세요.
         </p>
 
-        {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                    <li class="message {{ message.tags }}">{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-
         <form method="post" class="auth-form">
             {% csrf_token %}
             {{ form.non_field_errors }}

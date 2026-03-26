@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import FileResponse, JsonResponse, HttpResponseRedirect
 from django.db import transaction
-from django.db.models import Count, Q
+from django.db.models import Count, Prefetch, Q
 from django.core.exceptions import ValidationError
 from django.core.cache import cache
 from django.views.decorators.cache import cache_page
@@ -15,11 +15,20 @@ from django.urls import reverse
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.core.mail import send_mail
+from django.core.paginator import Paginator
 import logging
 import hashlib
 import uuid
 
-from .models import BoardAttachment, BoardPost, Category, Topic
+from .models import (
+    BoardAttachment,
+    BoardComment,
+    BoardNotification,
+    BoardPost,
+    BoardPostSubscriber,
+    Category,
+    Topic,
+)
 from .board_attachments import validate_board_uploaded_files
 from .board_password import upgrade_stored_password_if_legacy, verify_board_password
 from .utils import (
@@ -29,7 +38,7 @@ from .utils import (
     get_daily_visitors_count,
     get_client_ip,
 )
-from .forms import SignupForm, LoginForm, BoardPostForm
+from .forms import BoardCommentForm, BoardPostForm, LoginForm, SignupForm
 from .tokens import account_activation_token
 
 logger = logging.getLogger(__name__)
@@ -398,14 +407,24 @@ def signup_complete(request):
 
 
 def board_list(request):
-    """자유게시판 목록"""
-    posts = (
+    """자유게시판 목록 (페이지당 10개)"""
+    posts_qs = (
         BoardPost.objects.filter(is_deleted=False)
+        .select_related("author_user")
         .annotate(attachment_count=Count("attachments", distinct=True))
         .order_by("-created_at")
     )
+    paginator = Paginator(posts_qs, 10)
+    page_obj = paginator.get_page(request.GET.get("page"))
+    page_links = []
+    for item in paginator.get_elided_page_range(
+        page_obj.number, on_each_side=1, on_ends=1
+    ):
+        page_links.append("…" if item is Ellipsis else item)
     context = {
-        "posts": posts,
+        "posts": page_obj,
+        "page_obj": page_obj,
+        "page_links": page_links,
     }
     return render(request, "board/board_list.html", context)
 
@@ -413,14 +432,186 @@ def board_list(request):
 def board_detail(request, pk):
     """자유게시판 상세"""
     post = get_object_or_404(
-        BoardPost.objects.prefetch_related("attachments"),
+        BoardPost.objects.select_related("author_user").prefetch_related(
+            "attachments"
+        ),
         pk=pk,
         is_deleted=False,
     )
+    replies_qs = BoardComment.objects.filter(is_deleted=False).order_by(
+        "created_at", "id"
+    )
+    root_comments = (
+        BoardComment.objects.filter(
+            post=post, parent__isnull=True, is_deleted=False
+        )
+        .select_related("author_user")
+        .order_by("created_at", "id")
+        .prefetch_related(
+            Prefetch("replies", queryset=replies_qs.select_related("author_user"))
+        )
+    )
+    board_comment_count = BoardComment.objects.filter(
+        post=post, is_deleted=False
+    ).count()
     context = {
         "post": post,
+        "root_comments": root_comments,
+        "board_comment_count": board_comment_count,
+        "comment_form": BoardCommentForm(),
     }
     return render(request, "board/board_detail.html", context)
+
+
+def _notify_for_new_comment(
+    comment: BoardComment,
+    post: BoardPost,
+    parent: BoardComment | None,
+    commenter_user: User | None,
+):
+    """구독자 및 답글 대상(로그인 작성자)에게 알림 생성."""
+    commenter_id = (
+        commenter_user.pk
+        if commenter_user and commenter_user.is_authenticated
+        else None
+    )
+    recipient_payload: dict[int, tuple[str, str]] = {}
+
+    for sub in BoardPostSubscriber.objects.filter(post=post).select_related("user"):
+        if commenter_id and sub.user_id == commenter_id:
+            continue
+        recipient_payload[sub.user_id] = (
+            BoardNotification.Kind.THREAD_COMMENT,
+            f"'{post.title[:80]}'에 새 댓글이 달렸습니다.",
+        )
+
+    if parent and parent.author_user_id:
+        if parent.author_user_id != commenter_id:
+            recipient_payload[parent.author_user_id] = (
+                BoardNotification.Kind.REPLY,
+                f"'{post.title[:60]}'에서 내 댓글에 답글이 달렸습니다.",
+            )
+
+    if not recipient_payload:
+        return
+
+    BoardNotification.objects.bulk_create(
+        [
+            BoardNotification(
+                recipient_id=uid,
+                post=post,
+                comment=comment,
+                kind=kind,
+                summary=summary[:200],
+            )
+            for uid, (kind, summary) in recipient_payload.items()
+        ]
+    )
+
+
+def board_comment_create(request, pk):
+    """자유게시판 댓글/대댓글 작성 (비로그인 가능, 로그인 시 해당 글 알림 구독)."""
+    post = get_object_or_404(BoardPost, pk=pk, is_deleted=False)
+    if request.method != "POST":
+        return redirect("board_detail", pk=post.pk)
+
+    if _board_rate_limit_exceeded(request, "comment"):
+        return _rate_limit_response(request, "comment")
+
+    form = BoardCommentForm(request.POST)
+    raw_parent = (request.POST.get("parent") or "").strip()
+    parent: BoardComment | None = None
+    if raw_parent.isdigit():
+        parent = BoardComment.objects.filter(
+            pk=int(raw_parent), post=post, is_deleted=False
+        ).first()
+        if not parent:
+            messages.error(request, "답글 대상 댓글을 찾을 수 없습니다.")
+            return redirect("board_detail", pk=post.pk)
+        if parent.parent_id is not None:
+            messages.error(request, "대댓글에는 답글을 달 수 없습니다.")
+            return redirect("board_detail", pk=post.pk)
+
+    if not form.is_valid():
+        for err in form.non_field_errors():
+            messages.error(request, err)
+        for field, errs in form.errors.items():
+            if field == "__all__":
+                continue
+            for err in errs:
+                messages.error(request, f"{field}: {err}")
+        return redirect("board_detail", pk=post.pk)
+
+    client_ip = get_client_ip(request)
+    anon_id, is_new = _get_or_create_anonymous_id(request)
+    commenter_user = request.user if request.user.is_authenticated else None
+
+    with transaction.atomic():
+        comment = BoardComment(
+            post=post,
+            parent=parent,
+            author_name=_make_masked_author_from_ip(client_ip),
+            anonymous_id=anon_id,
+            author_user=commenter_user,
+            content=form.cleaned_data["content"],
+        )
+        comment.save()
+        if commenter_user and commenter_user.is_authenticated:
+            BoardPostSubscriber.objects.get_or_create(
+                user=commenter_user, post=post
+            )
+        _notify_for_new_comment(comment, post, parent, commenter_user)
+
+    messages.success(request, "댓글이 등록되었습니다.")
+    url = reverse("board_detail", kwargs={"pk": post.pk})
+    response = HttpResponseRedirect(f"{url}#comment-{comment.pk}")
+    if is_new:
+        response.set_cookie(
+            "ap_anon_id",
+            anon_id,
+            max_age=60 * 60 * 24 * 365,
+            httponly=True,
+            samesite="Lax",
+        )
+    return response
+
+
+@login_required
+def notification_list(request):
+    """자유게시판 알림 목록 (로그인 사용자)."""
+    items = BoardNotification.objects.filter(recipient=request.user).select_related(
+        "post", "comment"
+    )[:200]
+    return render(
+        request,
+        "notifications/notification_list.html",
+        {"notifications": items},
+    )
+
+
+@login_required
+def notification_mark_read(request, pk):
+    """단일 알림 읽음 처리."""
+    if request.method != "POST":
+        return redirect("notification_list")
+    note = get_object_or_404(BoardNotification, pk=pk, recipient=request.user)
+    if not note.is_read:
+        note.is_read = True
+        note.save(update_fields=["is_read"])
+    next_url = request.POST.get("next") or reverse("notification_list")
+    return HttpResponseRedirect(next_url)
+
+
+@login_required
+def notification_mark_all_read(request):
+    """알림 전체 읽음."""
+    if request.method != "POST":
+        return redirect("notification_list")
+    BoardNotification.objects.filter(recipient=request.user, is_read=False).update(
+        is_read=True
+    )
+    messages.success(request, "모든 알림을 읽음으로 표시했습니다.")
+    return redirect("notification_list")
 
 
 def board_attachment_download(request, post_pk, attachment_pk):
@@ -505,7 +696,7 @@ def _get_or_create_anonymous_id(request):
 
 
 def board_create(request):
-    """자유게시판 글 작성 (비로그인)"""
+    """자유게시판 글 작성 (비로그인 가능, 로그인 시 작성자 아이디 표시)"""
     if request.method == "POST":
         if _board_rate_limit_exceeded(request, "create"):
             return _rate_limit_response(request, "create")
@@ -524,6 +715,9 @@ def board_create(request):
                     post.author_name = _make_masked_author_from_ip(client_ip)
                     anon_id, is_new = _get_or_create_anonymous_id(request)
                     post.anonymous_id = anon_id
+                    post.author_user = (
+                        request.user if request.user.is_authenticated else None
+                    )
                     post.save()
                     _save_new_attachments(post, files)
                 messages.success(request, "게시글이 등록되었습니다.")
@@ -547,7 +741,9 @@ def board_create(request):
 def board_update(request, pk):
     """자유게시판 글 수정 (비밀번호 확인)"""
     post = get_object_or_404(
-        BoardPost.objects.prefetch_related("attachments"),
+        BoardPost.objects.select_related("author_user").prefetch_related(
+            "attachments"
+        ),
         pk=pk,
         is_deleted=False,
     )
