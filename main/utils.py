@@ -14,6 +14,7 @@ TODAY_VISITORS_KEY = 'visitors:today'  # 오늘 접속자 수
 TOTAL_VISITORS_KEY = 'visitors:total'  # 누적 접속자 수
 DAILY_VISITORS_KEY_PREFIX = 'visitors:daily:'  # 일별 접속자 수 (예: visitors:daily:2024-01-01)
 VISITOR_SET_KEY_PREFIX = 'visitors:set:'  # 일별 접속자 집합 (중복 제거용)
+VISITOR_REDIS_ALIAS = 'metrics'
 
 
 def get_client_ip(request):
@@ -35,7 +36,7 @@ def get_redis_client():
     Redis 클라이언트 연결 반환
     """
     try:
-        return get_redis_connection('default')
+        return get_redis_connection(VISITOR_REDIS_ALIAS)
     except Exception as e:
         logger.error(f"Redis 연결 실패: {e}")
         return None

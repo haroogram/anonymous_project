@@ -3,6 +3,7 @@
 사용법: python manage.py load_initial_data
 """
 from django.core.management.base import BaseCommand
+from django.core.cache import caches
 from main.models import Category, Topic
 from main.management.commands import initial_topics_data
 
@@ -111,10 +112,9 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(f'\n초기 데이터 로드 완료!'))
         self.stdout.write(self.style.SUCCESS(f'생성된 주제: {topic_count}개'))
 
-        from django.core.cache import cache
-
-        # 캐시 클리어
-        self.stdout.write('\n캐시를 클리어합니다...')
-        cache.clear()
-        self.stdout.write(self.style.SUCCESS('캐시 클리어 완료!'))
+        # 콘텐츠 반영 지연 방지를 위해 앱 캐시(default)는 비웁니다.
+        # 접속자 통계는 settings.CACHES['metrics']로 분리되어 있어 영향받지 않습니다.
+        self.stdout.write('\ndefault 캐시를 클리어합니다...')
+        caches['default'].clear()
+        self.stdout.write(self.style.SUCCESS('default 캐시 클리어 완료!'))
 
