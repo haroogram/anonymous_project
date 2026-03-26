@@ -120,6 +120,7 @@ EOF
         append_env_var "REDIS_PORT" "${SSM_PARAMS[redis/port]:-6379}"
         [ -n "${SSM_PARAMS[redis/password]}" ] && append_env_var "REDIS_PASSWORD" "${SSM_PARAMS[redis/password]}"
         append_env_var "REDIS_DB" "${SSM_PARAMS[redis/db]:-0}"
+        append_env_var "REDIS_METRICS_DB" "${SSM_PARAMS[redis/metrics_db]:-1}"
 
         # Email(SMTP) 설정 (선택 - SES 등)
         [ -n "${SSM_PARAMS[email/backend]}" ] && append_env_var "EMAIL_BACKEND" "${SSM_PARAMS[email/backend]}"
