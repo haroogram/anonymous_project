@@ -155,12 +155,22 @@ REDIS_HOST = env('REDIS_HOST', default='localhost')
 REDIS_PORT = env('REDIS_PORT', default=6379)
 REDIS_PASSWORD = env('REDIS_PASSWORD', default=None)  # ElastiCache의 경우 password 인증 사용 가능
 REDIS_DB = env('REDIS_DB', default=0)
+# 접속자 통계(metrics)는 default 캐시와 별도 DB를 권장
+# - cache.clear() 시 접속자 키가 지워지지 않도록 분리
+REDIS_METRICS_DB = env('REDIS_METRICS_DB', default=1)
 
 # Redis 연결 URL 구성
 if REDIS_PASSWORD:
     REDIS_URL = f"redis://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}"
 else:
     REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}"
+
+if REDIS_PASSWORD:
+    REDIS_METRICS_URL = (
+        f"redis://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}/{REDIS_METRICS_DB}"
+    )
+else:
+    REDIS_METRICS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_METRICS_DB}"
 
 CACHES = {
     'default': {
@@ -187,7 +197,25 @@ CACHES = {
         },
         'KEY_PREFIX': 'anonymous_project',
         'TIMEOUT': 300,  # 기본 캐시 타임아웃 (초)
-    }
+    },
+    'metrics': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': REDIS_METRICS_URL,
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'SOCKET_CONNECT_TIMEOUT': 5,
+            'SOCKET_TIMEOUT': 5,
+            'CONNECTION_POOL_KWARGS': {
+                'max_connections': 20,
+                'retry_on_timeout': True,
+                'socket_keepalive': True,
+                'socket_keepalive_options': {},
+            },
+            'IGNORE_EXCEPTIONS': True,
+        },
+        'KEY_PREFIX': 'anonymous_project_metrics',
+        'TIMEOUT': None,  # 접속자 집계 키는 개별 expire로 관리
+    },
 }
 
 # Redis 직접 접근을 위한 설정 (django-redis의 get_redis_connection 사용)
