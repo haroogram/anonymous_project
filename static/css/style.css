@@ -419,6 +419,27 @@ body {
     font-size: 0.85rem;
 }
 
+/* auth-page 내 인증 버튼 영역
+   - 헤더용 `.auth-actions` 전역 스타일(display:flex)이 인증 페이지의 `.auth-actions`에도 적용되는 것을 방지
+   - activation_invalid.html 등에서 버튼/링크 배치가 틀어지는 문제 해결 */
+.auth-page .auth-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+}
+.auth-page .auth-actions .auth-submit {
+    width: 100%;
+    margin: 0 !important;
+    margin-bottom: 0 !important;
+    display: inline-flex;
+    justify-content: center;
+    text-align: center;
+}
+.auth-page .auth-switch {
+    margin: 0 !important;
+}
+
 /* Django messages → 화면 하단 오른쪽 고정 토스트 (main.js) */
 .toast-stack {
     position: fixed;

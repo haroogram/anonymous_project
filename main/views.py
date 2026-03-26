@@ -719,6 +719,10 @@ def board_create(request):
                         request.user if request.user.is_authenticated else None
                     )
                     post.save()
+                    if request.user.is_authenticated:
+                        BoardPostSubscriber.objects.get_or_create(
+                            user=request.user, post=post
+                        )
                     _save_new_attachments(post, files)
                 messages.success(request, "게시글이 등록되었습니다.")
                 response = redirect("board_list")
