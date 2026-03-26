@@ -161,11 +161,10 @@ if USE_S3_STATIC:
     # ManifestStaticStorage는 파일 내용의 해시를 파일명에 추가하여
     # CSS/JS 파일 변경 시 자동으로 새로운 URL이 생성되도록 합니다.
     STORAGES = {
+        **STORAGES,
         "staticfiles": {
             "BACKEND": "main.storages.ManifestStaticStorage",
         },
-        # default는 Django 기본값 사용 (로컬 파일 시스템)
-        # Media files를 S3에 저장하려면 MediaStorage 클래스를 추가하세요
     }
     
     # CloudFront 사용 시 CDN 도메인으로, 미사용 시 S3 직접 접근
@@ -185,6 +184,7 @@ else:
     # 로컬 파일 시스템 사용 (Manifest 기능 포함)
     # ManifestStaticFilesStorage를 사용하여 파일 변경 시 자동으로 URL이 변경되도록 함
     STORAGES = {
+        **STORAGES,
         "staticfiles": {
             "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",
         },

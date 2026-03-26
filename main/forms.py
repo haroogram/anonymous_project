@@ -3,7 +3,7 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
 
 from .board_password import hash_board_password
-from .models import BoardPost
+from .models import BoardComment, BoardPost
 
 
 class BoardPostForm(forms.ModelForm):
@@ -39,6 +39,29 @@ class SignupForm(UserCreationForm):
         if email and User.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError("이미 사용 중인 이메일입니다.")
         return email
+
+
+class BoardCommentForm(forms.ModelForm):
+    class Meta:
+        model = BoardComment
+        fields = ["content"]
+        labels = {"content": "댓글"}
+        widgets = {
+            "content": forms.Textarea(
+                attrs={
+                    "maxlength": "2000",
+                    "rows": 4,
+                    "placeholder": "댓글을 입력하세요.",
+                    "aria-label": "댓글",
+                }
+            ),
+        }
+
+    def clean_content(self):
+        text = (self.cleaned_data.get("content") or "").strip()
+        if not text:
+            raise forms.ValidationError("내용을 입력해 주세요.")
+        return text
 
 
 class LoginForm(AuthenticationForm):
