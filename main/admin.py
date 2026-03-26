@@ -2,7 +2,16 @@ from django import forms
 from django.contrib import admin
 
 from .board_password import hash_board_password
-from .models import BoardAttachment, BoardPost, Category, Topic, VisitorStats
+from .models import (
+    BoardAttachment,
+    BoardComment,
+    BoardNotification,
+    BoardPost,
+    BoardPostSubscriber,
+    Category,
+    Topic,
+    VisitorStats,
+)
 
 
 class BoardPostAdminForm(forms.ModelForm):
@@ -66,13 +75,50 @@ class BoardAttachmentInline(admin.TabularInline):
     readonly_fields = ['uploaded_at', 'size']
 
 
+@admin.register(BoardComment)
+class BoardCommentAdmin(admin.ModelAdmin):
+    list_display = ["id", "post", "parent_id", "display_author", "created_at", "is_deleted"]
+    list_filter = ["is_deleted", "created_at"]
+    search_fields = ["content", "anonymous_id"]
+    raw_id_fields = ["post", "parent", "author_user"]
+    ordering = ["-created_at"]
+
+    @admin.display(description="작성자 표시")
+    def display_author(self, obj: BoardComment):
+        return obj.get_display_author()
+
+
+@admin.register(BoardPostSubscriber)
+class BoardPostSubscriberAdmin(admin.ModelAdmin):
+    list_display = ["user", "post", "created_at"]
+    raw_id_fields = ["user", "post"]
+    search_fields = ["user__username"]
+
+
+@admin.register(BoardNotification)
+class BoardNotificationAdmin(admin.ModelAdmin):
+    list_display = ["id", "recipient", "kind", "summary", "is_read", "created_at"]
+    list_filter = ["kind", "is_read", "created_at"]
+    search_fields = ["summary", "recipient__username"]
+    raw_id_fields = ["recipient", "post", "comment"]
+    ordering = ["-created_at"]
+
+
 @admin.register(BoardPost)
 class BoardPostAdmin(admin.ModelAdmin):
     form = BoardPostAdminForm
-    list_display = ['title', 'author_name', 'is_deleted', 'created_at', 'updated_at']
+    list_display = [
+        'title',
+        'author_name',
+        'author_user',
+        'is_deleted',
+        'created_at',
+        'updated_at',
+    ]
     list_filter = ['is_deleted', 'created_at']
     search_fields = ['title', 'content', 'author_name', 'anonymous_id']
     ordering = ['-created_at']
     readonly_fields = ['created_at', 'updated_at']
     date_hierarchy = 'created_at'
+    raw_id_fields = ['author_user']
     inlines = [BoardAttachmentInline]

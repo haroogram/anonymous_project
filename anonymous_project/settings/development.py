@@ -50,7 +50,5 @@ else:
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='no-reply@example.com')
 
-# 로그인/로그아웃 리다이렉트 설정
-LOGIN_URL = 'auth_login'
-LOGIN_REDIRECT_URL = 'index'
+# 로그아웃 리다이렉트 (LOGIN_URL / LOGIN_REDIRECT_URL 은 base.py)
 LOGOUT_REDIRECT_URL = 'index'

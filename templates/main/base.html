@@ -19,9 +19,42 @@
     <meta name="twitter:image" content="{% static 'img/anonymous.png' %}">
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .notif-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            min-width: 1.1rem;
+            height: 1.1rem;
+            padding: 0 4px;
+            font-size: 0.65rem;
+            line-height: 1.1rem;
+            text-align: center;
+            border-radius: 999px;
+            background: #dc2626;
+            color: #fff;
+            font-weight: 700;
+        }
+    </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
+    {# Django messages: 템플릿에서 순회해야 세션에서 제거됨. 표시는 main.js 토스트로 처리 #}
+    {% if messages %}
+    <div id="django-message-sources" hidden>
+        {% for message in messages %}
+        <div class="toast-source" data-tags="{{ message.tags|escape }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% if unread_board_notification_toasts %}
+    <div id="board-notification-toast-sources" hidden>
+        {% for n in unread_board_notification_toasts %}
+        <div class="toast-source" data-tags="info">알림 · {{ n.summary }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <!-- 헤더 -->
     <header class="header">
         <div class="container">
@@ -71,6 +104,12 @@
                     </form>
                     <div class="auth-actions">
                         {% if request.user.is_authenticated %}
+                            <a href="{% url 'notification_list' %}" class="btn btn-outline" style="position: relative;">
+                                알림
+                                {% if unread_board_notification_count %}
+                                <span class="notif-badge" aria-label="읽지 않은 알림">{{ unread_board_notification_count }}</span>
+                                {% endif %}
+                            </a>
                             <a href="{% url 'auth_logout' %}" class="btn btn-secondary">로그아웃</a>
                         {% else %}
                             <a href="{% url 'auth_login' %}" class="btn btn-primary">로그인/회원가입</a>
@@ -143,6 +182,8 @@
             </div>
         </div>
     </footer>
+
+    <div id="toast-stack" class="toast-stack" aria-live="polite" aria-atomic="false"></div>
 
     <script src="{% static 'js/main.js' %}"></script>
     {% block extra_js %}{% endblock %}

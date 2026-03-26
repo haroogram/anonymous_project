@@ -68,6 +68,61 @@
         color: #64748b;
         font-size: 0.95rem;
     }
+    .board-pagination {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 6px 8px;
+        margin-top: 20px;
+        padding: 14px 16px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+    }
+    .board-pagination__meta {
+        width: 100%;
+        text-align: center;
+        font-size: 0.85rem;
+        color: #64748b;
+        margin-bottom: 4px;
+    }
+    .board-pagination a,
+    .board-pagination span.board-pagination__current {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 2.25rem;
+        height: 2.25rem;
+        padding: 0 10px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        text-decoration: none;
+    }
+    .board-pagination a {
+        color: #475569;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+    }
+    .board-pagination a:hover {
+        border-color: #c7d2fe;
+        color: #4338ca;
+        background: #f5f3ff;
+    }
+    .board-pagination span.board-pagination__current {
+        font-weight: 700;
+        color: #fff;
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        border: 1px solid transparent;
+    }
+    .board-pagination span.board-pagination__ellipsis {
+        color: #94a3b8;
+        padding: 0 4px;
+        user-select: none;
+    }
+    .board-pagination__prev-next {
+        font-weight: 600;
+    }
 </style>
 {% endblock %}
 
@@ -78,7 +133,7 @@
 </div>
 
 <div class="board-list">
-    {% if posts %}
+    {% if page_obj.paginator.count %}
     <table>
         <thead>
             <tr>
@@ -103,7 +158,7 @@
                         —
                     {% endif %}
                 </td>
-                <td>{{ post.get_anonymous_nickname }}</td>
+                <td>{{ post.get_display_author }}</td>
                 <td>{{ post.created_at|date:"Y-m-d H:i" }}</td>
             </tr>
             {% endfor %}
@@ -115,5 +170,32 @@
     </div>
     {% endif %}
 </div>
+
+{% if page_obj.paginator.count and page_obj.paginator.num_pages > 1 %}
+<nav class="board-pagination" aria-label="게시판 페이지">
+    <div class="board-pagination__meta">
+        전체 {{ page_obj.paginator.count }}건 · {{ page_obj.number }} / {{ page_obj.paginator.num_pages }} 페이지
+    </div>
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}" class="board-pagination__prev-next">이전</a>
+    {% else %}
+    <span class="board-pagination__prev-next" style="opacity:0.35;pointer-events:none;">이전</span>
+    {% endif %}
+    {% for link in page_links %}
+        {% if link == "…" %}
+        <span class="board-pagination__ellipsis" aria-hidden="true">…</span>
+        {% elif link == page_obj.number %}
+        <span class="board-pagination__current">{{ link }}</span>
+        {% else %}
+        <a href="?page={{ link }}">{{ link }}</a>
+        {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}" class="board-pagination__prev-next">다음</a>
+    {% else %}
+    <span class="board-pagination__prev-next" style="opacity:0.35;pointer-events:none;">다음</span>
+    {% endif %}
+</nav>
+{% endif %}
 {% endblock %}
 

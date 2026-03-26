@@ -65,6 +65,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'main.context_processors.visitor_stats',
+                'main.context_processors.notification_badge',
             ],
         },
     },
@@ -92,6 +93,9 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+LOGIN_URL = 'auth_login'
+LOGIN_REDIRECT_URL = 'index'
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
@@ -129,11 +133,14 @@ BOARD_ATTACHMENT_ALLOWED_EXTENSIONS = frozenset({
     'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx',
 })
 
-# Static files storage 설정
-# 개발 환경에서도 ManifestStaticFilesStorage를 사용하여
-# CSS/JS 파일 변경 시 자동으로 URL이 변경되도록 함
-# 참고: 프로덕션 환경에서는 production.py에서 덮어쓰기됨
+# Static / 미디어 storage (Django 4.2+ STORAGES)
+# - default: FileField·ImageField 등 업로드용 (MEDIA_ROOT). 키가 없으면 KeyError: 'default' 발생.
+# - staticfiles: collectstatic / {% static %}
+# 프로덕션에서는 production.py에서 staticfiles(및 선택적 default=S3)로 덮어씀.
 STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
     "staticfiles": {
         "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",
     },
