@@ -415,6 +415,11 @@ body {
     font-weight: 500;
 }
 
+/* auth-switch 내부에서도 버튼 링크 색상은 버튼 규칙을 우선 */
+.auth-switch a.btn-primary {
+    color: var(--white);
+}
+
 .auth-extra .muted {
     font-size: 0.85rem;
 }
