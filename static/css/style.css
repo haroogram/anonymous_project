@@ -411,7 +411,6 @@ body {
 }
 
 .auth-switch a {
-    color: var(--secondary-color);
     font-weight: 500;
 }
 
