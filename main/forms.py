@@ -1,5 +1,10 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import (
+    AuthenticationForm,
+    PasswordResetForm,
+    SetPasswordForm,
+    UserCreationForm,
+)
 from django.contrib.auth.models import User
 
 from .board_password import hash_board_password
@@ -71,4 +76,25 @@ class LoginForm(AuthenticationForm):
         # 기본 AuthenticationForm 검증 사용
         cleaned_data = super().clean()
         return cleaned_data
+
+
+class PasswordResetRequestForm(PasswordResetForm):
+    email = forms.EmailField(
+        required=True,
+        label="이메일",
+        widget=forms.EmailInput(attrs={"autocomplete": "email"}),
+    )
+
+
+class PasswordResetSetPasswordForm(SetPasswordForm):
+    new_password1 = forms.CharField(
+        label="새 비밀번호",
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}),
+        strip=False,
+    )
+    new_password2 = forms.CharField(
+        label="새 비밀번호 확인",
+        strip=False,
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}),
+    )
 

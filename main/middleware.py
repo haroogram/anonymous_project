@@ -58,6 +58,7 @@ class VisitorCountMiddleware:
         '/.well-known',
         '/__debug__',
         '/debug',
+        '/errors/',
     ]
     
     # 제외할 User-Agent 패턴 (봇, 헬스체크, 모니터링 도구 등)
