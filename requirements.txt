@@ -7,6 +7,6 @@ celery==5.6.3
 django-celery-beat==2.9.0
 gunicorn==26.0.0
 django-storages==1.14.6
-boto3==1.42.75
+boto3==1.43.18
 setuptools==82.0.1
 
