@@ -37,7 +37,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -115,7 +115,7 @@ jobs:
     steps:
       - name: Checkout manifest repo (dso_project)
         if: ${{ env.DSO_REPO_TOKEN != '' }}  # 토큰이 있을 때만 실행 (선택적)
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: ${{ vars.DSO_MANIFEST_REPO || 'haroogram/dso_project' }}
           token: ${{ env.DSO_REPO_TOKEN }}
