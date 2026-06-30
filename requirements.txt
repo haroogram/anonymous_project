@@ -1,4 +1,4 @@
-Django==6.0.5
+Django==6.0.6
 django-environ==0.13.0
 python-dotenv==1.2.2
 PyMySQL==1.1.2
